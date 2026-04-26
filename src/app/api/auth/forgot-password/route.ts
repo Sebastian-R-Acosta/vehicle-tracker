@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       },
     });
 
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXTAUTH_URL || "https://vehicle-tracker-chi.vercel.app";
     const resetUrl = `${baseUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
 
     await sendPasswordResetEmail(email, {
