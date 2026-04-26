@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String   @unique
+  passwordHash  String?
+  name         String?
+  googleId     String?  @unique
+  avatarUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  vehicles             Vehicle[]
+  reminders            Reminder[]
+  transferCodesOwned   TransferCode[] @relation("OwnerTransferCode")
+  transferCodesUsed    TransferCode[] @relation("UsedByUser")
+  previouslyOwnedVehicles Vehicle[]   @relation("PreviousOwner")
+}
+
+model Vehicle {
+  id              String    @id @default(cuid())
+  userId          String
+  make            String
+  model           String
+  year            Int
+  vin             String?   @unique
+  nickname       String?
+  currentMileage Int       @default(0)
+  previousOwnerId String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  previousOwner     User?                @relation("PreviousOwner", fields: [previousOwnerId], references: [id])
+  maintenanceRecords MaintenanceRecord[]
+  reminders        Reminder[]
+  transferCodes   TransferCode[]
+}
+
+model MaintenanceRecord {
+  id         String   @id @default(cuid())
+  vehicleId String
+  date      DateTime
+  serviceType String
+  mileage   Int
+  notes     String?
+  imageUrl  String?
+  cost      Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+}
+
+model Reminder {
+  id          String    @id @default(cuid())
+  vehicleId  String
+  userId     String
+  title      String
+  description String?
+  dueDate    DateTime?
+  dueMileage Int?
+  isCompleted Boolean  @default(false)
+  completedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TransferCode {
+  id            String    @id @default(cuid())
+  vehicleId    String
+  ownerId       String
+  code         String    @unique
+  expiresAt   DateTime
+  usedAt      DateTime?
+  usedByUserId String?
+  createdAt   DateTime  @default(now())
+
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  owner     User    @relation("OwnerTransferCode", fields: [ownerId], references: [id])
+  usedByUser User?   @relation("UsedByUser", fields: [usedByUserId], references: [id])
+}
