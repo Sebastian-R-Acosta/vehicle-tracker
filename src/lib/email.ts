@@ -350,3 +350,63 @@ function generateReminderEmailHtml(
     </html>
   `;
 }
+
+export async function sendPasswordResetEmail(
+  to: string,
+  data: { resetUrl: string; userName: string }
+) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #dc2626; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .button { display: inline-block; padding: 12px 24px; background: #dc2626; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+        .button:hover { background: #b91c1c; }
+        .warning { background: #fef3c7; padding: 12px; border-radius: 6px; margin-top: 20px; font-size: 14px; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Password Reset Request</h1>
+        </div>
+        <div class="content">
+          <p>Hi ${data.userName},</p>
+          <p>We received a request to reset your password. Click the button below to create a new password:</p>
+          <div style="text-align: center;">
+            <a href="${data.resetUrl}" class="button">Reset Password</a>
+          </div>
+          <p>Or copy and paste this link into your browser:</p>
+          <p style="word-break: break-all; font-size: 14px; color: #6b7280;">${data.resetUrl}</p>
+          <div class="warning">
+            <strong>⚠️ This link expires in 1 hour.</strong><br />
+            If you didn't request this, you can safely ignore this email. Your password won't be changed.
+          </div>
+        </div>
+        <div class="footer">
+          Vehicle Tracker - Your vehicle management app
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const { data: result, error } = await resend.emails.send({
+    from: fromEmail,
+    to: [to],
+    subject: "Reset Your Password - Vehicle Tracker",
+    html,
+  });
+
+  if (error) {
+    console.error("Resend error:", error);
+    return { success: false, error };
+  }
+
+  return { success: true, data: result };
+}
