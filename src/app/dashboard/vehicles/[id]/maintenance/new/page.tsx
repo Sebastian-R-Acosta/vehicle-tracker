@@ -79,42 +79,48 @@ export default function NewMaintenancePage() {
     setError("");
 
     try {
-      const res = await fetch("/api/upload/presigned", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          filename: file.name,
-          contentType: file.type,
-        }),
-      });
-
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`Failed to get upload URL: ${res.status} - ${errText}`);
-      }
-
-      const data = await res.json();
-      console.log("Got presigned URL:", data);
-
-      const uploadRes = await fetch(data.uploadUrl, {
-        method: "PUT",
-        body: file,
-        headers: { "Content-Type": file.type },
-      });
-
-      console.log("Upload response:", uploadRes.status, uploadRes.statusText);
-
-      if (!uploadRes.ok) {
-        throw new Error(`Upload failed: ${uploadRes.status}`);
-      }
+      const reader = new FileReader();
       
-      setImagePreview(data.publicUrl);
-      setImageKey(data.key);
-      setValue("imageUrl", data.publicUrl);
+      reader.onload = async () => {
+        try {
+          const base64 = (reader.result as string).split(",")[1];
+          
+          const res = await fetch("/api/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              imageBase64: base64,
+              filename: file.name,
+              contentType: file.type,
+            }),
+          });
+
+          if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(`Upload failed: ${res.status} - ${errText}`);
+          }
+
+          const data = await res.json();
+          setImagePreview(data.imageUrl);
+          setImageKey(data.key);
+          setValue("imageUrl", data.imageUrl);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Failed to upload image");
+          console.error("Upload error:", err);
+        } finally {
+          setUploading(false);
+        }
+      };
+
+      reader.onerror = () => {
+        setError("Failed to read file");
+        setUploading(false);
+      };
+
+      reader.readAsDataURL(file);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to upload image");
-      console.error("Upload error:", err);
-    } finally {
+      setError("Failed to upload image");
+      console.error(err);
       setUploading(false);
     }
   };
