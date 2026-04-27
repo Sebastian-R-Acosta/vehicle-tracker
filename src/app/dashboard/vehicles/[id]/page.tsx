@@ -55,6 +55,7 @@ export default function VehicleDetailPage() {
   const params = useParams();
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
+  const [generatingReport, setGeneratingReport] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -100,21 +101,27 @@ export default function VehicleDetailPage() {
   };
 
   const generateReport = async () => {
+    setGeneratingReport(true);
     try {
       const res = await fetch(`/api/vehicles/${params.id}/report`);
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `vehicle-report-${vehicle?.make}-${vehicle?.model}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Error response:", errorText);
+        return;
       }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `vehicle-report-${vehicle?.make}-${vehicle?.model}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Failed to generate report:", err);
+    } finally {
+      setGeneratingReport(false);
     }
   };
 
@@ -145,10 +152,11 @@ export default function VehicleDetailPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={generateReport}
-                className="flex items-center gap-2 px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+                disabled={generatingReport}
+                className="flex items-center gap-2 px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg disabled:opacity-50"
               >
-                <Download className="w-4 h-4" />
-                Report
+                {generatingReport ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                {generatingReport ? "Generating..." : "Report"}
               </button>
               <button
                 onClick={() => setShowDeleteModal(true)}
@@ -326,10 +334,11 @@ export default function VehicleDetailPage() {
                 </Link>
                 <button
                   onClick={generateReport}
-                  className="flex items-center gap-2 p-3 w-full text-muted-foreground hover:bg-accent rounded-lg"
+                  disabled={generatingReport}
+                  className="flex items-center gap-2 p-3 w-full text-muted-foreground hover:bg-accent rounded-lg disabled:opacity-50"
                 >
-                  <Download className="w-4 h-4" />
-                  Generate Report
+                  {generatingReport ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                  {generatingReport ? "Generating..." : "Generate Report"}
                 </button>
               </div>
             </div>
