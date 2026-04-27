@@ -220,7 +220,7 @@ export default function VehicleDetailPage() {
         
         const colWidth = contentWidth / 4;
         const headerY = 115;
-        const rowHeight = 14;
+        const summaryRowHeight = 14;
         
         doc.setFillColor(241, 245, 249);
         doc.rect(margin, headerY, contentWidth, 10, "F");
@@ -254,38 +254,38 @@ export default function VehicleDetailPage() {
           const lastRecord = records[0];
           
           doc.setDrawColor(226, 232, 240);
-          doc.setLineWidth(0.3);
-          doc.line(margin, ySummary + rowHeight, margin + contentWidth, ySummary + rowHeight);
-          
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          doc.setTextColor(30, 41, 59);
-          doc.text(serviceType, margin + 5, ySummary + 10);
-          
-          doc.setTextColor(37, 99, 235);
-          doc.text(count > 0 ? String(count) : "—", margin + colWidth + 5, ySummary + 10);
-          
-          if (lastRecord) {
-            doc.setTextColor(71, 85, 105);
-            doc.text(new Date(lastRecord.date).toLocaleDateString(), margin + (colWidth * 2) + 5, ySummary + 10);
+doc.setLineWidth(0.3);
+            doc.line(margin, ySummary + summaryRowHeight, margin + contentWidth, ySummary + summaryRowHeight);
             
-            const { date: nextDate, mileage: nextMileage } = getNextDueDate(lastRecord.date, lastRecord.mileage, serviceType);
-            let nextDue = "—";
-            if (nextDate) {
-              nextDue = new Date(nextDate).toLocaleDateString();
-            } else if (serviceType !== "Repair" && serviceType !== "Other") {
-              nextDue = `${nextMileage.toLocaleString()} mi`;
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.setTextColor(30, 41, 59);
+            doc.text(serviceType, margin + 5, ySummary + 10);
+            
+            doc.setTextColor(37, 99, 235);
+            doc.text(count > 0 ? String(count) : "—", margin + colWidth + 5, ySummary + 10);
+            
+            if (lastRecord) {
+              doc.setTextColor(71, 85, 105);
+              doc.text(new Date(lastRecord.date).toLocaleDateString(), margin + (colWidth * 2) + 5, ySummary + 10);
+              
+              const { date: nextDate, mileage: nextMileage } = getNextDueDate(lastRecord.date, lastRecord.mileage, serviceType);
+              let nextDue = "—";
+              if (nextDate) {
+                nextDue = new Date(nextDate).toLocaleDateString();
+              } else if (serviceType !== "Repair" && serviceType !== "Other") {
+                nextDue = `${nextMileage.toLocaleString()} mi`;
+              }
+              doc.setTextColor(22, 163, 74);
+              doc.text(nextDue, margin + (colWidth * 3) + 5, ySummary + 10);
+            } else {
+              doc.setTextColor(148, 163, 184);
+              doc.text("Never Logged", margin + (colWidth * 2) + 5, ySummary + 10);
+              doc.setTextColor(239, 68, 68);
+              doc.text("—", margin + (colWidth * 3) + 5, ySummary + 10);
             }
-            doc.setTextColor(22, 163, 74);
-            doc.text(nextDue, margin + (colWidth * 3) + 5, ySummary + 10);
-          } else {
-            doc.setTextColor(148, 163, 184);
-            doc.text("Never Logged", margin + (colWidth * 2) + 5, ySummary + 10);
-            doc.setTextColor(239, 68, 68);
-            doc.text("—", margin + (colWidth * 3) + 5, ySummary + 10);
-          }
-          
-          ySummary += rowHeight;
+            
+            ySummary += summaryRowHeight;
         });
         
         const historyStartY = ySummary + 10;
