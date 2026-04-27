@@ -185,16 +185,7 @@ export default function VehicleDetailPage() {
         doc.setTextColor(30, 41, 59);
         doc.text("Vehicle Information", margin, 48);
         
-        const boxHeight = 48;
-        const labelColWidth = 60;
-        const valueColWidth = (contentWidth - labelColWidth) / 2;
-        
-        doc.setDrawColor(100, 116, 139);
-        doc.setLineWidth(0.5);
-        doc.roundedRect(margin, 53, contentWidth, boxHeight, 2, 2, "S");
-        
-        doc.setFontSize(11);
-        const startY = 63;
+        const startY = 58;
         const rowHeight = 16;
         
         const rows = [
@@ -208,17 +199,17 @@ export default function VehicleDetailPage() {
           
           row.forEach((cell, colIndex) => {
             if (!cell) return;
-            const x = colIndex === 0 ? margin + 8 : margin + valueColWidth + labelColWidth + 8;
+            const x = colIndex === 0 ? margin : margin + 95;
             
             doc.setFont("helvetica", "bold");
             doc.setFontSize(9);
             doc.setTextColor(100, 116, 139);
-            doc.text(cell.label, x, y);
+            doc.text(cell.label + ":", x, y);
             
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
             doc.setTextColor(30, 41, 59);
-            doc.text(cell.value, x, y + 7);
+            doc.text(cell.value, x + 35, y);
           });
         });
         
