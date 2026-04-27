@@ -45,25 +45,13 @@ export default function NewMaintenancePage() {
   const [currentMileage, setCurrentMileage] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    fetch(`/api/vehicles/${params.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.currentMileage !== undefined) {
-          setCurrentMileage(data.currentMileage);
-          setValue("mileage", data.currentMileage);
-        }
-      })
-      .catch(console.error);
-  }, [params.id, setValue]);
+useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<MaintenanceFormData>({
+  const useFormMethods = useForm<MaintenanceFormData>({
     resolver: zodResolver(maintenanceSchema),
     defaultValues: {
       date: new Date().toISOString().split("T")[0],
@@ -71,13 +59,27 @@ export default function NewMaintenancePage() {
     },
   });
 
+  const {
+    register,
+    handleSubmit,
+    setValue: setFormValue,
+    watch,
+    formState: { errors },
+  } = useFormMethods;
+
   const selectedServiceType = watch("serviceType");
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
+    fetch(`/api/vehicles/${params.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.currentMileage !== undefined) {
+          setCurrentMileage(data.currentMileage);
+          setFormValue("mileage", data.currentMileage);
+        }
+      })
+      .catch(console.error);
+  }, [params.id, setFormValue]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -121,7 +123,7 @@ export default function NewMaintenancePage() {
           const data = await res.json();
           setImagePreview(data.imageUrl);
           setImageKey(data.key);
-          setValue("imageUrl", data.imageUrl);
+          setFormValue("imageUrl", data.imageUrl);
         } catch (err) {
           setError(err instanceof Error ? err.message : "Failed to upload image");
           console.error("Upload error:", err);
