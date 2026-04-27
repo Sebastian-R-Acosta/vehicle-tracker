@@ -102,6 +102,49 @@ export default function VehicleDetailPage() {
 
   const vehicleId = Array.isArray(params.id) ? params.id[0] : params.id;
 
+  const serviceTypes = [
+    "Oil Change",
+    "Tire Rotation", 
+    "Brake Service",
+    "Air Filter",
+    "Transmission Service",
+    "Battery Replacement",
+    "Inspection",
+    "Repair",
+    "Other"
+  ];
+
+  const getNextDueDate = (lastDate: string | null, mileage: number, serviceType: string): { date: string | null; mileage: number } => {
+    const lastServiceDate = lastDate ? new Date(lastDate) : null;
+    const intervals: { [key: string]: { months: number; miles: number } } = {
+      "Oil Change": { months: 3, miles: 5000 },
+      "Tire Rotation": { months: 6, miles: 7500 },
+      "Brake Service": { months: 12, miles: 15000 },
+      "Air Filter": { months: 12, miles: 15000 },
+      "Transmission Service": { months: 24, miles: 30000 },
+      "Battery Replacement": { months: 48, miles: 50000 },
+      "Inspection": { months: 12, miles: 12000 },
+      "Repair": { months: 0, miles: 0 },
+      "Other": { months: 0, miles: 0 }
+    };
+    
+    const interval = intervals[serviceType] || { months: 0, miles: 0 };
+    let nextDate: string | null = null;
+    let nextMileage = mileage;
+    
+    if (lastServiceDate && interval.months > 0) {
+      const dueDate = new Date(lastServiceDate);
+      dueDate.setMonth(dueDate.getMonth() + interval.months);
+      nextDate = dueDate.toISOString().split('T')[0];
+    }
+    
+    if (interval.miles > 0) {
+      nextMileage = mileage + interval.miles;
+    }
+    
+    return { date: nextDate, mileage: nextMileage };
+  };
+
   const generateReport = async () => {
     setGeneratingReport(true);
     try {
@@ -116,105 +159,203 @@ export default function VehicleDetailPage() {
         const margin = 20;
         const contentWidth = pageWidth - (margin * 2);
         
-        doc.setFontSize(20);
+        const logoUrl = "/logo.svg";
+        try {
+          doc.addImage(logoUrl, "SVG", margin, 10, 50, 15);
+        } catch (e) {
+          console.log("Logo not found, using text instead");
+        }
+        
+        doc.setFontSize(18);
         doc.setFont("helvetica", "bold");
-        doc.text("Vehicle Tracker", pageWidth / 2, 20, { align: "center" });
-        doc.setFontSize(16);
-        doc.text("Vehicle History Report", pageWidth / 2, 28, { align: "center" });
-        
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, 32, pageWidth - margin, 32);
-        
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "normal");
-        doc.text(`${data.vehicle.year} ${data.vehicle.make} ${data.vehicle.model}`, margin, 45);
-        
-        doc.setFontSize(14);
-        doc.setFont("helvetica", "bold");
-        doc.text("Vehicle Information", margin, 60);
+        doc.setTextColor(30, 41, 59);
+        doc.text("Vehicle History Report", pageWidth - margin, 18, { align: "right" });
         
         doc.setFontSize(10);
         doc.setFont("helvetica", "normal");
+        doc.setTextColor(100, 116, 139);
+        doc.text(`${data.vehicle.year} ${data.vehicle.make} ${data.vehicle.model}`, pageWidth - margin, 26, { align: "right" });
         
-        let yPos = 70;
-        const label = (text: string) => doc.setFont("helvetica", "bold");
-        const value = (text: string) => doc.setFont("helvetica", "normal");
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.5);
+        doc.line(margin, 35, pageWidth - margin, 35);
         
-        label("Make:"); doc.text(data.vehicle.make, 50, yPos); yPos += 8;
-        label("Model:"); doc.text(data.vehicle.model, 50, yPos); yPos += 8;
-        label("Year:"); doc.text(String(data.vehicle.year), 50, yPos); yPos += 8;
-        label("Mileage:"); doc.text(`${data.vehicle.currentMileage.toLocaleString()} miles`, 50, yPos); yPos += 8;
-        label("VIN:"); doc.text(data.vehicle.vin || "Not provided", 50, yPos); yPos += 8;
-        if (data.vehicle.nickname) {
-          label("Nickname:"); doc.text(data.vehicle.nickname, 50, yPos); yPos += 8;
-        }
-        
-        yPos += 10;
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
-        doc.text("Report Summary", margin, yPos);
-        yPos += 10;
+        doc.setTextColor(30, 41, 59);
+        doc.text("Vehicle Information", margin, 48);
         
-        doc.setFontSize(10);
+        doc.setFillColor(248, 250, 252);
+        doc.roundedRect(margin, 53, contentWidth, 45, 3, 3, "F");
+        
+        doc.setFontSize(11);
         doc.setFont("helvetica", "normal");
-        if (data.summary.lastMaintenance) {
-          doc.text(`Last Maintenance: ${new Date(data.summary.lastMaintenance.date).toLocaleDateString()} - ${data.summary.lastMaintenance.serviceType}`, margin, yPos);
-          yPos += 8;
-        }
-        if (data.summary.nextReminder) {
-          let reminderText = `Next Due: ${data.summary.nextReminder.title}`;
-          if (data.summary.nextReminder.dueDate) reminderText += ` on ${new Date(data.summary.nextReminder.dueDate).toLocaleDateString()}`;
-          if (data.summary.nextReminder.dueMileage) reminderText += ` at ${data.summary.nextReminder.dueMileage.toLocaleString()} miles`;
-          doc.text(reminderText, margin, yPos);
-          yPos += 8;
-        }
         
-        yPos += 10;
-        doc.setFontSize(14);
-        doc.setFont("helvetica", "bold");
-        doc.text("Maintenance History", margin, yPos);
-        yPos += 5;
+        const info = [
+          ["Make:", data.vehicle.make],
+          ["Model:", data.vehicle.model],
+          ["Year:", String(data.vehicle.year)],
+          ["Current Mileage:", `${data.vehicle.currentMileage.toLocaleString()} miles`],
+          ["VIN:", data.vehicle.vin || "Not provided"],
+          ["Nickname:", data.vehicle.nickname || "Not set"]
+        ];
         
-        doc.setFillColor(245, 245, 245);
-        doc.rect(margin, yPos, contentWidth, 10, "F");
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
-        doc.text("Date", margin + 2, yPos + 7);
-        doc.text("Service", margin + 35, yPos + 7);
-        doc.text("Mileage", margin + 95, yPos + 7);
-        doc.text("Notes", margin + 130, yPos + 7);
-        yPos += 12;
-        
-        doc.setFont("helvetica", "normal");
-        data.maintenanceHistory.forEach((record: any, index: number) => {
-          if (yPos > 270) {
-            doc.addPage();
-            yPos = 20;
-          }
-          
-          if (index % 2 === 0) {
-            doc.setFillColor(250, 250, 250);
-            doc.rect(margin, yPos - 4, contentWidth, 10, "F");
-          }
-          
-          doc.text(new Date(record.date).toLocaleDateString(), margin + 2, yPos + 3);
-          doc.text(record.serviceType.substring(0, 20), margin + 35, yPos + 3);
-          doc.text(`${record.mileage.toLocaleString()} mi`, margin + 95, yPos + 3);
-          doc.text(record.notes ? record.notes.substring(0, 30) : "-", margin + 130, yPos + 3);
-          yPos += 10;
+        let yInfo = 62;
+        info.forEach(([label, value]) => {
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor(71, 85, 105);
+          doc.text(label, margin + 5, yInfo);
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor(30, 41, 59);
+          doc.text(value, margin + 35, yInfo);
+          yInfo += 7;
         });
         
-        doc.setDrawColor(200, 200, 200);
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(30, 41, 59);
+        doc.text("Maintenance Summary", margin, 110);
+        
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.setFillColor(37, 99, 235);
+        doc.roundedRect(margin, 115, contentWidth, 10, 2, 2, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.text("Service Type", margin + 5, 122);
+        doc.text("Count", margin + 80, 122);
+        doc.text("Last Service", margin + 110, 122);
+        doc.text("Next Due", margin + 160, 122);
+        
+        const maintenanceByType: { [key: string]: typeof data.maintenanceHistory } = {};
+        data.maintenanceHistory.forEach((record: any) => {
+          if (!maintenanceByType[record.serviceType]) {
+            maintenanceByType[record.serviceType] = [];
+          }
+          maintenanceByType[record.serviceType].push(record);
+        });
+        
+        let ySummary = 130;
+        let rowIndex = 0;
+        
+        serviceTypes.forEach((serviceType) => {
+          if (ySummary > 250) {
+            doc.addPage();
+            ySummary = 25;
+          }
+          
+          const records = maintenanceByType[serviceType] || [];
+          const count = records.length;
+          const lastRecord = records[0];
+          
+          if (rowIndex % 2 === 0) {
+            doc.setFillColor(251, 251, 254);
+            doc.rect(margin, ySummary - 4, contentWidth, 12, "F");
+          }
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.setTextColor(30, 41, 59);
+          doc.text(serviceType, margin + 5, ySummary + 3);
+          
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor(37, 99, 235);
+          doc.text(count > 0 ? String(count) : "—", margin + 80, ySummary + 3);
+          
+          if (lastRecord) {
+            doc.setTextColor(71, 85, 105);
+            doc.text(new Date(lastRecord.date).toLocaleDateString(), margin + 110, ySummary + 3);
+            
+            const { date: nextDate, mileage: nextMileage } = getNextDueDate(lastRecord.date, lastRecord.mileage, serviceType);
+            let nextDue = "—";
+            if (nextDate) {
+              nextDue = new Date(nextDate).toLocaleDateString();
+            } else if (serviceType !== "Repair" && serviceType !== "Other") {
+              nextDue = `${nextMileage.toLocaleString()} mi`;
+            }
+            doc.setTextColor(22, 163, 74);
+            doc.text(nextDue, margin + 160, ySummary + 3);
+          } else {
+            doc.setTextColor(148, 163, 184);
+            doc.text("Never Logged", margin + 110, ySummary + 3);
+            doc.setTextColor(239, 68, 68);
+            doc.text("—", margin + 160, ySummary + 3);
+          }
+          
+          ySummary += 12;
+          rowIndex++;
+        });
+        
+        const historyStartY = ySummary + 10;
+        
+        if (historyStartY > 240) {
+          doc.addPage();
+          ySummary = 25;
+        } else {
+          ySummary = historyStartY;
+        }
+        
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(30, 41, 59);
+        doc.text("Maintenance History", margin, ySummary);
+        
+        ySummary += 8;
+        
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.setFillColor(241, 245, 249);
+        doc.rect(margin, ySummary, contentWidth, 10, "F");
+        doc.setTextColor(71, 85, 105);
+        doc.text("Date", margin + 3, ySummary + 7);
+        doc.text("Service", margin + 35, ySummary + 7);
+        doc.text("Mileage", margin + 95, ySummary + 7);
+        doc.text("Notes", margin + 130, ySummary + 7);
+        
+        ySummary += 14;
+        
+        doc.setFont("helvetica", "normal");
+        
+        if (data.maintenanceHistory.length === 0) {
+          doc.setTextColor(148, 163, 184);
+          doc.text("No maintenance records found.", margin + 5, ySummary);
+        } else {
+          data.maintenanceHistory.forEach((record: any, index: number) => {
+            if (ySummary > 270) {
+              doc.addPage();
+              ySummary = 25;
+            }
+            
+            if (index % 2 === 0) {
+              doc.setFillColor(251, 251, 254);
+              doc.rect(margin, ySummary - 4, contentWidth, 10, "F");
+            }
+            
+            doc.setTextColor(71, 85, 105);
+            doc.text(new Date(record.date).toLocaleDateString(), margin + 3, ySummary + 3);
+            doc.setTextColor(30, 41, 59);
+            doc.text(record.serviceType.substring(0, 20), margin + 35, ySummary + 3);
+            doc.text(`${record.mileage.toLocaleString()} mi`, margin + 95, ySummary + 3);
+            doc.setTextColor(100, 116, 139);
+            doc.text(record.notes ? record.notes.substring(0, 30) : "—", margin + 130, ySummary + 3);
+            
+            ySummary += 10;
+          });
+        }
+        
         const footerY = 285;
+        doc.setDrawColor(226, 232, 240);
         doc.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
         
-        doc.setFontSize(8);
+        doc.setFontSize(9);
         doc.setFont("helvetica", "bold");
+        doc.setTextColor(30, 41, 59);
         doc.text("Vehicle Tracker | Professional Fleet & Vehicle Management System", pageWidth / 2, footerY, { align: "center" });
+        
         doc.setFont("helvetica", "normal");
-        doc.setTextColor(150, 150, 150);
-        doc.text("CONFIDENTIAL: This report is intended solely for the use of the individual or entity to whom it is addressed.", pageWidth / 2, footerY + 5, { align: "center" });
-        doc.text(`Report generated: ${new Date().toLocaleString()}`, pageWidth / 2, footerY + 10, { align: "center" });
+        doc.setFontSize(8);
+        doc.setTextColor(148, 163, 184);
+        doc.text("CONFIDENTIAL: This report is intended solely for the use of the individual or entity to whom it is addressed.", pageWidth / 2, footerY + 6, { align: "center" });
+        doc.text(`Report generated: ${new Date().toLocaleString()}`, pageWidth / 2, footerY + 12, { align: "center" });
         
         doc.save(`vehicle-report-${data.vehicle.make}-${data.vehicle.model}.pdf`);
       }
