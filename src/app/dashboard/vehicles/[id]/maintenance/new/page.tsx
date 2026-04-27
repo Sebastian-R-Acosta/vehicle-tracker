@@ -2,11 +2,11 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, Loader2, Wrench } from "lucide-react";
+import { ArrowLeft, Loader2, Wrench, Upload, X, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 
 const maintenanceSchema = z.object({
@@ -15,6 +15,7 @@ const maintenanceSchema = z.object({
   mileage: z.number().min(0, "Mileage must be positive"),
   notes: z.string().optional(),
   cost: z.number().optional(),
+  imageUrl: z.string().optional(),
 });
 
 type MaintenanceFormData = z.infer<typeof maintenanceSchema>;
@@ -36,11 +37,16 @@ export default function NewMaintenancePage() {
   const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageKey, setImageKey] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<MaintenanceFormData>({
     resolver: zodResolver(maintenanceSchema),
@@ -54,6 +60,69 @@ export default function NewMaintenancePage() {
       router.push("/login");
     }
   }, [status, router]);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Please select an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image must be less than 5MB");
+      return;
+    }
+
+    setUploading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/upload/presigned", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          filename: file.name,
+          contentType: file.type,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to get upload URL");
+      }
+
+      const { url, key } = await res.json();
+
+      await fetch(url, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type },
+      });
+
+      const bucket = process.env.NEXT_PUBLIC_AWS_S3_BUCKET || "vehicle-tracker-recibos-2026";
+      const region = process.env.NEXT_PUBLIC_AWS_REGION || "us-east-1";
+      const imageUrl = `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
+      
+      setImagePreview(imageUrl);
+      setImageKey(key);
+      setValue("imageUrl", imageUrl);
+    } catch (err) {
+      setError("Failed to upload image");
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    setImageKey(null);
+    setValue("imageUrl", "");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const onSubmit = async (data: MaintenanceFormData) => {
     setError("");
@@ -80,8 +149,8 @@ export default function NewMaintenancePage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -179,6 +248,57 @@ export default function NewMaintenancePage() {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
+                Invoice Image (optional)
+              </label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              
+              {imagePreview ? (
+                <div className="relative mt-2">
+                  <img
+                    src={imagePreview}
+                    alt="Invoice preview"
+                    className="w-full max-h-64 object-contain rounded-lg border border-border bg-background"
+                  />
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full hover:opacity-90"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="mt-2 w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-border rounded-lg hover:border-primary hover:bg-accent/50 transition-colors disabled:opacity-50"
+                >
+                  {uploading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <Upload className="w-5 h-5 text-muted-foreground" />
+                      <span className="text-muted-foreground">
+                        Click to upload invoice image
+                      </span>
+                    </>
+                  )}
+                </button>
+              )}
+              <p className="mt-1 text-xs text-muted-foreground">
+                PNG, JPG, or WEBP up to 5MB
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Notes (optional)
               </label>
               <textarea
@@ -204,7 +324,7 @@ export default function NewMaintenancePage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || uploading}
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}

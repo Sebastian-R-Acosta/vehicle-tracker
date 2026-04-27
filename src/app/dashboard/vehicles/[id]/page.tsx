@@ -16,6 +16,8 @@ import {
   Loader2,
   Pencil,
   Trash2,
+  Image,
+  X,
 } from "lucide-react";
 
 interface MaintenanceRecord {
@@ -54,6 +56,7 @@ export default function VehicleDetailPage() {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -249,6 +252,15 @@ export default function VehicleDetailPage() {
                               {record.notes}
                             </p>
                           )}
+                          {record.imageUrl && (
+                            <button
+                              onClick={() => setSelectedImage(record.imageUrl)}
+                              className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline"
+                            >
+                              <Image className="w-4 h-4" />
+                              View Invoice
+                            </button>
+                          )}
                         </div>
                       </div>
                       <Link
@@ -347,6 +359,26 @@ export default function VehicleDetailPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button
+            onClick={() => setSelectedImage(null)}
+            className="absolute top-4 right-4 p-2 bg-white/10 rounded-full hover:bg-white/20 text-white"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          <img
+            src={selectedImage}
+            alt="Invoice"
+            className="max-w-full max-h-full object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
     </div>
