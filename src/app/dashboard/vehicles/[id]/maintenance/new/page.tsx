@@ -148,7 +148,7 @@ useEffect(() => {
   const removeImage = () => {
     setImagePreview(null);
     setImageKey(null);
-    setValue("imageUrl", "");
+    setFormValue("imageUrl", "");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
