@@ -196,9 +196,12 @@ export default function VehicleDetailPage() {
           ["Model:", data.vehicle.model],
           ["Year:", String(data.vehicle.year)],
           ["Current Mileage:", `${data.vehicle.currentMileage.toLocaleString()} miles`],
-          ["VIN:", data.vehicle.vin || "Not provided"],
-          ["Nickname:", data.vehicle.nickname || "Not set"]
+          ["VIN:", data.vehicle.vin || "Not provided"]
         ];
+        
+        if (data.vehicle.nickname) {
+          info.push(["Nickname:", data.vehicle.nickname]);
+        }
         
         let yInfo = 62;
         info.forEach(([label, value]) => {
