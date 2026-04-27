@@ -185,34 +185,64 @@ export default function VehicleDetailPage() {
         doc.setTextColor(30, 41, 59);
         doc.text("Vehicle Information", margin, 48);
         
-        doc.setFillColor(248, 250, 252);
-        doc.roundedRect(margin, 53, contentWidth, 45, 3, 3, "F");
+        doc.setFillColor(255, 255, 255);
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.3);
+        doc.roundedRect(margin, 53, contentWidth, 55, 3, 3, "FD");
+        
+        const col1X = margin + 8;
+        const col2X = margin + contentWidth / 2 + 8;
+        const labelWidth = 45;
+        const valueX1 = col1X + labelWidth;
+        const valueX2 = col2X + labelWidth;
         
         doc.setFontSize(11);
-        doc.setFont("helvetica", "normal");
+        let yLine1 = 68;
+        let yLine2 = 68;
         
-        const info = [
-          ["Make:", data.vehicle.make],
-          ["Model:", data.vehicle.model],
-          ["Year:", String(data.vehicle.year)],
-          ["Current Mileage:", `${data.vehicle.currentMileage.toLocaleString()} miles`],
-          ["VIN:", data.vehicle.vin || "Not provided"]
-        ];
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(100, 116, 139);
+        doc.text("Make", col1X, yLine1);
+        doc.text("Model", col2X, yLine2);
+        
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(30, 41, 59);
+        doc.text(data.vehicle.make, valueX1, yLine1);
+        doc.text(data.vehicle.model, valueX2, yLine2);
+        
+        yLine1 += 12;
+        yLine2 += 12;
+        
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(100, 116, 139);
+        doc.text("Year", col1X, yLine1);
+        doc.text("Current Mileage", col2X, yLine2);
+        
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(30, 41, 59);
+        doc.text(String(data.vehicle.year), valueX1, yLine1);
+        doc.text(`${data.vehicle.currentMileage.toLocaleString()} miles`, valueX2, yLine2);
+        
+        yLine1 += 12;
+        yLine2 += 12;
+        
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(100, 116, 139);
+        doc.text("VIN", col1X, yLine1);
+        
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(30, 41, 59);
+        doc.text(data.vehicle.vin || "Not provided", valueX1, yLine1);
         
         if (data.vehicle.nickname) {
-          info.push(["Nickname:", data.vehicle.nickname]);
-        }
-        
-        let yInfo = 62;
-        info.forEach(([label, value]) => {
           doc.setFont("helvetica", "bold");
-          doc.setTextColor(71, 85, 105);
-          doc.text(label, margin + 5, yInfo);
+          doc.setTextColor(100, 116, 139);
+          doc.text("Nickname", col2X, yLine2);
+          
           doc.setFont("helvetica", "normal");
           doc.setTextColor(30, 41, 59);
-          doc.text(value, margin + 35, yInfo);
-          yInfo += 7;
-        });
+          doc.text(data.vehicle.nickname, valueX2, yLine2);
+        }
         
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
