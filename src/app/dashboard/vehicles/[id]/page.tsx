@@ -185,37 +185,30 @@ export default function VehicleDetailPage() {
         doc.setTextColor(30, 41, 59);
         doc.text("Vehicle Information", margin, 48);
         
-        const boxHeight = 72;
+        const boxHeight = 48;
         const labelColWidth = 60;
         const valueColWidth = (contentWidth - labelColWidth) / 2;
         
-        doc.setFillColor(241, 245, 249);
-        doc.setDrawColor(226, 232, 240);
-        doc.setLineWidth(0.3);
-        doc.roundedRect(margin, 53, contentWidth, boxHeight, 2, 2, "FD");
+        doc.setDrawColor(100, 116, 139);
+        doc.setLineWidth(0.5);
+        doc.roundedRect(margin, 53, contentWidth, boxHeight, 2, 2, "S");
         
         doc.setFontSize(11);
         const startY = 63;
-        const rowHeight = 12;
+        const rowHeight = 16;
         
         const rows = [
           [{ label: "Make", value: data.vehicle.make }, { label: "Model", value: data.vehicle.model }],
           [{ label: "Year", value: String(data.vehicle.year) }, { label: "Mileage", value: `${data.vehicle.currentMileage.toLocaleString()} miles` }],
-          [{ label: "VIN", value: data.vehicle.vin || "Not provided" }, { label: "Nickname", value: data.vehicle.nickname || "—" }]
+          [{ label: "VIN", value: data.vehicle.vin || "Not provided" }, null]
         ];
         
         rows.forEach((row, rowIndex) => {
           const y = startY + (rowIndex * rowHeight);
           
-          const dividerY = y + rowHeight;
-          if (rowIndex < rows.length - 1) {
-            doc.setDrawColor(226, 232, 240);
-            doc.line(margin + 1, dividerY, margin + contentWidth - 1, dividerY);
-          }
-          
           row.forEach((cell, colIndex) => {
+            if (!cell) return;
             const x = colIndex === 0 ? margin + 8 : margin + valueColWidth + labelColWidth + 8;
-            const colWidth = colIndex === 0 ? labelColWidth + valueColWidth : labelColWidth + valueColWidth;
             
             doc.setFont("helvetica", "bold");
             doc.setFontSize(9);
@@ -225,7 +218,7 @@ export default function VehicleDetailPage() {
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
             doc.setTextColor(30, 41, 59);
-            doc.text(cell.value, x, y + 6);
+            doc.text(cell.value, x, y + 7);
           });
         });
         
