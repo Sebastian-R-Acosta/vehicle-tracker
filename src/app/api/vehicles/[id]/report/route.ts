@@ -84,17 +84,20 @@ export async function GET(
     })),
   };
 
-  try {
+try {
     const pdfBuffer = await generatePDF(reportData);
 
-    return new NextResponse(new Uint8Array(pdfBuffer), {
+    return new Response(new Uint8Array(pdfBuffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="vehicle-report-${vehicle.year}-${vehicle.make}-${vehicle.model}.pdf"`,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("PDF generation error:", error);
-    return new NextResponse("Failed to generate PDF", { status: 500 });
+    return new NextResponse(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }

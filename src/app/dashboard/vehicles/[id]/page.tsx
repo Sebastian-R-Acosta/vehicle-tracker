@@ -104,11 +104,22 @@ export default function VehicleDetailPage() {
     setGeneratingReport(true);
     try {
       const res = await fetch(`/api/vehicles/${params.id}/report`);
+      const contentType = res.headers.get("content-type");
+      
       if (!res.ok) {
         const errorText = await res.text();
         console.error("Error response:", errorText);
+        setGeneratingReport(false);
         return;
       }
+      
+      if (contentType?.includes("application/json")) {
+        const errorData = await res.json();
+        console.error("API Error:", errorData);
+        setGeneratingReport(false);
+        return;
+      }
+      
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
