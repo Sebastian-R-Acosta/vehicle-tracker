@@ -1,8 +1,15 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { renderToBuffer } from "@react-pdf/renderer";
-import VehicleReportPDF from "@/components/VehicleReportPDF";
+
+export const dynamic = "force-dynamic";
+
+async function generatePDF(data: any): Promise<Buffer> {
+  const { renderToBuffer } = await import("@react-pdf/renderer");
+  const VehicleReportPDF = (await import("@/components/VehicleReportPDF")).default;
+  const buffer = await renderToBuffer(VehicleReportPDF({ data }));
+  return buffer as Buffer;
+}
 
 export async function GET(
   request: Request,
@@ -78,9 +85,7 @@ export async function GET(
   };
 
   try {
-    const pdfBuffer = await renderToBuffer(
-      VehicleReportPDF({ data: reportData })
-    );
+    const pdfBuffer = await generatePDF(reportData);
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
       headers: {
