@@ -107,7 +107,7 @@ export default function VehicleDetailPage() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `vehicle-report-${vehicle?.make}-${vehicle?.model}.pdf`;
+        a.download = `vehicle-report-${vehicle?.make}-${vehicle?.model}.txt`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
