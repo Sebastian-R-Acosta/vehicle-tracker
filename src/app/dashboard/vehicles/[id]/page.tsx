@@ -101,16 +101,48 @@ export default function VehicleDetailPage() {
 
   const generateReport = async () => {
     try {
-      const res = await fetch(`/api/vehicles/${params.id}/report-pdf`);
+      const res = await fetch(`/api/vehicles/${params.id}/report`);
       if (res.ok) {
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `vehicle-report-${vehicle?.make}-${vehicle?.model}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
+        const data = await res.json();
+        
+        const { jsPDF } = await import("jspdf");
+        const doc = new jsPDF();
+        
+        doc.setFontSize(20);
+        doc.text("Vehicle History Report", 105, 20, { align: "center" });
+        
+        doc.setFontSize(14);
+        doc.text("Vehicle Information", 14, 40);
+        doc.setFontSize(11);
+        doc.text(`${data.vehicle.year} ${data.vehicle.make} ${data.vehicle.model}`, 14, 50);
+        if (data.vehicle.nickname) doc.text(`Nickname: ${data.vehicle.nickname}`, 14, 58);
+        if (data.vehicle.vin) doc.text(`VIN: ${data.vehicle.vin}`, 14, 66);
+        doc.text(`Current Mileage: ${data.vehicle.currentMileage.toLocaleString()} miles`, 14, 74);
+        
+        doc.setFontSize(14);
+        doc.text("Summary", 14, 90);
+        doc.setFontSize(11);
+        if (data.summary.lastMaintenance) {
+          doc.text(`Last Maintenance: ${new Date(data.summary.lastMaintenance.date).toLocaleDateString()} - ${data.summary.lastMaintenance.serviceType}`, 14, 100);
+        } else {
+          doc.text("No maintenance records", 14, 100);
+        }
+        
+        doc.setFontSize(14);
+        doc.text("Maintenance History", 14, 120);
+        
+        let y = 130;
+        data.maintenanceHistory.forEach((record: any) => {
+          doc.setFontSize(10);
+          doc.text(`${new Date(record.date).toLocaleDateString()} - ${record.serviceType}`, 14, y);
+          doc.text(`${record.mileage.toLocaleString()} miles`, 160, y);
+          if (record.notes) {
+            doc.text(record.notes.substring(0, 80), 14, y + 6);
+          }
+          y += record.notes ? 16 : 10;
+        });
+        
+        doc.save(`vehicle-report-${vehicle?.make}-${vehicle?.model}.pdf`);
       }
     } catch (err) {
       console.error("Failed to generate report:", err);
