@@ -42,7 +42,20 @@ export default function NewMaintenancePage() {
   const [error, setError] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageKey, setImageKey] = useState<string | null>(null);
+  const [currentMileage, setCurrentMileage] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetch(`/api/vehicles/${params.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.currentMileage !== undefined) {
+          setCurrentMileage(data.currentMileage);
+          setValue("mileage", data.currentMileage);
+        }
+      })
+      .catch(console.error);
+  }, [params.id, setValue]);
 
   const {
     register,
