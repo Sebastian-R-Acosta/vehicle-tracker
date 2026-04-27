@@ -4,13 +4,6 @@ import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-async function generatePDF(data: any): Promise<Buffer> {
-  const { renderToBuffer } = await import("@react-pdf/renderer");
-  const VehicleReportPDF = (await import("@/components/VehicleReportPDF")).default;
-  const buffer = await renderToBuffer(VehicleReportPDF({ data }));
-  return buffer as Buffer;
-}
-
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -30,7 +23,6 @@ export async function GET(
       maintenanceRecords: {
         orderBy: { date: "desc" },
       },
-      previousOwner: true,
       reminders: {
         where: { isCompleted: false },
         orderBy: [{ dueDate: "asc" }, { dueMileage: "asc" }],
@@ -49,7 +41,7 @@ export async function GET(
     0
   );
 
-  const reportData = {
+  return NextResponse.json({
     vehicle: {
       year: vehicle.year,
       make: vehicle.make,
@@ -82,22 +74,5 @@ export async function GET(
       notes: record.notes,
       cost: record.cost,
     })),
-  };
-
-try {
-    const pdfBuffer = await generatePDF(reportData);
-
-    return new Response(new Uint8Array(pdfBuffer), {
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="vehicle-report-${vehicle.year}-${vehicle.make}-${vehicle.model}.pdf"`,
-      },
-    });
-  } catch (error: any) {
-    console.error("PDF generation error:", error);
-    return new NextResponse(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  });
 }

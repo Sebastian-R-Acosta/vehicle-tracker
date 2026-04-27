@@ -106,31 +106,118 @@ export default function VehicleDetailPage() {
     setGeneratingReport(true);
     try {
       const res = await fetch(`/api/vehicles/${vehicleId}/report`);
-      const contentType = res.headers.get("content-type");
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("Error response:", errorText);
-        setGeneratingReport(false);
-        return;
+      if (res.ok) {
+        const data = await res.json();
+        
+        const { jsPDF } = await import("jspdf");
+        const doc = new jsPDF();
+        
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 20;
+        const contentWidth = pageWidth - (margin * 2);
+        
+        doc.setFontSize(20);
+        doc.setFont("helvetica", "bold");
+        doc.text("Vehicle Tracker", pageWidth / 2, 20, { align: "center" });
+        doc.setFontSize(16);
+        doc.text("Vehicle History Report", pageWidth / 2, 28, { align: "center" });
+        
+        doc.setDrawColor(200, 200, 200);
+        doc.line(margin, 32, pageWidth - margin, 32);
+        
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+        doc.text(`${data.vehicle.year} ${data.vehicle.make} ${data.vehicle.model}`, margin, 45);
+        
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text("Vehicle Information", margin, 60);
+        
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        
+        let yPos = 70;
+        const label = (text: string) => doc.setFont("helvetica", "bold");
+        const value = (text: string) => doc.setFont("helvetica", "normal");
+        
+        label("Make:"); doc.text(data.vehicle.make, 50, yPos); yPos += 8;
+        label("Model:"); doc.text(data.vehicle.model, 50, yPos); yPos += 8;
+        label("Year:"); doc.text(String(data.vehicle.year), 50, yPos); yPos += 8;
+        label("Mileage:"); doc.text(`${data.vehicle.currentMileage.toLocaleString()} miles`, 50, yPos); yPos += 8;
+        label("VIN:"); doc.text(data.vehicle.vin || "Not provided", 50, yPos); yPos += 8;
+        if (data.vehicle.nickname) {
+          label("Nickname:"); doc.text(data.vehicle.nickname, 50, yPos); yPos += 8;
+        }
+        
+        yPos += 10;
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text("Report Summary", margin, yPos);
+        yPos += 10;
+        
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        if (data.summary.lastMaintenance) {
+          doc.text(`Last Maintenance: ${new Date(data.summary.lastMaintenance.date).toLocaleDateString()} - ${data.summary.lastMaintenance.serviceType}`, margin, yPos);
+          yPos += 8;
+        }
+        if (data.summary.nextReminder) {
+          let reminderText = `Next Due: ${data.summary.nextReminder.title}`;
+          if (data.summary.nextReminder.dueDate) reminderText += ` on ${new Date(data.summary.nextReminder.dueDate).toLocaleDateString()}`;
+          if (data.summary.nextReminder.dueMileage) reminderText += ` at ${data.summary.nextReminder.dueMileage.toLocaleString()} miles`;
+          doc.text(reminderText, margin, yPos);
+          yPos += 8;
+        }
+        
+        yPos += 10;
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text("Maintenance History", margin, yPos);
+        yPos += 5;
+        
+        doc.setFillColor(245, 245, 245);
+        doc.rect(margin, yPos, contentWidth, 10, "F");
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.text("Date", margin + 2, yPos + 7);
+        doc.text("Service", margin + 35, yPos + 7);
+        doc.text("Mileage", margin + 95, yPos + 7);
+        doc.text("Notes", margin + 130, yPos + 7);
+        yPos += 12;
+        
+        doc.setFont("helvetica", "normal");
+        data.maintenanceHistory.forEach((record: any, index: number) => {
+          if (yPos > 270) {
+            doc.addPage();
+            yPos = 20;
+          }
+          
+          if (index % 2 === 0) {
+            doc.setFillColor(250, 250, 250);
+            doc.rect(margin, yPos - 4, contentWidth, 10, "F");
+          }
+          
+          doc.text(new Date(record.date).toLocaleDateString(), margin + 2, yPos + 3);
+          doc.text(record.serviceType.substring(0, 20), margin + 35, yPos + 3);
+          doc.text(`${record.mileage.toLocaleString()} mi`, margin + 95, yPos + 3);
+          doc.text(record.notes ? record.notes.substring(0, 30) : "-", margin + 130, yPos + 3);
+          yPos += 10;
+        });
+        
+        doc.setDrawColor(200, 200, 200);
+        const footerY = 285;
+        doc.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
+        
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "bold");
+        doc.text("Vehicle Tracker | Professional Fleet & Vehicle Management System", pageWidth / 2, footerY, { align: "center" });
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(150, 150, 150);
+        doc.text("CONFIDENTIAL: This report is intended solely for the use of the individual or entity to whom it is addressed.", pageWidth / 2, footerY + 5, { align: "center" });
+        doc.text(`Report generated: ${new Date().toLocaleString()}`, pageWidth / 2, footerY + 10, { align: "center" });
+        
+        doc.save(`vehicle-report-${data.vehicle.make}-${data.vehicle.model}.pdf`);
       }
-      
-      if (contentType?.includes("application/json")) {
-        const errorData = await res.json();
-        console.error("API Error:", errorData);
-        setGeneratingReport(false);
-        return;
-      }
-      
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `vehicle-report-${vehicle?.make}-${vehicle?.model}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Failed to generate report:", err);
     } finally {
