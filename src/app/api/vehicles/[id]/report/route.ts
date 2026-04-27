@@ -1,6 +1,8 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { renderToBuffer } from "@react-pdf/renderer";
+import VehicleReportPDF from "@/components/VehicleReportPDF";
 
 export async function GET(
   request: Request,
@@ -21,6 +23,7 @@ export async function GET(
       maintenanceRecords: {
         orderBy: { date: "desc" },
       },
+      previousOwner: true,
       reminders: {
         where: { isCompleted: false },
         orderBy: [{ dueDate: "asc" }, { dueMileage: "asc" }],
@@ -34,8 +37,12 @@ export async function GET(
 
   const lastMaintenance = vehicle.maintenanceRecords[0];
   const nextReminder = vehicle.reminders.find(r => r.dueDate || r.dueMileage);
+  const totalCost = vehicle.maintenanceRecords.reduce(
+    (sum, record) => sum + (record.cost || 0),
+    0
+  );
 
-  return NextResponse.json({
+  const reportData = {
     vehicle: {
       year: vehicle.year,
       make: vehicle.make,
@@ -47,7 +54,7 @@ export async function GET(
     summary: {
       lastMaintenance: lastMaintenance
         ? {
-            date: lastMaintenance.date,
+            date: lastMaintenance.date.toISOString().split('T')[0],
             serviceType: lastMaintenance.serviceType,
             mileage: lastMaintenance.mileage,
           }
@@ -55,11 +62,34 @@ export async function GET(
       nextReminder: nextReminder
         ? {
             title: nextReminder.title,
-            dueDate: nextReminder.dueDate,
+            dueDate: nextReminder.dueDate?.toISOString().split('T')[0] ?? null,
             dueMileage: nextReminder.dueMileage,
           }
         : null,
+      totalCost: totalCost > 0 ? totalCost : null,
     },
-    maintenanceHistory: vehicle.maintenanceRecords,
-  });
+    maintenanceHistory: vehicle.maintenanceRecords.map(record => ({
+      date: record.date.toISOString().split('T')[0],
+      serviceType: record.serviceType,
+      mileage: record.mileage,
+      notes: record.notes,
+      cost: record.cost,
+    })),
+  };
+
+  try {
+    const pdfBuffer = await renderToBuffer(
+      VehicleReportPDF({ data: reportData })
+    );
+
+    return new NextResponse(new Uint8Array(pdfBuffer), {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="vehicle-report-${vehicle.year}-${vehicle.make}-${vehicle.model}.pdf"`,
+      },
+    });
+  } catch (error) {
+    console.error("PDF generation error:", error);
+    return new NextResponse("Failed to generate PDF", { status: 500 });
+  }
 }
