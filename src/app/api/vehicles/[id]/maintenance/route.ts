@@ -3,6 +3,16 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendMaintenanceConfirmation } from "@/lib/email";
 
+const SERVICE_RECOMMENDATIONS: Record<string, { miles: number; months: number }> = {
+  "Oil Change": { miles: 5000, months: 6 },
+  "Tire Rotation": { miles: 7500, months: 6 },
+  "Brake Service": { miles: 30000, months: 24 },
+  "Air Filter": { miles: 15000, months: 12 },
+  "Transmission Service": { miles: 60000, months: 48 },
+  "Battery Replacement": { miles: 50000, months: 48 },
+  "Inspection": { miles: 12000, months: 12 },
+};
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -54,7 +64,7 @@ export async function POST(
   }
 
   const body = await request.json();
-  const { date, serviceType, mileage, notes, imageUrl, cost } = body;
+  const { date, serviceType, mileage, notes, imageUrl, cost, setReminder } = body;
 
   if (!date || !serviceType || !mileage) {
     return new NextResponse("Missing required fields", { status: 400 });
@@ -93,5 +103,25 @@ export async function POST(
     }).catch((err) => console.error("Failed to send maintenance email:", err));
   }
 
-  return NextResponse.json(record);
+  const rec = SERVICE_RECOMMENDATIONS[serviceType];
+  let nextReminder = null;
+  
+  if (rec && setReminder !== false) {
+    const dueMileage = mileage + rec.miles;
+    const dueDate = new Date(date);
+    dueDate.setMonth(dueDate.getMonth() + rec.months);
+
+    nextReminder = await prisma.reminder.create({
+      data: {
+        vehicleId: params.id,
+        userId: session.user.id,
+        title: `Next ${serviceType}`,
+        description: `Based on ${serviceType} performed on ${new Date(date).toLocaleDateString()}`,
+        dueMileage,
+        dueDate,
+      },
+    });
+  }
+
+  return NextResponse.json({ record, nextReminder });
 }

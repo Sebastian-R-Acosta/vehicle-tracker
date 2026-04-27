@@ -94,3 +94,9 @@ model TransferCode {
   owner     User    @relation("OwnerTransferCode", fields: [ownerId], references: [id])
   usedByUser User?   @relation("UsedByUser", fields: [usedByUserId], references: [id])
 }
+
+model ServiceRecommendation {
+  serviceType      String  @id
+  recommendedMiles Int    @default(5000)
+  recommendedMonths Int   @default(6)
+}

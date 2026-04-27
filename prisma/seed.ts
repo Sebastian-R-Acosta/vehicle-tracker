@@ -45,9 +45,28 @@ async function main() {
     });
   }
 
+  const recommendations = [
+    { serviceType: 'Oil Change', recommendedMiles: 5000, recommendedMonths: 6 },
+    { serviceType: 'Tire Rotation', recommendedMiles: 7500, recommendedMonths: 6 },
+    { serviceType: 'Brake Service', recommendedMiles: 30000, recommendedMonths: 24 },
+    { serviceType: 'Air Filter', recommendedMiles: 15000, recommendedMonths: 12 },
+    { serviceType: 'Transmission Service', recommendedMiles: 60000, recommendedMonths: 48 },
+    { serviceType: 'Battery Replacement', recommendedMiles: 50000, recommendedMonths: 48 },
+    { serviceType: 'Inspection', recommendedMiles: 12000, recommendedMonths: 12 },
+  ];
+
+  for (const rec of recommendations) {
+    await prisma.serviceRecommendation.upsert({
+      where: { serviceType: rec.serviceType },
+      update: rec,
+      create: rec,
+    });
+  }
+
   console.log('Demo user created:');
   console.log('  Email: demo@vehicle-tracker.local');
   console.log('  Password: demo123');
+  console.log('Service recommendations seeded');
 }
 
 main()

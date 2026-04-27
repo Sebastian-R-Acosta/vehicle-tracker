@@ -16,6 +16,7 @@ const maintenanceSchema = z.object({
   notes: z.string().optional(),
   cost: z.number().optional(),
   imageUrl: z.string().optional(),
+  setReminder: z.boolean().optional(),
 });
 
 type MaintenanceFormData = z.infer<typeof maintenanceSchema>;
@@ -47,13 +48,17 @@ export default function NewMaintenancePage() {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<MaintenanceFormData>({
     resolver: zodResolver(maintenanceSchema),
     defaultValues: {
       date: new Date().toISOString().split("T")[0],
+      setReminder: true,
     },
   });
+
+  const selectedServiceType = watch("serviceType");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -331,6 +336,25 @@ export default function NewMaintenancePage() {
                 placeholder="0.00"
               />
             </div>
+
+            {selectedServiceType && selectedServiceType !== "Other" && selectedServiceType !== "Repair" && (
+              <div className="p-4 bg-accent rounded-lg border border-border">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    {...register("setReminder")}
+                    defaultChecked
+                    className="w-5 h-5 rounded border-input text-primary focus:ring-ring"
+                  />
+                  <div>
+                    <span className="font-medium text-foreground">Set automatic reminder</span>
+                    <p className="text-sm text-muted-foreground">
+                      A reminder for the next {selectedServiceType} will be created based on expert recommendations.
+                    </p>
+                  </div>
+                </label>
+              </div>
+            )}
 
             <button
               type="submit"
