@@ -87,14 +87,14 @@ export default function NewMaintenancePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link
                 href={`/dashboard/vehicles/${params.id}`}
-                className="flex items-center gap-2 text-gray-500 hover:text-gray-700"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back
@@ -105,16 +105,16 @@ export default function NewMaintenancePage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-card rounded-lg border border-border p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-blue-600 rounded-lg">
-              <Wrench className="w-5 h-5 text-white" />
+            <div className="p-2 bg-primary rounded-lg">
+              <Wrench className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold">Add Maintenance Record</h1>
+            <h1 className="text-xl font-semibold text-foreground">Add Maintenance Record</h1>
           </div>
 
           {error && (
-            <div className="mb-6 p-3 text-sm text-red-600 bg-red-50 rounded-lg">
+            <div className="mb-6 p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
               {error}
             </div>
           )}
@@ -122,33 +122,33 @@ export default function NewMaintenancePage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Date <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Date <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="date"
                   {...register("date")}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                 />
                 {errors.date && (
-                  <p className="mt-1 text-sm text-red-600">
+                  <p className="mt-1 text-sm text-destructive">
                     {errors.date.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mileage <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Mileage <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="number"
                   {...register("mileage", { valueAsNumber: true })}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                   placeholder="0"
                 />
                 {errors.mileage && (
-                  <p className="mt-1 text-sm text-red-600">
+                  <p className="mt-1 text-sm text-destructive">
                     {errors.mileage.message}
                   </p>
                 )}
@@ -156,12 +156,12 @@ export default function NewMaintenancePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Service Type <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                Service Type <span className="text-destructive">*</span>
               </label>
               <select
                 {...register("serviceType")}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
               >
                 <option value="">Select service type</option>
                 {serviceTypes.map((type) => (
@@ -171,33 +171,33 @@ export default function NewMaintenancePage() {
                 ))}
               </select>
               {errors.serviceType && (
-                <p className="mt-1 text-sm text-red-600">
+                <p className="mt-1 text-sm text-destructive">
                   {errors.serviceType.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Notes (optional)
               </label>
               <textarea
                 {...register("notes")}
                 rows={3}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                 placeholder="Any additional details..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Cost (optional)
               </label>
               <input
                 type="number"
                 step="0.01"
                 {...register("cost", { valueAsNumber: true })}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                 placeholder="0.00"
               />
             </div>
@@ -205,7 +205,7 @@ export default function NewMaintenancePage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               Add Record

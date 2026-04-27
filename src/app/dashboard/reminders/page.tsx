@@ -107,14 +107,14 @@ export default function RemindersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 text-gray-500 hover:text-gray-700"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back
@@ -123,7 +123,7 @@ export default function RemindersPage() {
             <div className="flex items-center gap-2">
               <Link
                 href="/dashboard/reminders/new"
-                className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
               >
                 <Plus className="w-4 h-4" />
                 New Reminder
@@ -134,18 +134,18 @@ export default function RemindersPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold mb-8">Reminders</h1>
+        <h1 className="text-2xl font-bold mb-8 text-foreground">Reminders</h1>
 
         {reminders.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
-            <Bell className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-            <h2 className="text-lg font-medium mb-2">No reminders yet</h2>
-            <p className="text-gray-500 mb-4">
+          <div className="text-center py-16 bg-card rounded-lg border border-border">
+            <Bell className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+            <h2 className="text-lg font-medium mb-2 text-foreground">No reminders yet</h2>
+            <p className="text-muted-foreground mb-4">
               Set reminders for maintenance and services
             </p>
             <Link
               href="/dashboard/reminders/new"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
             >
               <Plus className="w-4 h-4" />
               New Reminder
@@ -155,7 +155,7 @@ export default function RemindersPage() {
           <div className="space-y-8">
             {activeReminders.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-foreground">
                   <Clock className="w-5 h-5" />
                   Active
                 </h2>
@@ -163,10 +163,10 @@ export default function RemindersPage() {
                   {activeReminders.map((reminder) => (
                     <div
                       key={reminder.id}
-                      className={`p-4 bg-white rounded-lg border ${
+                      className={`p-4 bg-card rounded-lg border ${
                         isOverdue(reminder)
-                          ? "border-red-300"
-                          : "border-gray-200"
+                          ? "border-destructive"
+                          : "border-border"
                       }`}
                     >
                       <div className="flex items-start justify-between">
@@ -175,8 +175,8 @@ export default function RemindersPage() {
                             onClick={() => toggleComplete(reminder.id)}
                             className={`mt-1 p-1 rounded-full border-2 ${
                               isOverdue(reminder)
-                                ? "border-red-500 text-red-500"
-                                : "border-gray-300 hover:border-green-500"
+                                ? "border-destructive text-destructive"
+                                : "border-input hover:border-green-500"
                             }`}
                           >
                             {isOverdue(reminder) && (
@@ -184,12 +184,12 @@ export default function RemindersPage() {
                             )}
                           </button>
                           <div>
-                            <p className="font-medium">{reminder.title}</p>
-                            <p className="text-sm text-gray-500">
+                            <p className="font-medium text-foreground">{reminder.title}</p>
+                            <p className="text-sm text-muted-foreground">
                               {reminder.vehicle.make}{" "}
                               {reminder.vehicle.model}
                             </p>
-                            <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                            <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
                               {reminder.dueDate && (
                                 <span>
                                   {new Date(
@@ -207,7 +207,7 @@ export default function RemindersPage() {
                         </div>
                         <button
                           onClick={() => deleteReminder(reminder.id)}
-                          className="p-2 text-gray-400 hover:text-red-500"
+                          className="p-2 text-muted-foreground hover:text-destructive"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -220,7 +220,7 @@ export default function RemindersPage() {
 
             {completedReminders.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-foreground">
                   <CheckCircle className="w-5 h-5" />
                   Completed
                 </h2>
@@ -228,7 +228,7 @@ export default function RemindersPage() {
                   {completedReminders.map((reminder) => (
                     <div
                       key={reminder.id}
-                      className="p-4 bg-white rounded-lg border border-gray-200 opacity-60"
+                      className="p-4 bg-card rounded-lg border border-border opacity-60"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-3">
@@ -239,10 +239,10 @@ export default function RemindersPage() {
                             <Check className="w-3 h-3" />
                           </button>
                           <div>
-                            <p className="font-medium line-through">
+                            <p className="font-medium line-through text-foreground">
                               {reminder.title}
                             </p>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-muted-foreground">
                               {reminder.vehicle.make}{" "}
                               {reminder.vehicle.model}
                             </p>
@@ -250,7 +250,7 @@ export default function RemindersPage() {
                         </div>
                         <button
                           onClick={() => deleteReminder(reminder.id)}
-                          className="p-2 text-gray-400 hover:text-red-500"
+                          className="p-2 text-muted-foreground hover:text-destructive"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

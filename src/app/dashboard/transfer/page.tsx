@@ -90,14 +90,14 @@ export default function TransferPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 text-gray-500 hover:text-gray-700"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back
@@ -108,31 +108,31 @@ export default function TransferPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold mb-8">Transfer Vehicle</h1>
+        <h1 className="text-2xl font-bold mb-8 text-foreground">Transfer Vehicle</h1>
 
         <div className="grid gap-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-card rounded-lg border border-border p-6">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-blue-600 rounded-lg">
-                <Key className="w-5 h-5 text-white" />
+              <div className="p-2 bg-primary rounded-lg">
+                <Key className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold">Generate Transfer Code</h2>
-                <p className="text-sm text-gray-500">
+                <h2 className="text-lg font-semibold text-foreground">Generate Transfer Code</h2>
+                <p className="text-sm text-muted-foreground">
                   Create a code to transfer ownership
                 </p>
               </div>
             </div>
 
             {error && (
-              <div className="mb-6 p-3 text-sm text-red-600 bg-red-50 rounded-lg">
+              <div className="mb-6 p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
                 {error}
               </div>
             )}
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Select Vehicle
                 </label>
                 <select
@@ -141,7 +141,7 @@ export default function TransferPage() {
                     setSelectedVehicle(e.target.value);
                     setTransferCode(null);
                   }}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                   disabled={!!transferCode}
                 >
                   <option value="">Choose a vehicle</option>
@@ -154,17 +154,17 @@ export default function TransferPage() {
               </div>
 
               {transferCode ? (
-                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-sm text-green-600 mb-2">
+                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                  <p className="text-sm text-green-600 dark:text-green-400 mb-2">
                     Transfer code generated (valid for 24 hours):
                   </p>
                   <div className="flex items-center gap-2">
-                    <code className="text-2xl font-mono font-bold tracking-wider">
+                    <code className="text-2xl font-mono font-bold tracking-wider text-foreground">
                       {transferCode.code}
                     </code>
                     <button
                       onClick={() => copyToClipboard(transferCode.code)}
-                      className="p-2 text-gray-500 hover:text-gray-700"
+                      className="p-2 text-muted-foreground hover:text-foreground"
                     >
                       {copied ? (
                         <Check className="w-4 h-4 text-green-600" />
@@ -178,7 +178,7 @@ export default function TransferPage() {
                 <button
                   onClick={handleGenerateCode}
                   disabled={!selectedVehicle || generating}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   {generating && <Loader2 className="w-4 h-4 animate-spin" />}
                   Generate Code
@@ -187,14 +187,14 @@ export default function TransferPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-card rounded-lg border border-border p-6">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-gray-600 rounded-lg">
-                <Car className="w-5 h-5 text-white" />
+              <div className="p-2 bg-secondary rounded-lg">
+                <Car className="w-5 h-5 text-secondary-foreground" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold">Claim Vehicle</h2>
-                <p className="text-sm text-gray-500">
+                <h2 className="text-lg font-semibold text-foreground">Claim Vehicle</h2>
+                <p className="text-sm text-muted-foreground">
                   Enter a code to claim a vehicle
                 </p>
               </div>
@@ -243,16 +243,16 @@ function ClaimForm() {
 
   if (success) {
     return (
-      <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-        <p className="text-green-600 font-medium">
+      <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+        <p className="text-green-600 dark:text-green-400 font-medium">
           Vehicle claimed successfully!
         </p>
-        <p className="text-sm text-green-600 mt-1">
+        <p className="text-sm text-green-600 dark:text-green-400 mt-1">
           The vehicle is now in your garage.
         </p>
         <button
           onClick={() => setSuccess(false)}
-          className="mt-3 text-sm text-green-700 underline"
+          className="mt-3 text-sm text-green-700 dark:text-green-300 underline"
         >
           Claim another
         </button>
@@ -263,21 +263,21 @@ function ClaimForm() {
   return (
     <div className="space-y-4">
       {error && (
-        <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg flex items-center gap-2">
+        <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-lg flex items-center gap-2">
           <AlertCircle className="w-4 h-4" />
           {error}
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-foreground mb-1">
           Transfer Code
         </label>
         <input
           type="text"
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
-          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent font-mono text-lg tracking-wider"
+          className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono text-lg tracking-wider"
           placeholder="XXXXXXXX"
           maxLength={8}
         />
@@ -286,7 +286,7 @@ function ClaimForm() {
       <button
         onClick={handleClaim}
         disabled={!code || loading}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-secondary text-secondary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
       >
         {loading && <Loader2 className="w-4 h-4 animate-spin" />}
         Claim Vehicle

@@ -98,14 +98,14 @@ export default function NewReminderPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link
                 href="/dashboard/reminders"
-                className="flex items-center gap-2 text-gray-500 hover:text-gray-700"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back
@@ -116,28 +116,28 @@ export default function NewReminderPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-card rounded-lg border border-border p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-blue-600 rounded-lg">
-              <Bell className="w-5 h-5 text-white" />
+            <div className="p-2 bg-primary rounded-lg">
+              <Bell className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold">New Reminder</h1>
+            <h1 className="text-xl font-semibold text-foreground">New Reminder</h1>
           </div>
 
           {error && (
-            <div className="mb-6 p-3 text-sm text-red-600 bg-red-50 rounded-lg">
+            <div className="mb-6 p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
               {error}
             </div>
           )}
 
           {vehicles.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">
+              <p className="text-muted-foreground mb-4">
                 You need to add a vehicle first
               </p>
               <Link
                 href="/dashboard/vehicles/new"
-                className="text-blue-600 hover:underline"
+                className="text-primary hover:underline"
               >
                 Add Vehicle
               </Link>
@@ -145,12 +145,12 @@ export default function NewReminderPage() {
           ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Vehicle <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Vehicle <span className="text-destructive">*</span>
                 </label>
                 <select
                   {...register("vehicleId")}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                 >
                   <option value="">Select vehicle</option>
                   {vehicles.map((v) => (
@@ -160,73 +160,73 @@ export default function NewReminderPage() {
                   ))}
                 </select>
                 {errors.vehicleId && (
-                  <p className="mt-1 text-sm text-red-600">
+                  <p className="mt-1 text-sm text-destructive">
                     {errors.vehicleId.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Title <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Title <span className="text-destructive">*</span>
                 </label>
                 <input
                   {...register("title")}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                   placeholder="Oil Change"
                 />
                 {errors.title && (
-                  <p className="mt-1 text-sm text-red-600">
+                  <p className="mt-1 text-sm text-destructive">
                     {errors.title.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Description (optional)
                 </label>
                 <textarea
                   {...register("description")}
                   rows={2}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                   placeholder="Additional details..."
                 />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Due Date
                   </label>
                   <input
                     type="date"
                     {...register("dueDate")}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Due Mileage
                   </label>
                   <input
                     type="number"
                     {...register("dueMileage", { valueAsNumber: true })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                     placeholder="5000"
                   />
                 </div>
               </div>
 
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 Set at least one trigger (date or mileage)
               </p>
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                 Create Reminder

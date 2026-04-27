@@ -125,14 +125,14 @@ export default function VehicleDetailPage() {
   const lastMaintenance = vehicle.maintenanceRecords[0];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 text-gray-500 hover:text-gray-700"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back
@@ -141,14 +141,14 @@ export default function VehicleDetailPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={generateReport}
-                className="flex items-center gap-2 px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg"
+                className="flex items-center gap-2 px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
               >
                 <Download className="w-4 h-4" />
                 Report
               </button>
               <button
                 onClick={() => setShowDeleteModal(true)}
-                className="flex items-center gap-2 px-3 py-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg"
+                className="flex items-center gap-2 px-3 py-2 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -160,19 +160,19 @@ export default function VehicleDetailPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+            <div className="bg-card rounded-lg border border-border p-6 mb-6">
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h1 className="text-2xl font-bold mb-1">
+                  <h1 className="text-2xl font-bold mb-1 text-foreground">
                     {vehicle.year} {vehicle.make} {vehicle.model}
                   </h1>
                   {vehicle.nickname && (
-                    <p className="text-gray-500">{vehicle.nickname}</p>
+                    <p className="text-muted-foreground">{vehicle.nickname}</p>
                   )}
                 </div>
                 <Link
                   href={`/dashboard/vehicles/${vehicle.id}/edit`}
-                  className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg"
+                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
                 >
                   <Pencil className="w-4 h-4" />
                 </Link>
@@ -180,25 +180,25 @@ export default function VehicleDetailPage() {
 
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
-                  <p className="text-sm text-gray-500">Current Mileage</p>
-                  <p className="text-lg font-semibold">
+                  <p className="text-sm text-muted-foreground">Current Mileage</p>
+                  <p className="text-lg font-semibold text-foreground">
                     {vehicle.currentMileage.toLocaleString()} mi
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">VIN</p>
-                  <p className="text-lg font-semibold">
+                  <p className="text-sm text-muted-foreground">VIN</p>
+                  <p className="text-lg font-semibold text-foreground">
                     {vehicle.vin || "Not provided"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Last Service</p>
-                  <p className="text-lg font-semibold">
+                  <p className="text-sm text-muted-foreground">Last Service</p>
+                  <p className="text-lg font-semibold text-foreground">
                     {lastMaintenance ? (
                       <>
                         {new Date(lastMaintenance.date).toLocaleDateString()}
                         <br />
-                        <span className="text-sm font-normal text-gray-500">
+                        <span className="text-sm font-normal text-muted-foreground">
                           {lastMaintenance.serviceType}
                         </span>
                       </>
@@ -210,12 +210,12 @@ export default function VehicleDetailPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200">
-              <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h2 className="text-lg font-semibold">Maintenance History</h2>
+            <div className="bg-card rounded-lg border border-border">
+              <div className="flex items-center justify-between p-6 border-b border-border">
+                <h2 className="text-lg font-semibold text-foreground">Maintenance History</h2>
                 <Link
                   href={`/dashboard/vehicles/${vehicle.id}/maintenance/new`}
-                  className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
                 >
                   <Plus className="w-4 h-4" />
                   Add Record
@@ -224,28 +224,28 @@ export default function VehicleDetailPage() {
 
               {vehicle.maintenanceRecords.length === 0 ? (
                 <div className="p-12 text-center">
-                  <Wrench className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-500">No maintenance records yet</p>
+                  <Wrench className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">No maintenance records yet</p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-200">
+                <div className="divide-y divide-border">
                   {vehicle.maintenanceRecords.map((record) => (
                     <div
                       key={record.id}
-                      className="p-6 flex items-start justify-between hover:bg-gray-50"
+                      className="p-6 flex items-start justify-between hover:bg-accent"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="p-2 bg-gray-100 rounded-lg">
-                          <Wrench className="w-4 h-4 text-gray-600" />
+                        <div className="p-2 bg-secondary rounded-lg">
+                          <Wrench className="w-4 h-4 text-secondary-foreground" />
                         </div>
                         <div>
-                          <p className="font-medium">{record.serviceType}</p>
-                          <p className="text-sm text-gray-500">
+                          <p className="font-medium text-foreground">{record.serviceType}</p>
+                          <p className="text-sm text-muted-foreground">
                             {new Date(record.date).toLocaleDateString()} at{" "}
                             {record.mileage.toLocaleString()} miles
                           </p>
                           {record.notes && (
-                            <p className="text-sm text-gray-600 mt-1">
+                            <p className="text-sm text-muted-foreground mt-1">
                               {record.notes}
                             </p>
                           )}
@@ -253,7 +253,7 @@ export default function VehicleDetailPage() {
                       </div>
                       <Link
                         href={`/dashboard/vehicles/${vehicle.id}/maintenance/${record.id}/edit`}
-                        className="p-2 text-gray-400 hover:text-gray-600"
+                        className="p-2 text-muted-foreground hover:text-foreground"
                       >
                         <Pencil className="w-4 h-4" />
                       </Link>
@@ -265,30 +265,30 @@ export default function VehicleDetailPage() {
           </div>
 
           <div>
-            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+            <div className="bg-card rounded-lg border border-border p-6 mb-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">Reminders</h2>
+                <h2 className="text-lg font-semibold text-foreground">Reminders</h2>
                 <Link
                   href={`/dashboard/vehicles/${vehicle.id}/reminders/new`}
-                  className="p-1 hover:bg-gray-100 rounded"
+                  className="p-1 hover:bg-accent rounded"
                 >
                   <Plus className="w-4 h-4" />
                 </Link>
               </div>
 
               {vehicle.reminders.length === 0 ? (
-                <p className="text-sm text-gray-500">No active reminders</p>
+                <p className="text-sm text-muted-foreground">No active reminders</p>
               ) : (
                 <div className="space-y-3">
                   {vehicle.reminders.map((reminder) => (
                     <div
                       key={reminder.id}
-                      className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg"
+                      className="flex items-center gap-2 p-2 bg-secondary rounded-lg"
                     >
-                      <Bell className="w-4 h-4 text-blue-600" />
+                      <Bell className="w-4 h-4 text-primary" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium">{reminder.title}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm font-medium text-foreground">{reminder.title}</p>
+                        <p className="text-xs text-muted-foreground">
                           {reminder.dueDate &&
                             new Date(reminder.dueDate).toLocaleDateString()}
                           {reminder.dueMileage &&
@@ -301,19 +301,19 @@ export default function VehicleDetailPage() {
               )}
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+            <div className="bg-card rounded-lg border border-border p-6">
+              <h2 className="text-lg font-semibold mb-4 text-foreground">Quick Actions</h2>
               <div className="space-y-2">
                 <Link
                   href={`/dashboard/vehicles/${vehicle.id}/transfer`}
-                  className="flex items-center gap-2 p-3 text-gray-600 hover:bg-gray-50 rounded-lg"
+                  className="flex items-center gap-2 p-3 text-muted-foreground hover:bg-accent rounded-lg"
                 >
                   <Share2 className="w-4 h-4" />
                   Transfer Ownership
                 </Link>
                 <button
                   onClick={generateReport}
-                  className="flex items-center gap-2 p-3 w-full text-gray-600 hover:bg-gray-50 rounded-lg"
+                  className="flex items-center gap-2 p-3 w-full text-muted-foreground hover:bg-accent rounded-lg"
                 >
                   <Download className="w-4 h-4" />
                   Generate Report
@@ -325,23 +325,23 @@ export default function VehicleDetailPage() {
       </main>
 
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-            <h2 className="text-lg font-semibold mb-4">Delete Vehicle</h2>
-            <p className="text-gray-500 mb-6">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-card rounded-lg p-6 max-w-md mx-4 border border-border">
+            <h2 className="text-lg font-semibold mb-4 text-foreground">Delete Vehicle</h2>
+            <p className="text-muted-foreground mb-6">
               Are you sure you want to delete this vehicle? This will also delete all
               maintenance records and reminders. This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border border-input rounded-lg hover:bg-accent"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                className="flex-1 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90"
               >
                 Delete
               </button>
