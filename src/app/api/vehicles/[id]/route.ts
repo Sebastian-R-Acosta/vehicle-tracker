@@ -46,7 +46,7 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const { make, model, year, vin, nickname, currentMileage } = body;
+  const { make, model, year, vin, nickname, currentMileage, vehicleType, status } = body;
 
   const vehicle = await prisma.vehicle.findFirst({
     where: { 
@@ -68,6 +68,8 @@ export async function PUT(
       vin,
       nickname,
       currentMileage,
+      vehicleType: vehicleType || "car",
+      status: status || "active",
     },
   });
 

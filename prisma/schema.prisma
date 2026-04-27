@@ -34,6 +34,8 @@ model Vehicle {
   year            Int
   vin             String?   @unique
   nickname       String?
+  vehicleType     String    @default("car")
+  status          String    @default("active")
   currentMileage Int       @default(0)
   previousOwnerId String?
   createdAt       DateTime  @default(now())

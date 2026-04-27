@@ -19,11 +19,8 @@ export async function GET() {
       reminders: {
         where: {
           isCompleted: false,
-          OR: [
-            { dueDate: { lte: new Date() } },
-          ],
         },
-        take: 5,
+        take: 10,
       },
     },
     orderBy: { createdAt: "desc" },
@@ -40,7 +37,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { make, model, year, vin, nickname, currentMileage } = body;
+  const { make, model, year, vin, nickname, currentMileage, vehicleType, status } = body;
 
   if (!make || !model || !year) {
     return new NextResponse(JSON.stringify({ error: "Missing required fields", make, model, year }), {
@@ -66,6 +63,8 @@ export async function POST(request: Request) {
       vin: vin || null,
       nickname: nickname || null,
       currentMileage: parseInt(currentMileage, 10) || 0,
+      vehicleType: vehicleType || "car",
+      status: status || "active",
     },
   });
 

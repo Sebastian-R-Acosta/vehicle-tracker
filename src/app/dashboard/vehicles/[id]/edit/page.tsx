@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, Loader2, Car } from "lucide-react";
+import { ArrowLeft, Loader2, Car, Truck, Bike, Zap } from "lucide-react";
 import Link from "next/link";
 
 const vehicleSchema = z.object({
@@ -15,13 +15,29 @@ const vehicleSchema = z.object({
   year: z.number().min(1886).max(new Date().getFullYear() + 1),
   vin: z.string().length(17).optional().or(z.literal("")),
   nickname: z.string().max(100).optional(),
+  vehicleType: z.enum(["car", "truck", "motorcycle", "other"]).default("car"),
+  status: z.enum(["active", "maintenance", "inactive", "sold"]).default("active"),
   currentMileage: z.number().min(0),
 });
 
 type VehicleFormData = z.infer<typeof vehicleSchema>;
 
+const vehicleTypes = [
+  { value: "car", label: "Car", icon: Car },
+  { value: "truck", label: "Truck", icon: Truck },
+  { value: "motorcycle", label: "Motorcycle", icon: Bike },
+  { value: "other", label: "Other", icon: Zap },
+];
+
+const statuses = [
+  { value: "active", label: "Active" },
+  { value: "maintenance", label: "In Maintenance" },
+  { value: "inactive", label: "Inactive" },
+  { value: "sold", label: "Sold" },
+];
+
 export default function EditVehiclePage() {
-  const { data: session, status } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = useState(false);
@@ -31,17 +47,20 @@ export default function EditVehiclePage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
     reset,
   } = useForm<VehicleFormData>({
     resolver: zodResolver(vehicleSchema),
   });
 
+  const selectedType = watch("vehicleType");
+
   useEffect(() => {
-    if (status === "unauthenticated") {
+    if (sessionStatus === "unauthenticated") {
       router.push("/login");
     }
-  }, [status, router]);
+  }, [sessionStatus, router]);
 
   useEffect(() => {
     if (session?.user && params.id) {
@@ -61,6 +80,8 @@ export default function EditVehiclePage() {
           vin: data.vin || "",
           nickname: data.nickname || "",
           currentMileage: data.currentMileage,
+          vehicleType: data.vehicleType || "car",
+          status: data.status || "active",
         });
       } else {
         router.push("/dashboard");
@@ -95,10 +116,10 @@ export default function EditVehiclePage() {
     }
   };
 
-  if (status === "loading" || initialLoading) {
+  if (sessionStatus === "loading" || initialLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -169,6 +190,39 @@ export default function EditVehiclePage() {
               </div>
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Vehicle Type <span className="text-destructive">*</span>
+              </label>
+              <div className="grid grid-cols-4 gap-3">
+                {vehicleTypes.map((type) => {
+                  const Icon = type.icon;
+                  const isSelected = selectedType === type.value;
+                  return (
+                    <label
+                      key={type.value}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        isSelected
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        value={type.value}
+                        {...register("vehicleType")}
+                        className="sr-only"
+                      />
+                      <Icon className={`w-6 h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+                      <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
+                        {type.label}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
@@ -188,13 +242,18 @@ export default function EditVehiclePage() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  VIN (optional)
+                  Status
                 </label>
-                <input
-                  {...register("vin")}
+                <select
+                  {...register("status")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  maxLength={17}
-                />
+                >
+                  {statuses.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -219,6 +278,17 @@ export default function EditVehiclePage() {
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                VIN (optional)
+              </label>
+              <input
+                {...register("vin")}
+                className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono"
+                maxLength={17}
+              />
             </div>
 
             <button

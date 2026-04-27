@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, Loader2, Car } from "lucide-react";
+import { ArrowLeft, Loader2, Car, Truck, Bike, Zap } from "lucide-react";
 import Link from "next/link";
 
 const vehicleSchema = z.object({
@@ -15,10 +15,26 @@ const vehicleSchema = z.object({
   year: z.number().min(1886).max(new Date().getFullYear() + 1),
   vin: z.string().length(17).optional().or(z.literal("")),
   nickname: z.string().max(100).optional(),
+  vehicleType: z.enum(["car", "truck", "motorcycle", "other"]).default("car"),
+  status: z.enum(["active", "maintenance", "inactive", "sold"]).default("active"),
   currentMileage: z.number().min(0).default(0),
 });
 
 type VehicleFormData = z.infer<typeof vehicleSchema>;
+
+const vehicleTypes = [
+  { value: "car", label: "Car", icon: Car },
+  { value: "truck", label: "Truck", icon: Truck },
+  { value: "motorcycle", label: "Motorcycle", icon: Bike },
+  { value: "other", label: "Other", icon: Zap },
+];
+
+const statuses = [
+  { value: "active", label: "Active" },
+  { value: "maintenance", label: "In Maintenance" },
+  { value: "inactive", label: "Inactive" },
+  { value: "sold", label: "Sold" },
+];
 
 export default function NewVehiclePage() {
   const { data: session, status } = useSession();
@@ -29,13 +45,18 @@ export default function NewVehiclePage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<VehicleFormData>({
     resolver: zodResolver(vehicleSchema),
     defaultValues: {
+      vehicleType: "car",
+      status: "active",
       currentMileage: 0,
     },
   });
+
+  const selectedType = watch("vehicleType");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -71,8 +92,8 @@ export default function NewVehiclePage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -145,6 +166,39 @@ export default function NewVehiclePage() {
               </div>
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Vehicle Type <span className="text-destructive">*</span>
+              </label>
+              <div className="grid grid-cols-4 gap-3">
+                {vehicleTypes.map((type) => {
+                  const Icon = type.icon;
+                  const isSelected = selectedType === type.value;
+                  return (
+                    <label
+                      key={type.value}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        isSelected
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        value={type.value}
+                        {...register("vehicleType")}
+                        className="sr-only"
+                      />
+                      <Icon className={`w-6 h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+                      <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
+                        {type.label}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
@@ -165,19 +219,18 @@ export default function NewVehiclePage() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  VIN (optional)
+                  Status
                 </label>
-                <input
-                  {...register("vin")}
+                <select
+                  {...register("status")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder="17 characters"
-                  maxLength={17}
-                />
-                {errors.vin && (
-                  <p className="mt-1 text-sm text-destructive">
-                    {errors.vin.message}
-                  </p>
-                )}
+                >
+                  {statuses.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -204,6 +257,23 @@ export default function NewVehiclePage() {
                   placeholder="0"
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                VIN (optional)
+              </label>
+              <input
+                {...register("vin")}
+                className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono"
+                placeholder="17 characters"
+                maxLength={17}
+              />
+              {errors.vin && (
+                <p className="mt-1 text-sm text-destructive">
+                  {errors.vin.message}
+                </p>
+              )}
             </div>
 
             <button
