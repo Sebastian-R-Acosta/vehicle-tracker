@@ -92,21 +92,17 @@ export default function NewMaintenancePage() {
         throw new Error("Failed to get upload URL");
       }
 
-      const { url, key } = await res.json();
+      const { uploadUrl, key, publicUrl } = await res.json();
 
-      await fetch(url, {
+      await fetch(uploadUrl, {
         method: "PUT",
         body: file,
         headers: { "Content-Type": file.type },
       });
-
-      const bucket = process.env.NEXT_PUBLIC_AWS_S3_BUCKET || "vehicle-tracker-recibos-2026";
-      const region = process.env.NEXT_PUBLIC_AWS_REGION || "us-east-1";
-      const imageUrl = `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
       
-      setImagePreview(imageUrl);
+      setImagePreview(publicUrl);
       setImageKey(key);
-      setValue("imageUrl", imageUrl);
+      setValue("imageUrl", publicUrl);
     } catch (err) {
       setError("Failed to upload image");
       console.error(err);
