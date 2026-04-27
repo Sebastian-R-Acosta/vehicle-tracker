@@ -1,9 +1,12 @@
 "use client";
 
-import { useTheme } from "./ThemeProvider";
+import { useTheme, ThemeContext } from "./ThemeProvider";
+import { useContext } from "react";
 
 export function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const context = useContext(ThemeContext);
+  const theme = context?.theme || "light";
+  const toggleTheme = context?.toggleTheme || (() => {});
 
   return (
     <button
