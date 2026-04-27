@@ -100,10 +100,12 @@ export default function VehicleDetailPage() {
     }
   };
 
+  const vehicleId = Array.isArray(params.id) ? params.id[0] : params.id;
+
   const generateReport = async () => {
     setGeneratingReport(true);
     try {
-      const res = await fetch(`/api/vehicles/${params.id}/report`);
+      const res = await fetch(`/api/vehicles/${vehicleId}/report`);
       const contentType = res.headers.get("content-type");
       
       if (!res.ok) {
