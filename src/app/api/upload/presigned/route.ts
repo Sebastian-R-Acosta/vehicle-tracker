@@ -22,6 +22,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { filename, contentType } = body;
 
+    console.log("Upload request:", { filename, contentType, bucket: process.env.AWS_S3_BUCKET });
+
     const key = `maintenance/${session.user.id}/${Date.now()}-${filename}`;
 
     const command = new PutObjectCommand({
@@ -31,6 +33,7 @@ export async function POST(request: Request) {
     });
 
     const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+    console.log("Generated presigned URL");
 
     const bucket = process.env.AWS_S3_BUCKET!;
     const region = process.env.AWS_REGION || "us-east-1";
@@ -39,6 +42,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ uploadUrl: url, key, publicUrl });
   } catch (error) {
     console.error("Presigned URL error:", error);
-    return new NextResponse("Error creating upload URL", { status: 500 });
+    return new NextResponse(`Error creating upload URL: ${error}`, { status: 500 });
   }
 }

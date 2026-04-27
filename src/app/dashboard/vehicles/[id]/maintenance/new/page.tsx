@@ -89,23 +89,31 @@ export default function NewMaintenancePage() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to get upload URL");
+        const errText = await res.text();
+        throw new Error(`Failed to get upload URL: ${res.status} - ${errText}`);
       }
 
-      const { uploadUrl, key, publicUrl } = await res.json();
+      const data = await res.json();
+      console.log("Got presigned URL:", data);
 
-      await fetch(uploadUrl, {
+      const uploadRes = await fetch(data.uploadUrl, {
         method: "PUT",
         body: file,
         headers: { "Content-Type": file.type },
       });
+
+      console.log("Upload response:", uploadRes.status, uploadRes.statusText);
+
+      if (!uploadRes.ok) {
+        throw new Error(`Upload failed: ${uploadRes.status}`);
+      }
       
-      setImagePreview(publicUrl);
-      setImageKey(key);
-      setValue("imageUrl", publicUrl);
+      setImagePreview(data.publicUrl);
+      setImageKey(data.key);
+      setValue("imageUrl", data.publicUrl);
     } catch (err) {
-      setError("Failed to upload image");
-      console.error(err);
+      setError(err instanceof Error ? err.message : "Failed to upload image");
+      console.error("Upload error:", err);
     } finally {
       setUploading(false);
     }
