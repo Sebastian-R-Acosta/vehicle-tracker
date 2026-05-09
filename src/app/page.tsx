@@ -5,9 +5,9 @@ import Nav from "@/components/landing/Nav";
 import Hero from "@/components/landing/Hero";
 import TrustBar from "@/components/landing/TrustBar";
 import Features from "@/components/landing/Features";
+import ForIndividuals from "@/components/landing/ForIndividuals";
 import ForDealers from "@/components/landing/ForDealers";
 import ForInsurers from "@/components/landing/ForInsurers";
-import HowItWorks from "@/components/landing/HowItWorks";
 import Testimonials from "@/components/landing/Testimonials";
 import CTA from "@/components/landing/CTA";
 import Footer from "@/components/landing/Footer";
@@ -22,9 +22,9 @@ export default function HomePage() {
       <Hero onBookDemo={() => setDemoOpen(true)} />
       <TrustBar />
       <Features />
+      <ForIndividuals />
       <ForDealers />
       <ForInsurers />
-      <HowItWorks />
       <Testimonials />
       <CTA onBookDemo={() => setDemoOpen(true)} />
       <Footer />

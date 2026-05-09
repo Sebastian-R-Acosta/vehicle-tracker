@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getUserRole } from "@/lib/org";
+import { canAddVehicle } from "@/lib/billing";
 
 export async function GET(request: Request) {
   const session = await auth();
@@ -75,6 +76,14 @@ export async function POST(request: Request) {
     const role = await getUserRole(organizationId, session.user.id);
     if (!role) {
       return new NextResponse("Not a member of this organization", { status: 403 });
+    }
+  } else {
+    const { allowed, limit } = await canAddVehicle(session.user.id);
+    if (!allowed) {
+      return new NextResponse(
+        JSON.stringify({ error: `Free tier limited to ${limit} vehicles. Upgrade to add more.` }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
     }
   }
 

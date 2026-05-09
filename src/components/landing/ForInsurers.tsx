@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Shield, BarChart3, FileSearch, CheckCircle } from "lucide-react";
+import Link from "next/link";
 
 const benefits = [
   {
@@ -80,6 +81,12 @@ export default function ForInsurers() {
               <CheckCircle className="w-4 h-4 text-green-500" />
               <span>API-ready for integration with your existing systems</span>
             </div>
+            <Link
+              href="/solutions/insurers"
+              className="inline-flex items-center gap-1 mt-6 text-sm text-indigo-600 hover:text-indigo-500 font-medium"
+            >
+              Learn more for insurers &rarr;
+            </Link>
           </div>
         </div>
       </div>

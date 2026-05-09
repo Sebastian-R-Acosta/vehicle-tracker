@@ -63,10 +63,34 @@ async function main() {
     });
   }
 
+  const plans = [
+    { tier: "free", name: "Free", price: 0, maxVehicles: 2, features: ["2 vehicles", "Maintenance logging", "Manual reminders"] },
+    { tier: "pro", name: "Pro", price: 9.99, maxVehicles: 999, features: ["Unlimited vehicles", "PDF reports", "Image uploads", "Smart reminders", "Email notifications"] },
+    { tier: "business", name: "Business", price: 99, maxVehicles: 99999, features: ["Everything in Pro", "Multi-tenant orgs", "Team roles", "White-label", "API access"] },
+  ];
+
+  for (const plan of plans) {
+    await prisma.subscriptionPlan.upsert({
+      where: { tier: plan.tier },
+      update: plan,
+      create: plan,
+    });
+  }
+
+  const freePlan = await prisma.subscriptionPlan.findUnique({ where: { tier: "free" } });
+  if (freePlan) {
+    await prisma.subscription.upsert({
+      where: { userId: user.id },
+      update: { planId: freePlan.id },
+      create: { userId: user.id, planId: freePlan.id, status: "active" },
+    });
+  }
+
   console.log('Demo user created:');
   console.log('  Email: demo@vehicle-tracker.local');
   console.log('  Password: demo123');
   console.log('Service recommendations seeded');
+  console.log('Subscription plans seeded');
 }
 
 main()

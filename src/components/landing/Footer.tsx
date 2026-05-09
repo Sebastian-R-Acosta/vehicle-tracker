@@ -1,21 +1,46 @@
 import { Car } from "lucide-react";
+import Link from "next/link";
 
 const columns = [
   {
     title: "Product",
-    links: ["Features", "Pricing", "For Dealers", "For Insurers", "Integrations"],
+    links: [
+      { label: "Features", href: "/#features" },
+      { label: "Pricing", href: "/pricing" },
+      { label: "For Car Owners", href: "/solutions/individuals" },
+      { label: "For Dealerships", href: "/solutions/dealers" },
+      { label: "For Insurers", href: "/solutions/insurers" },
+    ],
   },
   {
     title: "Company",
-    links: ["About", "Blog", "Careers", "Press", "Contact"],
+    links: [
+      { label: "About", href: "#" },
+      { label: "Blog", href: "#" },
+      { label: "Careers", href: "#" },
+      { label: "Press", href: "#" },
+      { label: "Contact", href: "#" },
+    ],
   },
   {
     title: "Resources",
-    links: ["Documentation", "API Reference", "Help Center", "Community", "Release Notes"],
+    links: [
+      { label: "Documentation", href: "#" },
+      { label: "API Reference", href: "#" },
+      { label: "Help Center", href: "#" },
+      { label: "Community", href: "#" },
+      { label: "Release Notes", href: "#" },
+    ],
   },
   {
     title: "Legal",
-    links: ["Privacy Policy", "Terms of Service", "Cookie Policy", "GDPR", "Security"],
+    links: [
+      { label: "Privacy Policy", href: "#" },
+      { label: "Terms of Service", href: "#" },
+      { label: "Cookie Policy", href: "#" },
+      { label: "GDPR", href: "#" },
+      { label: "Security", href: "#" },
+    ],
   },
 ];
 
@@ -40,11 +65,14 @@ export default function Footer() {
             <div key={col.title}>
               <h4 className="text-sm font-semibold text-white mb-4">{col.title}</h4>
               <ul className="space-y-3">
-                {col.links.map((link) => (
-                  <li key={link}>
-                    <span className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer">
-                      {link}
-                    </span>
+                  {col.links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-gray-400 hover:text-white transition-colors"
+                    >
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

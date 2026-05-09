@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Play } from "lucide-react";
+import Link from "next/link";
 
 const stats = [
   { label: "Vehicles Tracked", target: 50000, suffix: "+" },
@@ -51,7 +52,7 @@ function AnimatedCounter({ target, suffix }: { target: number; suffix: string })
   );
 }
 
-export default function Hero({ onBookDemo }: { onBookDemo: () => void }) {
+export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 overflow-hidden">
       <div className="absolute inset-0">
@@ -74,27 +75,24 @@ export default function Hero({ onBookDemo }: { onBookDemo: () => void }) {
         </h1>
 
         <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-10 leading-relaxed">
-          The all-in-one vehicle history and maintenance platform built for dealerships and
-          insurance companies. Track records, automate reminders, and close deals faster.
+          The all-in-one vehicle history platform for car owners, dealerships, and insurance
+          companies. Track maintenance, automate reminders, and generate reports — all from one place.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-          <button
-            onClick={onBookDemo}
+          <Link
+            href="/register"
             className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all shadow-xl hover:shadow-2xl"
           >
-            Book a Demo
+            Get Started Free
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </Link>
           <button
-            onClick={() => {
-              const el = document.querySelector("#features");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
-            }}
+            onClick={onBookDemo}
             className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-medium text-white border border-white/30 rounded-xl hover:bg-white/10 transition-all"
           >
             <Play className="w-4 h-4" />
-            See How It Works
+            Book a Demo
           </button>
         </div>
 

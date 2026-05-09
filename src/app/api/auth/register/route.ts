@@ -36,6 +36,20 @@ export async function POST(request: Request) {
         },
       });
 
+      const freePlan = await prisma.subscriptionPlan.findUnique({
+        where: { tier: "free" },
+      });
+
+      if (freePlan) {
+        await prisma.subscription.create({
+          data: {
+            userId: user.id,
+            planId: freePlan.id,
+            status: "active",
+          },
+        });
+      }
+
       return NextResponse.json({
         id: user.id,
         email: user.email,

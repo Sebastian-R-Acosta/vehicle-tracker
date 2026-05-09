@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle, TrendingUp, Clock, Users as UsersIcon } from "lucide-react";
+import Link from "next/link";
 
 const benefits = [
   {
@@ -74,6 +75,12 @@ export default function ForDealers() {
               <CheckCircle className="w-4 h-4 text-green-500" />
               <span>White-label branding included</span>
             </div>
+            <Link
+              href="/solutions/dealers"
+              className="inline-flex items-center gap-1 mt-6 text-sm text-blue-600 hover:text-blue-500 font-medium"
+            >
+              Learn more for dealerships &rarr;
+            </Link>
           </div>
 
           <div className="bg-gray-200 rounded-2xl aspect-[4/3] flex items-center justify-center">
