@@ -19,16 +19,65 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  currentOrganizationId String?
+
+  currentOrganization  Organization?    @relation("CurrentOrganization", fields: [currentOrganizationId], references: [id])
+  organizations        OrganizationMember[]
   vehicles             Vehicle[]
   reminders            Reminder[]
-  transferCodesOwned   TransferCode[] @relation("OwnerTransferCode")
-  transferCodesUsed    TransferCode[] @relation("UsedByUser")
-  previouslyOwnedVehicles Vehicle[]   @relation("PreviousOwner")
+  invitationsSent      Invitation[]     @relation("Inviter")
+  transferCodesOwned   TransferCode[]   @relation("OwnerTransferCode")
+  transferCodesUsed    TransferCode[]   @relation("UsedByUser")
+  previouslyOwnedVehicles Vehicle[]     @relation("PreviousOwner")
+}
+
+model Organization {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  logoUrl      String?
+  primaryColor String  @default("#2563eb")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  members     OrganizationMember[]
+  vehicles    Vehicle[]
+  invitations Invitation[]
+  usersWithCurrent User[] @relation("CurrentOrganization")
+}
+
+model OrganizationMember {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  role           String   @default("member")
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+}
+
+model Invitation {
+  id             String    @id @default(cuid())
+  organizationId String
+  email          String
+  role           String    @default("customer")
+  token          String    @unique
+  invitedById    String
+  expiresAt      DateTime
+  acceptedAt     DateTime?
+  createdAt      DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invitedBy     User        @relation("Inviter", fields: [invitedById], references: [id])
 }
 
 model Vehicle {
   id              String    @id @default(cuid())
   userId          String
+  organizationId  String?
   make            String
   model           String
   year            Int
@@ -42,6 +91,7 @@ model Vehicle {
   updatedAt       DateTime  @updatedAt
 
   user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization      Organization?        @relation(fields: [organizationId], references: [id])
   previousOwner     User?                @relation("PreviousOwner", fields: [previousOwnerId], references: [id])
   maintenanceRecords MaintenanceRecord[]
   reminders        Reminder[]

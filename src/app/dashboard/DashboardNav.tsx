@@ -1,0 +1,38 @@
+"use client";
+
+import { Car, Bell } from "lucide-react";
+import Link from "next/link";
+import OrgSwitcher from "@/components/OrgSwitcher";
+
+export function DashboardNav() {
+  return (
+    <header className="bg-card border-b border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <div className="p-2 bg-primary rounded-lg">
+                <Car className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <span className="text-xl font-bold text-foreground">Vehicle Tracker</span>
+            </Link>
+            <div className="hidden sm:block">
+              <OrgSwitcher />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/dashboard/reminders"
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+            >
+              <Bell className="w-5 h-5" />
+            </Link>
+            <div className="sm:hidden">
+              <OrgSwitcher />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}

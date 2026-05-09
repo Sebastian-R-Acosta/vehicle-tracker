@@ -1,25 +1,42 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getUserRole } from "@/lib/org";
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = await auth();
-  
+
   if (!session?.user?.id) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const organizationId = searchParams.get("organizationId");
+
+  let where: any;
+
+  if (organizationId) {
+    const role = await getUserRole(organizationId, session.user.id);
+    if (!role) {
+      return new NextResponse("Not a member of this organization", { status: 403 });
+    }
+    where = { organizationId };
+  } else {
+    where = { userId: session.user.id, organizationId: null };
+  }
+
   const vehicles = await prisma.vehicle.findMany({
-    where: { userId: session.user.id },
+    where,
     include: {
+      user: {
+        select: { id: true, name: true, email: true },
+      },
       maintenanceRecords: {
         take: 1,
         orderBy: { date: "desc" },
       },
       reminders: {
-        where: {
-          isCompleted: false,
-        },
+        where: { isCompleted: false },
         take: 10,
       },
     },
@@ -31,13 +48,13 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const session = await auth();
-  
+
   if (!session?.user?.id) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
   const body = await request.json();
-  const { make, model, year, vin, nickname, currentMileage, vehicleType, status } = body;
+  const { make, model, year, vin, nickname, currentMileage, vehicleType, status, organizationId } = body;
 
   if (!make || !model || !year) {
     return new NextResponse(JSON.stringify({ error: "Missing required fields", make, model, year }), {
@@ -54,9 +71,17 @@ export async function POST(request: Request) {
     });
   }
 
+  if (organizationId) {
+    const role = await getUserRole(organizationId, session.user.id);
+    if (!role) {
+      return new NextResponse("Not a member of this organization", { status: 403 });
+    }
+  }
+
   const vehicle = await prisma.vehicle.create({
     data: {
       userId: session.user.id,
+      organizationId: organizationId || null,
       make,
       model,
       year: vehicleYear,

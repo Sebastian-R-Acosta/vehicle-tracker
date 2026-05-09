@@ -10,6 +10,12 @@ export default auth((req) => {
     pathname.startsWith("/forgot-password") ||
     pathname.startsWith("/reset-password");
 
+  const isPublicPage = pathname.startsWith("/join");
+
+  if (isPublicPage) {
+    return NextResponse.next();
+  }
+
   if (isAuthPage) {
     if (isAuth) {
       return Response.redirect(new URL("/dashboard", req.nextUrl));

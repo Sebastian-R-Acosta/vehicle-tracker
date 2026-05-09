@@ -64,6 +64,8 @@ export default function NewVehiclePage() {
     }
   }, [status, router]);
 
+  const currentOrgId = session?.user?.currentOrganizationId;
+
   const onSubmit = async (data: VehicleFormData) => {
     setError("");
     setLoading(true);
@@ -72,7 +74,7 @@ export default function NewVehiclePage() {
       const res = await fetch("/api/vehicles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, organizationId: currentOrgId || undefined }),
       });
 
       const result = await res.json();

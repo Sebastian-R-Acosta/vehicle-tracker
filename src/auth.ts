@@ -5,6 +5,18 @@ import Google from "next-auth/providers/google";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      name?: string | null;
+      image?: string | null;
+      currentOrganizationId?: string | null;
+    };
+  }
+}
+
 export const authConfig: NextAuthConfig = {
   providers: [
     Google({
@@ -44,20 +56,26 @@ export const authConfig: NextAuthConfig = {
           email: user.email,
           name: user.name,
           image: user.avatarUrl,
+          currentOrganizationId: user.currentOrganizationId,
         };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
+        token.currentOrganizationId = (user as any).currentOrganizationId;
+      }
+      if (trigger === "update" && session) {
+        token.currentOrganizationId = session.currentOrganizationId;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.currentOrganizationId = token.currentOrganizationId as string | undefined;
       }
       return session;
     },

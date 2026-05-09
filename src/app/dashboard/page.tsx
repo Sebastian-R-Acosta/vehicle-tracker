@@ -1,9 +1,9 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Car, Plus, LogOut, Bell, Settings, Loader2, Truck, Bike, Zap } from "lucide-react";
+import { Car, Plus, Settings, Loader2, Truck, Bike, Zap, Bell as BellIcon } from "lucide-react";
 import Link from "next/link";
 
 type VehicleType = "car" | "truck" | "motorcycle" | "other";
@@ -96,36 +96,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/dashboard" className="flex items-center gap-2">
-                <div className="p-2 bg-primary rounded-lg">
-                  <Car className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <span className="text-xl font-bold text-foreground">Vehicle Tracker</span>
-              </Link>
-            </div>
-            <div className="flex items-center gap-2">
-              <Link
-                href="/dashboard/reminders"
-                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
-              >
-                <Bell className="w-5 h-5" />
-              </Link>
-              <button
-                onClick={() => signOut({ callbackUrl: "/login" })}
-                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
-              >
-                <LogOut className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <div className="bg-background">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
@@ -267,7 +238,7 @@ export default function DashboardPage() {
             href="/dashboard/reminders"
             className="p-6 bg-card rounded-lg border border-border hover:border-primary transition-colors"
           >
-            <Bell className="w-8 h-8 text-primary mb-3" />
+            <BellIcon className="w-8 h-8 text-primary mb-3" />
             <h3 className="font-semibold mb-1 text-foreground">Reminders</h3>
             <p className="text-sm text-muted-foreground">
               {upcomingReminders > 0 ? `${upcomingReminders} active reminders` : "No upcoming maintenance"}
