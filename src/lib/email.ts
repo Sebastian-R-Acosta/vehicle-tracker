@@ -410,3 +410,71 @@ export async function sendPasswordResetEmail(
 
   return { success: true, data: result };
 }
+
+export async function sendDemoRequestEmail(
+  to: string,
+  data: { name: string; email: string; company: string; phone: string; message: string }
+) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .field { margin-bottom: 16px; }
+        .label { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .value { font-size: 16px; color: #1f2937; font-weight: 500; }
+        .divider { border: none; border-top: 1px solid #e5e7eb; margin: 20px 0; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 style="margin: 0;">New Demo Request</h1>
+          <p style="margin: 8px 0 0; opacity: 0.9;">${data.company}</p>
+        </div>
+        <div class="content">
+          <div class="field">
+            <div class="label">Name</div>
+            <div class="value">${data.name}</div>
+          </div>
+          <div class="field">
+            <div class="label">Email</div>
+            <div class="value">${data.email}</div>
+          </div>
+          <div class="field">
+            <div class="label">Company</div>
+            <div class="value">${data.company}</div>
+          </div>
+          <div class="field">
+            <div class="label">Phone</div>
+            <div class="value">${data.phone || "Not provided"}</div>
+          </div>
+          ${data.message ? `<hr class="divider" /><div class="field"><div class="label">Message</div><div class="value">${data.message}</div></div>` : ""}
+        </div>
+        <div class="footer">
+          Vehicle Tracker - Demo Request Notification
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const { data: result, error } = await resend.emails.send({
+    from: fromEmail,
+    to: [to],
+    subject: `New Demo Request from ${data.name} at ${data.company}`,
+    html,
+  });
+
+  if (error) {
+    console.error("Resend error:", error);
+    return { success: false, error };
+  }
+
+  return { success: true, data: result };
+}
