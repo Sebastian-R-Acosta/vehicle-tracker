@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X, Car } from "lucide-react";
+import { Menu, X, Car, LogIn } from "lucide-react";
+import Link from "next/link";
 
 const links = [
   { href: "#features", label: "Features" },
@@ -32,20 +33,27 @@ export default function Nav({ onBookDemo }: { onBookDemo: () => void }) {
 
           <div className="hidden md:flex items-center gap-8">
             {links.map((link) => (
-              <button
-                key={link.href}
-                onClick={() => handleClick(link.href)}
-                className="text-sm text-gray-300 hover:text-white transition-colors"
+                <button
+                  key={link.href}
+                  onClick={() => handleClick(link.href)}
+                  className="text-sm text-gray-300 hover:text-white transition-colors"
+                >
+                  {link.label}
+                </button>
+              ))}
+              <Link
+                href="/login"
+                className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white border border-white/30 rounded-lg hover:bg-white/10 transition-all"
               >
-                {link.label}
+                <LogIn className="w-3.5 h-3.5" />
+                Log In
+              </Link>
+              <button
+                onClick={onBookDemo}
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-all"
+              >
+                Book a Demo
               </button>
-            ))}
-            <button
-              onClick={onBookDemo}
-              className="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-all"
-            >
-              Book a Demo
-            </button>
           </div>
 
           <button
@@ -68,6 +76,14 @@ export default function Nav({ onBookDemo }: { onBookDemo: () => void }) {
               {link.label}
             </button>
           ))}
+          <Link
+            href="/login"
+            className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white py-2"
+            onClick={() => setOpen(false)}
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            Log In
+          </Link>
           <button
             onClick={() => { setOpen(false); onBookDemo(); }}
             className="w-full px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500"
