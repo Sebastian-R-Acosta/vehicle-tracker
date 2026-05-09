@@ -3,4 +3,5 @@
 .env
 .env.local
 .env.production
+.env.vercel
 !.env.example

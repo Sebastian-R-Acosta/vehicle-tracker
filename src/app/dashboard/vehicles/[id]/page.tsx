@@ -537,7 +537,7 @@ doc.setLineWidth(0.3);
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-foreground">Reminders</h2>
                 <Link
-                  href={`/dashboard/vehicles/${vehicle.id}/reminders/new`}
+                  href={`/dashboard/reminders/new?vehicleId=${vehicle.id}`}
                   className="p-1 hover:bg-accent rounded"
                 >
                   <Plus className="w-4 h-4" />

@@ -1,21 +1,23 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { renderToStream } from "@react-pdf/renderer";
+import VehicleReportPDF from "@/components/VehicleReportPDF";
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   const session = await auth();
-  
+
   if (!session?.user?.id) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
   const vehicle = await prisma.vehicle.findFirst({
-    where: { 
+    where: {
       id: params.id,
-      userId: session.user.id 
+      userId: session.user.id,
     },
     include: {
       maintenanceRecords: {
@@ -35,36 +37,53 @@ export async function GET(
 
   const lastMaintenance = vehicle.maintenanceRecords[0];
   const nextReminder = vehicle.reminders.find(r => r.dueDate || r.dueMileage);
+  const totalCost = vehicle.maintenanceRecords.reduce((sum, r) => sum + (r.cost || 0), 0);
 
-  const reportText = `
-VEHICLE HISTORY REPORT
-========================
+  const data = {
+    vehicle: {
+      year: vehicle.year,
+      make: vehicle.make,
+      model: vehicle.model,
+      nickname: vehicle.nickname,
+      vin: vehicle.vin,
+      currentMileage: vehicle.currentMileage,
+    },
+    summary: {
+      lastMaintenance: lastMaintenance ? {
+        date: lastMaintenance.date.toISOString(),
+        serviceType: lastMaintenance.serviceType,
+        mileage: lastMaintenance.mileage,
+      } : null,
+      nextReminder: nextReminder ? {
+        title: nextReminder.title,
+        dueDate: nextReminder.dueDate?.toISOString() || null,
+        dueMileage: nextReminder.dueMileage,
+      } : null,
+      totalCost,
+    },
+    maintenanceHistory: vehicle.maintenanceRecords.map(r => ({
+      date: r.date.toISOString(),
+      serviceType: r.serviceType,
+      mileage: r.mileage,
+      notes: r.notes,
+      cost: r.cost,
+    })),
+    ownershipHistory: vehicle.previousOwner
+      ? [{ ownerName: vehicle.previousOwner.name || "Unknown", transferDate: null }]
+      : undefined,
+  };
 
-Vehicle Information
---------------------
-${vehicle.year} ${vehicle.make} ${vehicle.model}
-${vehicle.nickname ? `Nickname: ${vehicle.nickname}` : ''}
-${vehicle.vin ? `VIN: ${vehicle.vin}` : ''}
-Current Mileage: ${vehicle.currentMileage.toLocaleString()} miles
+  const stream = await renderToStream(<VehicleReportPDF data={data} />);
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream) {
+    chunks.push(Buffer.from(chunk));
+  }
+  const pdfBuffer = Buffer.concat(chunks);
 
-Summary
---------
-${lastMaintenance ? `Last Maintenance: ${new Date(lastMaintenance.date).toLocaleDateString()} - ${lastMaintenance.serviceType} at ${lastMaintenance.mileage.toLocaleString()} miles` : 'No maintenance records'}
-${nextReminder ? `Next Due: ${nextReminder.title}${nextReminder.dueDate ? ` on ${new Date(nextReminder.dueDate).toLocaleDateString()}` : ''}${nextReminder.dueMileage ? ` at ${nextReminder.dueMileage.toLocaleString()} miles` : ''}` : ''}
-
-Maintenance History
--------------------
-${vehicle.maintenanceRecords.map(r => `${new Date(r.date).toLocaleDateString()}\t${r.serviceType}\t${r.notes || '-'}\t${r.mileage.toLocaleString()} miles`).join('\n')}
-
-Generated on ${new Date().toLocaleDateString()}
-  `.trim();
-
-  const blob = new TextEncoder().encode(reportText);
-  
-  return new NextResponse(blob, {
+  return new NextResponse(pdfBuffer, {
     headers: {
-      "Content-Type": "text/plain",
-      "Content-Disposition": `attachment; filename="vehicle-report-${vehicle.make}-${vehicle.model}.txt"`,
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="vehicle-report-${vehicle.make}-${vehicle.model}.pdf"`,
     },
   });
 }

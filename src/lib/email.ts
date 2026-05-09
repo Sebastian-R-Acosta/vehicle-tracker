@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY || 're_AkAVn98H_94w5PcdsB3A5wxeZmg4jobRV');
+const resend = new Resend(process.env.RESEND_API_KEY);
 const fromEmail = "Vehicle Tracker <onboarding@resend.dev>";
 
 interface VehicleReminder {

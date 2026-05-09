@@ -30,10 +30,19 @@ export default function NewReminderPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<ReminderFormData>({
     resolver: zodResolver(reminderSchema),
   });
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const vehicleId = params.get("vehicleId");
+    if (vehicleId) {
+      setValue("vehicleId", vehicleId);
+    }
+  }, [setValue]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
