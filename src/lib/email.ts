@@ -351,6 +351,64 @@ function generateReminderEmailHtml(
   `;
 }
 
+export async function sendWelcomeEmail(to: string, name?: string) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .button { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+        .features { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+        .feature { background: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 14px; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 style="margin: 0;">Welcome to Vehicle Tracker</h1>
+        </div>
+        <div class="content">
+          <p>Hi ${name || "there"},</p>
+          <p>Thanks for signing up! You now have a free account with 2 vehicle slots.</p>
+          <div style="text-align: center;">
+            <a href="${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/onboarding" class="button">Get Started</a>
+          </div>
+          <div class="features">
+            <div class="feature">Track 2 vehicles free</div>
+            <div class="feature">Maintenance logging</div>
+            <div class="feature">Smart reminders</div>
+            <div class="feature">PDF reports</div>
+          </div>
+          <p style="font-size: 14px; color: #6b7280;">
+            Upgrade to Pro anytime for unlimited vehicles and premium features.
+          </p>
+        </div>
+        <div class="footer">
+          Vehicle Tracker &mdash; Your vehicle history platform
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  if (!process.env.RESEND_API_KEY) return { success: false };
+
+  const { data, error } = await resend.emails.send({
+    from: fromEmail,
+    to: [to],
+    subject: "Welcome to Vehicle Tracker",
+    html,
+  });
+
+  if (error) console.error("Resend error:", error);
+  return { success: !error, data };
+}
+
 export async function sendPasswordResetEmail(
   to: string,
   data: { resetUrl: string; userName: string }

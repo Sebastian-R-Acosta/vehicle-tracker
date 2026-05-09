@@ -49,6 +49,7 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  onboardingCompleted Boolean @default(false)
   currentOrganizationId String?
 
   currentOrganization  Organization?    @relation("CurrentOrganization", fields: [currentOrganizationId], references: [id])

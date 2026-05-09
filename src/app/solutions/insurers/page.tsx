@@ -69,6 +69,7 @@ export default function InsurersPage() {
                   className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-indigo-600 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 transition-all"
                 >
                   Talk to Sales
+                  Talk to Sales
                 </Link>
               </div>
             </div>

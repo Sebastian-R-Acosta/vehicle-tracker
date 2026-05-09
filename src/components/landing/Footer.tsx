@@ -19,7 +19,7 @@ const columns = [
       { label: "Blog", href: "#" },
       { label: "Careers", href: "#" },
       { label: "Press", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "Contact", href: "/contact" },
     ],
   },
   {
@@ -35,11 +35,8 @@ const columns = [
   {
     title: "Legal",
     links: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
-      { label: "Cookie Policy", href: "#" },
-      { label: "GDPR", href: "#" },
-      { label: "Security", href: "#" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
     ],
   },
 ];
