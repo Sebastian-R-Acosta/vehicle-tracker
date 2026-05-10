@@ -3,14 +3,32 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Vehicle Tracker",
-  description: "Personal vehicle management system",
+  title: {
+    default: "Vehicle Tracker — Vehicle History & Maintenance Platform",
+    template: "%s | Vehicle Tracker",
+  },
+  description:
+    "Track vehicle maintenance, service history, and get smart reminders. Free for car owners. White-label for dealerships and insurers.",
   icons: {
     icon: "/favicon.svg",
+  },
+  openGraph: {
+    title: "Vehicle Tracker — Vehicle History & Maintenance Platform",
+    description:
+      "Track vehicle maintenance, service history, and get smart reminders. Free for car owners. White-label for dealerships and insurers.",
+    type: "website",
+    siteName: "Vehicle Tracker",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vehicle Tracker",
+    description:
+      "Track vehicle maintenance, service history, and get smart reminders.",
   },
 };
 
@@ -23,6 +41,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN ? (
+          <Script
+            defer
+            data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
+            src="https://plausible.io/js/script.js"
+            strategy="afterInteractive"
+          />
+        ) : null}
       </head>
       <body className={`${inter.className} bg-background min-h-screen`}>
         <Providers>

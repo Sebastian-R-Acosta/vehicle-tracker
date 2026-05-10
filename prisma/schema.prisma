@@ -27,7 +27,7 @@ model Subscription {
   planId          String
   stripeCustomerId String?
   stripeSubId     String?
-  status          String    @default("active") // active, trialing, past_due, canceled
+  status          String    @default("active")
   currentPeriodStart DateTime?
   currentPeriodEnd   DateTime?
   createdAt       DateTime  @default(now())
@@ -35,6 +35,9 @@ model Subscription {
 
   user User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan SubscriptionPlan @relation(fields: [planId], references: [id])
+
+  @@index([planId])
+  @@index([status])
 }
 
 model User {
@@ -61,6 +64,8 @@ model User {
   transferCodesOwned   TransferCode[]   @relation("OwnerTransferCode")
   transferCodesUsed    TransferCode[]   @relation("UsedByUser")
   previouslyOwnedVehicles Vehicle[]     @relation("PreviousOwner")
+
+  @@index([email])
 }
 
 model Organization {
@@ -76,6 +81,8 @@ model Organization {
   vehicles    Vehicle[]
   invitations Invitation[]
   usersWithCurrent User[] @relation("CurrentOrganization")
+
+  @@index([slug])
 }
 
 model OrganizationMember {
@@ -89,6 +96,7 @@ model OrganizationMember {
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([organizationId, userId])
+  @@index([userId])
 }
 
 model Invitation {
@@ -104,6 +112,10 @@ model Invitation {
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   invitedBy     User        @relation("Inviter", fields: [invitedById], references: [id])
+
+  @@index([email])
+  @@index([invitedById])
+  @@index([token])
 }
 
 model Vehicle {
@@ -128,6 +140,11 @@ model Vehicle {
   maintenanceRecords MaintenanceRecord[]
   reminders        Reminder[]
   transferCodes   TransferCode[]
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([previousOwnerId])
+  @@index([vin])
 }
 
 model MaintenanceRecord {
@@ -143,6 +160,9 @@ model MaintenanceRecord {
   updatedAt DateTime @updatedAt
 
   vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([date])
 }
 
 model Reminder {
@@ -160,6 +180,10 @@ model Reminder {
 
   vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([userId])
+  @@index([isCompleted])
 }
 
 model TransferCode {
@@ -175,6 +199,10 @@ model TransferCode {
   vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
   owner     User    @relation("OwnerTransferCode", fields: [ownerId], references: [id])
   usedByUser User?   @relation("UsedByUser", fields: [usedByUserId], references: [id])
+
+  @@index([vehicleId])
+  @@index([ownerId])
+  @@index([code])
 }
 
 model ServiceRecommendation {

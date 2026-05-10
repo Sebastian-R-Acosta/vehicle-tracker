@@ -6,14 +6,11 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const count = await prisma.user.count();
-    const users = await prisma.user.findMany({
-      select: { id: true, email: true, name: true }
-    });
     
     return NextResponse.json({
       status: "ok",
       userCount: count,
-      users: users
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error("Health check error:", error);
