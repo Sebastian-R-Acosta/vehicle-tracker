@@ -54,7 +54,7 @@ function AnimatedCounter({ target, suffix }: { target: number; suffix: string })
 
 export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 overflow-hidden pt-16">
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.12),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.08),transparent_50%)]" />
@@ -66,7 +66,7 @@ export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
           Enterprise-grade vehicle management platform
         </div>
 
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
           Track Everything.
           <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-cyan-200">

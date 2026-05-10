@@ -38,9 +38,9 @@ const benefits = [
 export default function InsurersPage() {
   return (
     <PageLayout>
-      <section className="pt-32 pb-24">
+      <section className="pt-32 pb-16 lg:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 lg:gap-20 items-center">
             <div className="order-2 lg:order-1">
               <div className="bg-gray-200 rounded-2xl aspect-[4/3] flex items-center justify-center">
                 <span className="text-gray-400 font-medium">Analytics Preview</span>
@@ -69,7 +69,6 @@ export default function InsurersPage() {
                   className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-indigo-600 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 transition-all"
                 >
                   Talk to Sales
-                  Talk to Sales
                 </Link>
               </div>
             </div>
@@ -77,7 +76,7 @@ export default function InsurersPage() {
         </div>
       </section>
 
-      <section className="py-24 bg-gray-50">
+      <section className="py-16 lg:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -104,7 +103,7 @@ export default function InsurersPage() {
         </div>
       </section>
 
-      <section className="py-24 bg-white">
+      <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">See how insurers are using Vehicle Tracker</h2>
           <p className="text-gray-500 mb-8">Reduce claims fraud and reward safe drivers.</p>

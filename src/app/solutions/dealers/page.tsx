@@ -38,9 +38,9 @@ const benefits = [
 export default function DealersPage() {
   return (
     <PageLayout>
-      <section className="pt-32 pb-24">
+      <section className="pt-32 pb-16 lg:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 lg:gap-20 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full mb-6">
                 For Dealerships
@@ -74,7 +74,7 @@ export default function DealersPage() {
         </div>
       </section>
 
-      <section className="py-24 bg-gray-50">
+      <section className="py-16 lg:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -101,7 +101,7 @@ export default function DealersPage() {
         </div>
       </section>
 
-      <section className="py-24 bg-white">
+      <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Ready to modernize your dealership?</h2>
           <p className="text-gray-500 mb-8">Join dealerships across the country using Vehicle Tracker.</p>

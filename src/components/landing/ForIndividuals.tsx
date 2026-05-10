@@ -29,7 +29,7 @@ export default function ForIndividuals() {
   }, []);
 
   return (
-    <section id="for-individuals" className="py-24 bg-white">
+    <section id="for-individuals" className="py-16 lg:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full mb-4">
@@ -76,7 +76,7 @@ export default function ForIndividuals() {
           <div className="mt-4">
             <Link
               href="/solutions/individuals"
-              className="text-sm text-green-600 hover:text-green-500 font-medium"
+              className="inline-block py-3 text-sm text-green-600 hover:text-green-500 font-medium"
             >
               Learn more for car owners &rarr;
             </Link>

@@ -94,7 +94,7 @@ export default function OnboardingPage() {
 
         <button
           onClick={handleSkip}
-          className="block w-full text-center text-sm text-gray-400 mt-4 hover:text-gray-600"
+          className="block w-full text-center text-sm text-gray-400 mt-4 py-3 hover:text-gray-600"
         >
           Skip for now
         </button>

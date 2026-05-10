@@ -185,7 +185,7 @@ export default function SettingsPage() {
                   type="color"
                   value={primaryColor}
                   onChange={(e) => setPrimaryColor(e.target.value)}
-                  className="w-10 h-10 rounded border border-input cursor-pointer"
+                  className="w-11 h-11 rounded border border-input cursor-pointer"
                 />
                 <span className="text-sm text-muted-foreground">{primaryColor}</span>
               </div>
@@ -196,7 +196,7 @@ export default function SettingsPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+               className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
               <Save className="w-4 h-4" />
@@ -236,7 +236,7 @@ export default function SettingsPage() {
             </p>
             <button
               onClick={handleDelete}
-              className="flex items-center gap-2 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90 transition-opacity"
+               className="flex items-center gap-2 px-4 py-3 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90 transition-opacity"
             >
               <Trash2 className="w-4 h-4" />
               Delete Organization

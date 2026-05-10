@@ -38,11 +38,11 @@ export default function ForInsurers() {
   }, []);
 
   return (
-    <section id="for-insurers" className="py-24 bg-white">
+    <section id="for-insurers" className="py-16 lg:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
           ref={ref}
-          className={`grid lg:grid-cols-2 gap-12 lg:gap-20 items-center transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                     className={`grid lg:grid-cols-2 gap-8 lg:gap-12 lg:gap-20 items-center transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="order-2 lg:order-1">
             <div className="bg-gray-200 rounded-2xl aspect-[4/3] flex items-center justify-center">
@@ -83,7 +83,7 @@ export default function ForInsurers() {
             </div>
             <Link
               href="/solutions/insurers"
-              className="inline-flex items-center gap-1 mt-6 text-sm text-indigo-600 hover:text-indigo-500 font-medium"
+              className="inline-flex items-center gap-1 mt-6 py-3 text-sm text-indigo-600 hover:text-indigo-500 font-medium"
             >
               Learn more for insurers &rarr;
             </Link>

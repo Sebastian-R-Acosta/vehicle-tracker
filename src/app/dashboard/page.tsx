@@ -107,7 +107,7 @@ export default function DashboardPage() {
           </div>
           <Link
             href="/dashboard/vehicles/new"
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
           >
             <Plus className="w-4 h-4" />
             Add Vehicle
@@ -134,7 +134,7 @@ export default function DashboardPage() {
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value as VehicleType | "all")}
-              className="px-4 py-2 bg-card border border-border rounded-lg text-foreground focus:ring-2 focus:ring-ring"
+              className="px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:ring-2 focus:ring-ring"
             >
               <option value="all">All Types</option>
               <option value="car">Car</option>
@@ -145,7 +145,7 @@ export default function DashboardPage() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as VehicleStatus | "all")}
-              className="px-4 py-2 bg-card border border-border rounded-lg text-foreground focus:ring-2 focus:ring-ring"
+              className="px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:ring-2 focus:ring-ring"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>

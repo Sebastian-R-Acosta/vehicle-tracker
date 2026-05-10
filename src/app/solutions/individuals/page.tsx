@@ -14,7 +14,7 @@ const perks = [
 export default function IndividualsPage() {
   return (
     <PageLayout>
-      <section className="pt-32 pb-24">
+      <section className="pt-32 pb-16 lg:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full mb-4">
@@ -56,7 +56,7 @@ export default function IndividualsPage() {
         </div>
       </section>
 
-      <section className="py-24 bg-gray-50">
+      <section className="py-16 lg:py-24 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">How It Works</h2>
           <div className="grid sm:grid-cols-3 gap-8">
@@ -77,7 +77,7 @@ export default function IndividualsPage() {
         </div>
       </section>
 
-      <section className="py-24 bg-white">
+      <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to take control of your car&apos;s history?</h2>
           <p className="text-gray-500 mb-8">Join thousands of car owners who never miss a service.</p>

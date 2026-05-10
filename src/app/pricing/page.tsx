@@ -88,7 +88,7 @@ export default function PricingPage() {
         </div>
       </nav>
 
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+      <section className="py-12 md:py-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
             Simple, Transparent Pricing
@@ -106,7 +106,7 @@ export default function PricingPage() {
                 key={tier.name}
                 className={`relative p-8 rounded-2xl border-2 transition-all duration-300 hover:-translate-y-1 ${
                   isFeatured
-                    ? "bg-white border-blue-500 shadow-xl shadow-blue-500/10 scale-105 md:scale-105"
+                    ? "bg-white border-blue-500 shadow-xl shadow-blue-500/10 md:scale-105"
                     : "bg-white border-gray-200 shadow-sm hover:shadow-lg"
                 }`}
               >
@@ -151,7 +151,7 @@ export default function PricingPage() {
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Full Feature Comparison</h2>
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-x-auto shadow-sm">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">

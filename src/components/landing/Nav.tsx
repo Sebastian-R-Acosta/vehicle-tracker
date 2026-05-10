@@ -65,7 +65,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
             <div className="hidden md:flex items-center" ref={dropdownRef}>
               <button
                 onClick={() => setSolutionsOpen(!solutionsOpen)}
-                className="flex items-center gap-1 text-sm text-gray-300 hover:text-white transition-colors px-3 py-2"
+                className="flex items-center gap-1 text-sm text-gray-300 hover:text-white transition-colors px-3 py-2.5"
               >
                 Solutions
                 <ChevronDown
@@ -124,15 +124,15 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
 
           <button
             onClick={() => setOpen(!open)}
-            className="md:hidden p-2 text-gray-300 hover:text-white"
+            className="md:hidden p-3 text-gray-300 hover:text-white"
           >
-            {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
       {open && (
-        <div className="md:hidden bg-gray-900 border-t border-white/10 px-4 py-4 space-y-3">
+        <div className="md:hidden bg-gray-900 border-t border-white/10 px-4 py-4 space-y-3 max-h-[80vh] overflow-y-auto">
           <div className="text-sm font-medium text-gray-400 px-2 pt-1 pb-2 border-b border-white/10">
             Solutions
           </div>
@@ -141,7 +141,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
               key={s.href}
               href={s.href}
               onClick={() => setOpen(false)}
-              className="block text-sm text-gray-300 hover:text-white py-2"
+              className="block text-sm text-gray-300 hover:text-white py-3"
             >
               {s.label}
             </Link>
@@ -155,7 +155,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
                   const el = document.querySelector(`#${label.toLowerCase()}`);
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="block w-full text-left text-sm text-gray-300 hover:text-white py-2"
+                className="block w-full text-left text-sm text-gray-300 hover:text-white py-3"
               >
                 {label}
               </button>
@@ -163,7 +163,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
           </div>
           <Link
             href="/login"
-            className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white py-2"
+            className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white py-3"
             onClick={() => setOpen(false)}
           >
             <LogIn className="w-3.5 h-3.5" />

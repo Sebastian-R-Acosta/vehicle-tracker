@@ -400,14 +400,14 @@ doc.setLineWidth(0.3);
               <button
                 onClick={generateReport}
                 disabled={generatingReport}
-                className="flex items-center gap-2 px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg disabled:opacity-50"
+                className="flex items-center gap-2 px-3 py-3 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg disabled:opacity-50"
               >
                 {generatingReport ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                 {generatingReport ? "Generating..." : "Report"}
               </button>
               <button
                 onClick={() => setShowDeleteModal(true)}
-                className="flex items-center gap-2 px-3 py-2 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
+                className="flex items-center gap-2 px-3 py-3 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -431,9 +431,9 @@ doc.setLineWidth(0.3);
                 </div>
                 <Link
                   href={`/dashboard/vehicles/${vehicle.id}/edit`}
-                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
-                >
-                  <Pencil className="w-4 h-4" />
+                className="p-3 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+              >
+                <Pencil className="w-4 h-4" />
                 </Link>
               </div>
 
@@ -474,7 +474,7 @@ doc.setLineWidth(0.3);
                 <h2 className="text-lg font-semibold text-foreground">Maintenance History</h2>
                 <Link
                   href={`/dashboard/vehicles/${vehicle.id}/maintenance/new`}
-                  className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
+                  className="flex items-center gap-2 px-3 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
                 >
                   <Plus className="w-4 h-4" />
                   Add Record
@@ -521,7 +521,7 @@ doc.setLineWidth(0.3);
                       </div>
                       <Link
                         href={`/dashboard/vehicles/${vehicle.id}/maintenance/${record.id}/edit`}
-                        className="p-2 text-muted-foreground hover:text-foreground"
+                        className="p-3 text-muted-foreground hover:text-foreground"
                       >
                         <Pencil className="w-4 h-4" />
                       </Link>
@@ -538,7 +538,7 @@ doc.setLineWidth(0.3);
                 <h2 className="text-lg font-semibold text-foreground">Reminders</h2>
                 <Link
                   href={`/dashboard/reminders/new?vehicleId=${vehicle.id}`}
-                  className="p-1 hover:bg-accent rounded"
+                  className="p-3 hover:bg-accent rounded"
                 >
                   <Plus className="w-4 h-4" />
                 </Link>
@@ -604,13 +604,13 @@ doc.setLineWidth(0.3);
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 px-4 py-2 border border-input rounded-lg hover:bg-accent"
+                className="flex-1 px-4 py-3 border border-input rounded-lg hover:bg-accent"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90"
+                className="flex-1 px-4 py-3 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90"
               >
                 Delete
               </button>
@@ -626,7 +626,7 @@ doc.setLineWidth(0.3);
         >
           <button
             onClick={() => setSelectedImage(null)}
-            className="absolute top-4 right-4 p-2 bg-white/10 rounded-full hover:bg-white/20 text-white"
+            className="absolute top-4 right-4 p-3 bg-white/10 rounded-full hover:bg-white/20 text-white"
           >
             <X className="w-5 h-5" />
           </button>
