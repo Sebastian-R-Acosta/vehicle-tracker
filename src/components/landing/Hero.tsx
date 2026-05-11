@@ -89,7 +89,7 @@ export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
           </Link>
           <button
             onClick={onBookDemo}
-            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-medium text-white border border-white/30 rounded-xl hover:bg-white/10 transition-all"
+            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-medium text-white bg-white/10 border border-white/40 rounded-xl hover:bg-white/20 transition-all"
           >
             <Play className="w-4 h-4" />
             Book a Demo
