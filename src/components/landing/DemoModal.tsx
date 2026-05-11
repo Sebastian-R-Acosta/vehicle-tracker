@@ -38,11 +38,11 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8">
+      <div className="fixed inset-0 bg-black/80" onClick={onClose} />
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8" style={{ color: "#111" }}>
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+          className="absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100"
         >
           <X className="w-5 h-5" />
         </button>
@@ -56,14 +56,14 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
             </p>
             <button
               onClick={onClose}
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-500 font-medium"
+               className="px-6 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 font-medium"
             >
               Close
             </button>
           </div>
         ) : (
           <>
-            <h3 className="text-xl font-bold text-gray-900 mb-1">Book a Demo</h3>
+            <h3 className="text-xl font-bold mb-1">Book a Demo</h3>
             <p className="text-sm text-gray-500 mb-6">
               Fill out the form and we&apos;ll show you how Vehicle Tracker can transform your business.
             </p>
@@ -82,7 +82,7 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900"
                     placeholder="John Smith"
                   />
                 </div>
@@ -95,7 +95,7 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
                     type="email"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900"
                     placeholder="john@dealer.com"
                   />
                 </div>
@@ -109,7 +109,7 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
                     required
                     value={form.company}
                     onChange={(e) => setForm({ ...form, company: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900"
                     placeholder="AutoNation"
                   />
                 </div>
@@ -119,7 +119,7 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
                     type="tel"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900"
                     placeholder="+1 (555) 123-4567"
                   />
                 </div>
@@ -130,14 +130,14 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
                   rows={3}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900"
                   placeholder="Tell us about your needs..."
                 />
               </div>
               <button
                 type="submit"
                 disabled={sending}
-                className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {sending && <Loader2 className="w-4 h-4 animate-spin" />}
                 {sending ? "Sending..." : "Submit Request"}
