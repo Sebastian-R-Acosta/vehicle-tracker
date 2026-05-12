@@ -163,6 +163,7 @@ model Vehicle {
   maintenanceRecords MaintenanceRecord[]
   reminders        Reminder[]
   transferCodes   TransferCode[]
+  documents        VehicleDocument[]
 
   @@index([userId])
   @@index([organizationId])
@@ -228,6 +229,20 @@ model TransferCode {
   @@index([vehicleId])
   @@index([ownerId])
   @@index([code])
+}
+
+model VehicleDocument {
+  id        String   @id @default(cuid())
+  vehicleId String
+  name      String
+  type      String   @default("other")
+  fileUrl   String
+  fileSize  Int?
+  createdAt DateTime @default(now())
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
 }
 
 model ServiceRecommendation {
