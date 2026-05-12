@@ -8,6 +8,7 @@ import Features from "@/components/landing/Features";
 import ForIndividuals from "@/components/landing/ForIndividuals";
 import ForDealers from "@/components/landing/ForDealers";
 import ForInsurers from "@/components/landing/ForInsurers";
+import ForConstruction from "@/components/landing/ForConstruction";
 import Testimonials from "@/components/landing/Testimonials";
 import CTA from "@/components/landing/CTA";
 import Footer from "@/components/landing/Footer";
@@ -25,6 +26,7 @@ export default function HomePage() {
       <ForIndividuals />
       <ForDealers />
       <ForInsurers />
+      <ForConstruction />
       <Testimonials />
       <CTA onBookDemo={() => setDemoOpen(true)} />
       <Footer />

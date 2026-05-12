@@ -45,6 +45,10 @@ interface Vehicle {
   nickname: string | null;
   vin: string | null;
   currentMileage: number;
+  vehicleType: string;
+  hoursMeter: number | null;
+  serialNumber: string | null;
+  equipmentStatus: string | null;
   maintenanceRecords: MaintenanceRecord[];
   reminders: Reminder[];
 }
@@ -438,18 +442,37 @@ doc.setLineWidth(0.3);
               </div>
 
               <div className="grid gap-4 sm:grid-cols-3">
-                <div>
-                  <p className="text-sm text-muted-foreground">Current Mileage</p>
-                  <p className="text-lg font-semibold text-foreground">
-                    {vehicle.currentMileage.toLocaleString()} mi
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">VIN</p>
-                  <p className="text-lg font-semibold text-foreground">
-                    {vehicle.vin || "Not provided"}
-                  </p>
-                </div>
+                {vehicle.vehicleType && ["excavator", "bulldozer", "dump_truck", "crane", "loader", "grader"].includes(vehicle.vehicleType) ? (
+                  <>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Hours Meter</p>
+                      <p className="text-lg font-semibold text-foreground">
+                        {vehicle.hoursMeter != null ? `${vehicle.hoursMeter.toLocaleString()} hrs` : "Not set"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Serial Number</p>
+                      <p className="text-lg font-semibold text-foreground">
+                        {vehicle.serialNumber || "Not provided"}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Current Mileage</p>
+                      <p className="text-lg font-semibold text-foreground">
+                        {vehicle.currentMileage.toLocaleString()} mi
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">VIN</p>
+                      <p className="text-lg font-semibold text-foreground">
+                        {vehicle.vin || "Not provided"}
+                      </p>
+                    </div>
+                  </>
+                )}
                 <div>
                   <p className="text-sm text-muted-foreground">Last Service</p>
                   <p className="text-lg font-semibold text-foreground">

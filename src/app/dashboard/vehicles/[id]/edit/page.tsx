@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, Loader2, Car, Truck, Bike, Zap } from "lucide-react";
+import { ArrowLeft, Loader2, Car, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2 } from "lucide-react";
 import Link from "next/link";
 
 const vehicleSchema = z.object({
@@ -15,9 +15,13 @@ const vehicleSchema = z.object({
   year: z.number().min(1886).max(new Date().getFullYear() + 1),
   vin: z.string().length(17).optional().or(z.literal("")),
   nickname: z.string().max(100).optional(),
-  vehicleType: z.enum(["car", "truck", "motorcycle", "other"]).default("car"),
+  vehicleType: z.enum(["car", "truck", "motorcycle", "excavator", "bulldozer", "dump_truck", "crane", "loader", "grader", "other"]).default("car"),
   status: z.enum(["active", "maintenance", "inactive", "sold"]).default("active"),
   currentMileage: z.number().min(0),
+  hoursMeter: z.number().min(0).optional(),
+  serialNumber: z.string().max(100).optional(),
+  weightCapacity: z.number().min(0).optional(),
+  constructionSiteId: z.string().optional(),
 });
 
 type VehicleFormData = z.infer<typeof vehicleSchema>;
@@ -26,6 +30,12 @@ const vehicleTypes = [
   { value: "car", label: "Car", icon: Car },
   { value: "truck", label: "Truck", icon: Truck },
   { value: "motorcycle", label: "Motorcycle", icon: Bike },
+  { value: "excavator", label: "Excavator", icon: Drill },
+  { value: "bulldozer", label: "Bulldozer", icon: Tractor },
+  { value: "dump_truck", label: "Dump Truck", icon: Truck },
+  { value: "crane", label: "Crane", icon: Building2 },
+  { value: "loader", label: "Loader", icon: Hammer },
+  { value: "grader", label: "Grader", icon: Tractor },
   { value: "other", label: "Other", icon: Zap },
 ];
 
@@ -36,6 +46,8 @@ const statuses = [
   { value: "sold", label: "Sold" },
 ];
 
+const constructionTypes = new Set(["excavator", "bulldozer", "dump_truck", "crane", "loader", "grader"]);
+
 export default function EditVehiclePage() {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
@@ -43,6 +55,7 @@ export default function EditVehiclePage() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
+  const [constructionSites, setConstructionSites] = useState<{ id: string; name: string }[]>([]);
 
   const {
     register,
@@ -50,11 +63,13 @@ export default function EditVehiclePage() {
     watch,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<VehicleFormData>({
     resolver: zodResolver(vehicleSchema),
   });
 
   const selectedType = watch("vehicleType");
+  const isConstruction = constructionTypes.has(selectedType);
 
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
@@ -67,6 +82,19 @@ export default function EditVehiclePage() {
       fetchVehicle();
     }
   }, [session, params.id]);
+
+  const currentOrgId = session?.user?.currentOrganizationId;
+
+  useEffect(() => {
+    if (currentOrgId && isConstruction) {
+      fetch(`/api/construction-sites?organizationId=${currentOrgId}`)
+        .then((res) => res.ok ? res.json() : [])
+        .then((data) => setConstructionSites(data))
+        .catch(() => {});
+    } else {
+      setConstructionSites([]);
+    }
+  }, [currentOrgId, isConstruction]);
 
   const fetchVehicle = async () => {
     try {
@@ -82,6 +110,10 @@ export default function EditVehiclePage() {
           currentMileage: data.currentMileage,
           vehicleType: data.vehicleType || "car",
           status: data.status || "active",
+          hoursMeter: data.hoursMeter ?? undefined,
+          serialNumber: data.serialNumber || "",
+          weightCapacity: data.weightCapacity ?? undefined,
+          constructionSiteId: data.constructionSiteId || "",
         });
       } else {
         router.push("/dashboard");
@@ -98,10 +130,18 @@ export default function EditVehiclePage() {
     setLoading(true);
 
     try {
+      const payload: any = { ...data };
+      if (!isConstruction) {
+        delete payload.hoursMeter;
+        delete payload.serialNumber;
+        delete payload.weightCapacity;
+        delete payload.constructionSiteId;
+      }
+
       const res = await fetch(`/api/vehicles/${params.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -194,7 +234,7 @@ export default function EditVehiclePage() {
               <label className="block text-sm font-medium text-foreground mb-2">
                 Vehicle Type <span className="text-destructive">*</span>
               </label>
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-5 gap-3">
                 {vehicleTypes.map((type) => {
                   const Icon = type.icon;
                   const isSelected = selectedType === type.value;
@@ -268,28 +308,87 @@ export default function EditVehiclePage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">
-                  Current Mileage
-                </label>
-                <input
-                  type="number"
-                  {...register("currentMileage", { valueAsNumber: true })}
-                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                />
-              </div>
+              {isConstruction ? (
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    Hours Meter
+                  </label>
+                  <input
+                    type="number"
+                    {...register("hoursMeter", { valueAsNumber: true })}
+                    className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    Current Mileage
+                  </label>
+                  <input
+                    type="number"
+                    {...register("currentMileage", { valueAsNumber: true })}
+                    className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                  />
+                </div>
+              )}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                VIN (optional)
-              </label>
-              <input
-                {...register("vin")}
-                className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono"
-                maxLength={17}
-              />
-            </div>
+            {isConstruction && (
+              <>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">
+                      Serial Number
+                    </label>
+                    <input
+                      {...register("serialNumber")}
+                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">
+                      Weight Capacity (tons)
+                    </label>
+                    <input
+                      type="number"
+                      {...register("weightCapacity", { valueAsNumber: true })}
+                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                    />
+                  </div>
+                </div>
+                {constructionSites.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">
+                      Construction Site
+                    </label>
+                    <select
+                      {...register("constructionSiteId")}
+                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                    >
+                      <option value="">No site assignment</option>
+                      {constructionSites.map((site) => (
+                        <option key={site.id} value={site.id}>
+                          {site.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </>
+            )}
+
+            {!isConstruction && (
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  VIN (optional)
+                </label>
+                <input
+                  {...register("vin")}
+                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono"
+                  maxLength={17}
+                />
+              </div>
+            )}
 
             <button
               type="submit"

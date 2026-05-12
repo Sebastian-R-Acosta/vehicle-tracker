@@ -22,6 +22,7 @@ interface Reminder {
   description: string | null;
   dueDate: string | null;
   dueMileage: number | null;
+  dueHours: number | null;
   isCompleted: boolean;
   vehicle: {
     id: string;
@@ -200,6 +201,11 @@ export default function RemindersPage() {
                               {reminder.dueMileage && (
                                 <span>
                                   {reminder.dueMileage.toLocaleString()} miles
+                                </span>
+                              )}
+                              {reminder.dueHours && (
+                                <span>
+                                  {reminder.dueHours.toLocaleString()} hrs
                                 </span>
                               )}
                             </div>

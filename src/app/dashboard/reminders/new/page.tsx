@@ -15,9 +15,12 @@ const reminderSchema = z.object({
   description: z.string().optional(),
   dueDate: z.string().optional(),
   dueMileage: z.number().optional(),
+  dueHours: z.number().optional(),
 });
 
 type ReminderFormData = z.infer<typeof reminderSchema>;
+
+const constructionTypes = new Set(["excavator", "bulldozer", "dump_truck", "crane", "loader", "grader"]);
 
 export default function NewReminderPage() {
   const { data: session, status } = useSession();
@@ -26,15 +29,19 @@ export default function NewReminderPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [selectedVehicle, setSelectedVehicle] = useState<any>(null);
 
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<ReminderFormData>({
     resolver: zodResolver(reminderSchema),
   });
+
+  const watchVehicleId = watch("vehicleId");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -43,6 +50,15 @@ export default function NewReminderPage() {
       setValue("vehicleId", vehicleId);
     }
   }, [setValue]);
+
+  useEffect(() => {
+    if (watchVehicleId) {
+      const v = vehicles.find((v) => v.id === watchVehicleId);
+      setSelectedVehicle(v);
+    } else {
+      setSelectedVehicle(null);
+    }
+  }, [watchVehicleId, vehicles]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -70,9 +86,11 @@ export default function NewReminderPage() {
     }
   };
 
+  const isConstruction = selectedVehicle && constructionTypes.has(selectedVehicle.vehicleType);
+
   const onSubmit = async (data: ReminderFormData) => {
-    if (!data.dueDate && !data.dueMileage) {
-      setError("Must have at least one trigger (date or mileage)");
+    if (!data.dueDate && !data.dueMileage && !data.dueHours) {
+      setError("Must have at least one trigger (date, mileage, or hours)");
       return;
     }
 
@@ -215,21 +233,35 @@ export default function NewReminderPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">
-                    Due Mileage
-                  </label>
-                  <input
-                    type="number"
-                    {...register("dueMileage", { valueAsNumber: true })}
-                    className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                    placeholder="5000"
-                  />
-                </div>
+                {isConstruction ? (
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">
+                      Due Hours
+                    </label>
+                    <input
+                      type="number"
+                      {...register("dueHours", { valueAsNumber: true })}
+                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                      placeholder="500"
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">
+                      Due Mileage
+                    </label>
+                    <input
+                      type="number"
+                      {...register("dueMileage", { valueAsNumber: true })}
+                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                      placeholder="5000"
+                    />
+                  </div>
+                )}
               </div>
 
               <p className="text-sm text-muted-foreground">
-                Set at least one trigger (date or mileage)
+                Set at least one trigger (date{isConstruction ? ", or hours" : ", or mileage"})
               </p>
 
               <button

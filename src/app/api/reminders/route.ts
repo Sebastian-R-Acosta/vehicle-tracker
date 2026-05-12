@@ -27,13 +27,13 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { vehicleId, title, description, dueDate, dueMileage } = body;
+  const { vehicleId, title, description, dueDate, dueMileage, dueHours } = body;
 
   if (!vehicleId || !title) {
     return new NextResponse("Missing required fields", { status: 400 });
   }
 
-  if (!dueDate && !dueMileage) {
+  if (!dueDate && !dueMileage && !dueHours) {
     return new NextResponse("Must have at least one trigger", { status: 400 });
   }
 
@@ -53,6 +53,7 @@ export async function POST(request: Request) {
       description,
       dueDate: dueDate ? new Date(dueDate) : null,
       dueMileage,
+      dueHours,
     },
   });
 
@@ -67,6 +68,7 @@ export async function POST(request: Request) {
       description: reminder.description,
       dueDate: reminder.dueDate,
       dueMileage: reminder.dueMileage,
+      dueHours: reminder.dueHours,
       vehicle: {
         make: vehicle.make,
         model: vehicle.model,

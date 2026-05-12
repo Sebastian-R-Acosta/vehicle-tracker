@@ -3,10 +3,10 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Car, Plus, Settings, Loader2, Truck, Bike, Zap, Bell as BellIcon } from "lucide-react";
+import { Car, Plus, Settings, Loader2, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2, Bell as BellIcon } from "lucide-react";
 import Link from "next/link";
 
-type VehicleType = "car" | "truck" | "motorcycle" | "other";
+type VehicleType = "car" | "truck" | "motorcycle" | "excavator" | "bulldozer" | "dump_truck" | "crane" | "loader" | "grader" | "other";
 type VehicleStatus = "active" | "maintenance" | "sold" | "inactive";
 
 interface Vehicle {
@@ -22,17 +22,29 @@ interface Vehicle {
   reminders: { id: string }[];
 }
 
-const vehicleTypeIcons: Record<VehicleType, React.ElementType> = {
+const vehicleTypeIcons: Record<string, React.ElementType> = {
   car: Car,
   truck: Truck,
   motorcycle: Bike,
+  excavator: Drill,
+  bulldozer: Tractor,
+  dump_truck: Truck,
+  crane: Building2,
+  loader: Hammer,
+  grader: Tractor,
   other: Zap,
 };
 
-const vehicleTypeLabels: Record<VehicleType, string> = {
+const vehicleTypeLabels: Record<string, string> = {
   car: "Car",
   truck: "Truck",
   motorcycle: "Motorcycle",
+  excavator: "Excavator",
+  bulldozer: "Bulldozer",
+  dump_truck: "Dump Truck",
+  crane: "Crane",
+  loader: "Loader",
+  grader: "Grader",
   other: "Other",
 };
 
@@ -140,6 +152,12 @@ export default function DashboardPage() {
               <option value="car">Car</option>
               <option value="truck">Truck</option>
               <option value="motorcycle">Motorcycle</option>
+              <option value="excavator">Excavator</option>
+              <option value="bulldozer">Bulldozer</option>
+              <option value="dump_truck">Dump Truck</option>
+              <option value="crane">Crane</option>
+              <option value="loader">Loader</option>
+              <option value="grader">Grader</option>
               <option value="other">Other</option>
             </select>
             <select
@@ -188,8 +206,9 @@ export default function DashboardPage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredVehicles.map((vehicle) => {
-              const Icon = vehicleTypeIcons[vehicle.vehicleType as VehicleType] || Car;
+              const Icon = vehicleTypeIcons[vehicle.vehicleType] || Car;
               const statusStyle = statusColors[vehicle.status as VehicleStatus] || statusColors.active;
+              const typeLabel = vehicleTypeLabels[vehicle.vehicleType] || "Other";
               return (
                 <Link
                   key={vehicle.id}
@@ -206,8 +225,8 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs text-muted-foreground">{vehicle.year}</span>
-                    <span className="text-xs text-muted-foreground">•</span>
-                    <span className="text-xs text-muted-foreground">{vehicleTypeLabels[vehicle.vehicleType as VehicleType]}</span>
+                    <span className="text-xs text-muted-foreground">&bull;</span>
+                    <span className="text-xs text-muted-foreground">{typeLabel}</span>
                   </div>
                   <h3 className="text-lg font-semibold mb-1 text-foreground">
                     {vehicle.make} {vehicle.model}

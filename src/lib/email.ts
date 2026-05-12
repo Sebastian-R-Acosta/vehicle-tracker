@@ -9,6 +9,7 @@ interface VehicleReminder {
   description: string | null;
   dueDate: Date | null;
   dueMileage: number | null;
+  dueHours: number | null;
   vehicle: {
     nickname: string | null;
     make: string;
@@ -129,6 +130,7 @@ export async function sendReminderCreatedEmail(
     description: string | null;
     dueDate: Date | null;
     dueMileage: number | null;
+    dueHours: number | null;
     vehicle: { make: string; model: string; year: number; nickname: string | null };
   }
 ) {
@@ -168,6 +170,10 @@ export async function sendReminderCreatedEmail(
           <div class="detail-row">
             <span class="label">Due Mileage</span>
             <span class="value">${reminder.dueMileage ? `${reminder.dueMileage.toLocaleString()} mi` : "Not set"}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Due Hours</span>
+            <span class="value">${reminder.dueHours ? `${reminder.dueHours.toLocaleString()} hrs` : "Not set"}</span>
           </div>
           ${reminder.description ? `<div class="description"><strong>Notes:</strong><br>${reminder.description}</div>` : ""}
         </div>

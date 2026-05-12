@@ -3,14 +3,18 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendMaintenanceConfirmation } from "@/lib/email";
 
-const SERVICE_RECOMMENDATIONS: Record<string, { miles: number; months: number }> = {
-  "Oil Change": { miles: 5000, months: 6 },
+const SERVICE_RECOMMENDATIONS: Record<string, { miles: number; months: number; hours?: number }> = {
+  "Oil Change": { miles: 5000, months: 6, hours: 250 },
   "Tire Rotation": { miles: 7500, months: 6 },
   "Brake Service": { miles: 30000, months: 24 },
   "Air Filter": { miles: 15000, months: 12 },
   "Transmission Service": { miles: 60000, months: 48 },
   "Battery Replacement": { miles: 50000, months: 48 },
   "Inspection": { miles: 12000, months: 12 },
+  "Hydraulic Fluid": { miles: 0, months: 12, hours: 500 },
+  "Track Inspection": { miles: 0, months: 6, hours: 250 },
+  "Engine Service": { miles: 0, months: 6, hours: 250 },
+  "Coolant Flush": { miles: 0, months: 24, hours: 1000 },
 };
 
 export async function GET(
@@ -111,15 +115,22 @@ export async function POST(
     const dueDate = new Date(date);
     dueDate.setMonth(dueDate.getMonth() + rec.months);
 
+    const reminderData: any = {
+      vehicleId: params.id,
+      userId: session.user.id,
+      title: `Next ${serviceType}`,
+      description: `Based on ${serviceType} performed on ${new Date(date).toLocaleDateString()}`,
+      dueDate,
+    };
+
+    if (rec.hours && vehicle.hoursMeter != null) {
+      reminderData.dueHours = vehicle.hoursMeter + rec.hours;
+    } else {
+      reminderData.dueMileage = dueMileage;
+    }
+
     nextReminder = await prisma.reminder.create({
-      data: {
-        vehicleId: params.id,
-        userId: session.user.id,
-        title: `Next ${serviceType}`,
-        description: `Based on ${serviceType} performed on ${new Date(date).toLocaleDateString()}`,
-        dueMileage,
-        dueDate,
-      },
+      data: reminderData,
     });
   }
 

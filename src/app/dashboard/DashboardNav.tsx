@@ -1,6 +1,6 @@
 "use client";
 
-import { Car, Bell } from "lucide-react";
+import { Car, Bell, Building2 } from "lucide-react";
 import Link from "next/link";
 import OrgSwitcher from "@/components/OrgSwitcher";
 
@@ -16,8 +16,15 @@ export function DashboardNav() {
               </div>
               <span className="text-xl font-bold text-foreground">Vehicle Tracker</span>
             </Link>
-            <div className="hidden sm:block">
+            <div className="hidden sm:flex items-center gap-1">
               <OrgSwitcher />
+              <Link
+                href="/dashboard/construction-sites"
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+                title="Construction Sites"
+              >
+                <Building2 className="w-5 h-5" />
+              </Link>
             </div>
           </div>
           <div className="flex items-center gap-2">

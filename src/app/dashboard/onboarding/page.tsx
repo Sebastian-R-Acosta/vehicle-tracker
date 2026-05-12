@@ -3,13 +3,14 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Car, ArrowRight, Loader2 } from "lucide-react";
+import { Car, ArrowRight, Loader2, HardHat } from "lucide-react";
 import Link from "next/link";
 
 const roles = [
   { id: "personal", label: "Car Owner", desc: "Track my personal vehicles" },
   { id: "dealer", label: "Dealership", desc: "Manage customer vehicles and service" },
   { id: "insurer", label: "Insurance", desc: "Monitor policyholder fleets" },
+  { id: "construction", label: "Construction", desc: "Manage heavy equipment and fleet" },
 ];
 
 async function completeOnboarding() {

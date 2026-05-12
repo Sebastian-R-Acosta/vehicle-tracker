@@ -55,7 +55,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { make, model, year, vin, nickname, currentMileage, vehicleType, status, organizationId } = body;
+  const { make, model, year, vin, nickname, currentMileage, vehicleType, status, organizationId, hoursMeter, serialNumber, weightCapacity, constructionSiteId } = body;
 
   if (!make || !model || !year) {
     return new NextResponse(JSON.stringify({ error: "Missing required fields", make, model, year }), {
@@ -99,6 +99,10 @@ export async function POST(request: Request) {
       currentMileage: parseInt(currentMileage, 10) || 0,
       vehicleType: vehicleType || "car",
       status: status || "active",
+      hoursMeter: hoursMeter != null ? parseInt(hoursMeter, 10) : null,
+      serialNumber: serialNumber || null,
+      weightCapacity: weightCapacity != null ? parseFloat(weightCapacity) : null,
+      constructionSiteId: constructionSiteId || null,
     },
   });
 

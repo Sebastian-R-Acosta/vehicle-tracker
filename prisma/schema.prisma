@@ -80,6 +80,7 @@ model Organization {
   members     OrganizationMember[]
   vehicles    Vehicle[]
   invitations Invitation[]
+  constructionSites ConstructionSite[]
   usersWithCurrent User[] @relation("CurrentOrganization")
 
   @@index([slug])
@@ -118,6 +119,22 @@ model Invitation {
   @@index([token])
 }
 
+model ConstructionSite {
+  id             String   @id @default(cuid())
+  name           String
+  address        String?
+  city           String?
+  state          String?
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicles     Vehicle[]
+
+  @@index([organizationId])
+}
+
 model Vehicle {
   id              String    @id @default(cuid())
   userId          String
@@ -130,12 +147,18 @@ model Vehicle {
   vehicleType     String    @default("car")
   status          String    @default("active")
   currentMileage Int       @default(0)
+  hoursMeter     Int?
+  serialNumber   String?
+  weightCapacity Float?
+  equipmentStatus String?
+  constructionSiteId String?
   previousOwnerId String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
   user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   organization      Organization?        @relation(fields: [organizationId], references: [id])
+  constructionSite  ConstructionSite?    @relation(fields: [constructionSiteId], references: [id])
   previousOwner     User?                @relation("PreviousOwner", fields: [previousOwnerId], references: [id])
   maintenanceRecords MaintenanceRecord[]
   reminders        Reminder[]
@@ -143,6 +166,7 @@ model Vehicle {
 
   @@index([userId])
   @@index([organizationId])
+  @@index([constructionSiteId])
   @@index([previousOwnerId])
   @@index([vin])
 }
@@ -173,6 +197,7 @@ model Reminder {
   description String?
   dueDate    DateTime?
   dueMileage Int?
+  dueHours   Int?
   isCompleted Boolean  @default(false)
   completedAt DateTime?
   createdAt  DateTime  @default(now())
