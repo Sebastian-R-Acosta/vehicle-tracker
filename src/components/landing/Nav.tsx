@@ -20,6 +20,11 @@ const solutions = [
     label: "For Insurers",
     desc: "Risk scoring & claims verification",
   },
+  {
+    href: "/solutions/construction",
+    label: "For Construction",
+    desc: "Heavy equipment fleet management",
+  },
 ];
 
 const links = [
