@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { FREE_TIER_MAX_VEHICLES } from "@/lib/stripe";
+import { FREE_TIER_MAX_VEHICLES, PRO_TIER } from "@/lib/stripe";
 
 export async function getUserPlan(userId: string) {
   const sub = await prisma.subscription.findUnique({
@@ -20,4 +20,15 @@ export async function canAddVehicle(userId: string): Promise<{ allowed: boolean;
   const limit = plan?.maxVehicles ?? FREE_TIER_MAX_VEHICLES;
   const current = await getVehicleCount(userId);
   return { allowed: current < limit, limit, current };
+}
+
+export async function isPro(userId: string): Promise<boolean> {
+  const plan = await getUserPlan(userId);
+  return plan?.tier === PRO_TIER || plan?.tier === "business";
+}
+
+export async function requirePro(userId: string): Promise<{ allowed: boolean; error: string | null }> {
+  const pro = await isPro(userId);
+  if (pro) return { allowed: true, error: null };
+  return { allowed: false, error: "This feature requires a Pro subscription" };
 }

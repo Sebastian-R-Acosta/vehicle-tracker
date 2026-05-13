@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Building2, Users, Car, ArrowLeft, Save, Loader2, Trash2 } from "lucide-react";
+import { Building2, Users, Car, Bell, ArrowLeft, Save, Loader2, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 interface Org {
@@ -205,7 +205,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 mb-6">
+        <div className="grid gap-4 sm:grid-cols-3 mb-6">
           <Link
             href="/dashboard/settings/members"
             className="p-6 bg-card rounded-lg border border-border hover:border-primary transition-colors"
@@ -224,6 +224,16 @@ export default function SettingsPage() {
             <h3 className="font-semibold mb-1 text-foreground">Vehicles</h3>
             <p className="text-sm text-muted-foreground">
               {org._count?.vehicles || 0} vehicles in organization
+            </p>
+          </Link>
+          <Link
+            href="/dashboard/settings/notifications"
+            className="p-6 bg-card rounded-lg border border-border hover:border-primary transition-colors"
+          >
+            <Bell className="w-8 h-8 text-primary mb-3" />
+            <h3 className="font-semibold mb-1 text-foreground">Notifications</h3>
+            <p className="text-sm text-muted-foreground">
+              Configure SMS and push notification preferences
             </p>
           </Link>
         </div>

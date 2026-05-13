@@ -55,6 +55,14 @@ export default function NewVehiclePage() {
   const [error, setError] = useState("");
   const [constructionSites, setConstructionSites] = useState<{ id: string; name: string }[]>([]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const vin = params.get("vin");
+    if (vin) {
+      setValue("vin", vin);
+    }
+  }, []);
+
   const {
     register,
     handleSubmit,

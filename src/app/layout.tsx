@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -46,6 +47,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="manifest" href="/manifest.json" />
         {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN ? (
           <Script
             defer
@@ -61,6 +63,7 @@ export default function RootLayout({
             <ThemeToggle />
           </div>
           {children}
+          <PWAInstallPrompt />
         </Providers>
       </body>
     </html>

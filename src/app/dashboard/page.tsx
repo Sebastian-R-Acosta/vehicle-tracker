@@ -2,9 +2,10 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Car, Plus, Settings, Loader2, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2, Bell as BellIcon } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { Car, Plus, Settings, Loader2, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2, Bell as BellIcon, Download } from "lucide-react";
 import Link from "next/link";
+import jsPDF from "jspdf";
 
 type VehicleType = "car" | "truck" | "motorcycle" | "excavator" | "bulldozer" | "dump_truck" | "crane" | "loader" | "grader" | "other";
 type VehicleStatus = "active" | "maintenance" | "sold" | "inactive";
@@ -15,6 +16,7 @@ interface Vehicle {
   model: string;
   year: number;
   nickname: string | null;
+  vin: string | null;
   vehicleType: VehicleType;
   status: VehicleStatus;
   currentMileage: number;
@@ -62,6 +64,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<VehicleType | "all">("all");
   const [filterStatus, setFilterStatus] = useState<VehicleStatus | "all">("all");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [exportOpen, setExportOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -94,6 +99,110 @@ export default function DashboardPage() {
     const statusMatch = filterStatus === "all" || vehicle.status === filterStatus;
     return typeMatch && statusMatch;
   });
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const isAllFilteredSelected =
+    filteredVehicles.length > 0 &&
+    filteredVehicles.every((v) => selectedIds.includes(v.id));
+
+  const toggleSelectAll = () => {
+    if (isAllFilteredSelected) {
+      setSelectedIds((prev) =>
+        prev.filter((id) => !filteredVehicles.find((v) => v.id === id))
+      );
+    } else {
+      setSelectedIds((prev) => [
+        ...prev,
+        ...filteredVehicles
+          .filter((v) => !prev.includes(v.id))
+          .map((v) => v.id),
+      ]);
+    }
+  };
+
+  const handleExportCsv = async () => {
+    if (selectedIds.length === 0) return;
+    const res = await fetch(`/api/vehicles/export/csv?ids=${selectedIds.join(",")}`);
+    if (!res.ok) return;
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "vehicles-export.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setExportOpen(false);
+  };
+
+  const handleExportPdf = () => {
+    if (selectedIds.length === 0) return;
+    const selected = vehicles.filter((v) => selectedIds.includes(v.id));
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text("Vehicle Export Report", 14, 20);
+    doc.setFontSize(10);
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 28);
+    doc.setFontSize(12);
+    doc.text(`Total Vehicles: ${selected.length}`, 14, 36);
+
+    const headers = ["Year", "Make", "Model", "VIN", "Mileage", "Status"];
+    const rows = selected.map((v) => [
+      String(v.year),
+      v.make,
+      v.model,
+      (v.vin || "-"),
+      v.currentMileage.toLocaleString(),
+      statusColors[v.status as VehicleStatus]?.label || v.status,
+    ]);
+
+    const colWidths = [20, 35, 35, 50, 25, 25];
+    const startY = 44;
+    const rowH = 7;
+
+    headers.forEach((h, i) => {
+      const x = 14 + colWidths.slice(0, i).reduce((a, b) => a + b, 0);
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.text(h, x + 1, startY + 5);
+    });
+
+    doc.setDrawColor(200);
+    doc.line(14, startY + rowH, 14 + colWidths.reduce((a, b) => a + b, 0), startY + rowH);
+
+    rows.forEach((row, ri) => {
+      const y = startY + rowH + 4 + ri * rowH;
+      if (ri % 2 === 0) {
+        doc.setFillColor(245, 245, 245);
+        doc.rect(14, y - 4, colWidths.reduce((a, b) => a + b, 0), rowH, "F");
+      }
+      row.forEach((cell, ci) => {
+        const x = 14 + colWidths.slice(0, ci).reduce((a, b) => a + b, 0);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.text(cell, x + 1, y + 1);
+      });
+    });
+
+    doc.save("vehicles-export.pdf");
+    setExportOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
+        setExportOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const totalMiles = vehicles.reduce((sum, v) => sum + v.currentMileage, 0);
   const activeVehicles = vehicles.filter((v) => v.status === "active").length;
@@ -174,6 +283,45 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {selectedIds.length > 0 && (
+          <div className="flex items-center gap-3 mb-6 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isAllFilteredSelected}
+                onChange={toggleSelectAll}
+                className="rounded border-border"
+              />
+              <span className="text-foreground">{selectedIds.length} selected</span>
+            </label>
+            <div className="ml-auto relative" ref={exportRef}>
+              <button
+                onClick={() => setExportOpen(!exportOpen)}
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 text-sm"
+              >
+                <Download className="w-4 h-4" />
+                Export Selected ({selectedIds.length})
+              </button>
+              {exportOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg z-10">
+                  <button
+                    onClick={handleExportPdf}
+                    className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-accent rounded-t-lg"
+                  >
+                    PDF Report
+                  </button>
+                  <button
+                    onClick={handleExportCsv}
+                    className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-accent rounded-b-lg"
+                  >
+                    CSV
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {vehicles.length === 0 ? (
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <Car className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
@@ -210,11 +358,22 @@ export default function DashboardPage() {
               const statusStyle = statusColors[vehicle.status as VehicleStatus] || statusColors.active;
               const typeLabel = vehicleTypeLabels[vehicle.vehicleType] || "Other";
               return (
-                <Link
-                  key={vehicle.id}
+                <div key={vehicle.id} className="relative">
+                  <div
+                    className="absolute top-3 left-3 z-10"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(vehicle.id)}
+                      onChange={() => toggleSelect(vehicle.id)}
+                      className="w-4 h-4 rounded border-border cursor-pointer"
+                    />
+                  </div>
+                  <Link
                   href={`/dashboard/vehicles/${vehicle.id}`}
                   className="block p-6 bg-card rounded-xl border border-border hover:border-primary hover:shadow-lg transition-all group"
-                >
+                  >
                   <div className="flex items-start justify-between mb-4">
                     <div className="p-3 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors">
                       <Icon className="w-6 h-6 text-primary" />
@@ -247,6 +406,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </Link>
+                </div>
               );
             })}
           </div>

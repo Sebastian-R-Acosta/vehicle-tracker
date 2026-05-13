@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { renderToStream } from "@react-pdf/renderer";
 import VehicleReportPDF from "@/components/VehicleReportPDF";
+import { requirePro } from "@/lib/billing";
 
 export async function GET(
   request: Request,
@@ -12,6 +13,11 @@ export async function GET(
 
   if (!session?.user?.id) {
     return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const { allowed, error } = await requirePro(session.user.id);
+  if (!allowed) {
+    return NextResponse.json({ error }, { status: 403 });
   }
 
   const vehicle = await prisma.vehicle.findFirst({

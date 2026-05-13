@@ -62,7 +62,23 @@ interface VehicleDocument {
   type: string;
   fileUrl: string;
   fileSize: number | null;
+  expiryDate: string | null;
+  notes: string | null;
   createdAt: string;
+}
+
+interface DriverAssignment {
+  id: string;
+  driverId: string;
+  startDate: string;
+  endDate: string | null;
+  isPrimary: boolean;
+  driver: {
+    id: string;
+    name: string;
+    email: string | null;
+    phone: string | null;
+  };
 }
 
 interface Vehicle {
@@ -109,6 +125,13 @@ export default function VehicleDetailPage() {
   const [valueReport, setValueReport] = useState<ValueReport | null>(null);
   const [valueReportLoading, setValueReportLoading] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
+  const [assignments, setAssignments] = useState<DriverAssignment[]>([]);
+  const [showDocForm, setShowDocForm] = useState(false);
+  const [docName, setDocName] = useState("");
+  const [docCategory, setDocCategory] = useState("other");
+  const [docExpiry, setDocExpiry] = useState("");
+  const [docNotes, setDocNotes] = useState("");
+  const [docFile, setDocFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -396,19 +419,15 @@ export default function VehicleDetailPage() {
     }
   };
 
-  const handleDocUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleDocUpload = async () => {
+    if (!docFile) return;
 
     setUploadingDoc(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
       const base64 = await new Promise<string>((resolve) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(docFile);
       });
 
       const base64Data = base64.split(",")[1];
@@ -418,8 +437,8 @@ export default function VehicleDetailPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           imageBase64: base64Data,
-          filename: file.name,
-          contentType: file.type,
+          filename: docFile.name,
+          contentType: docFile.type,
         }),
       });
 
@@ -427,18 +446,16 @@ export default function VehicleDetailPage() {
 
       const { imageUrl } = await uploadRes.json();
 
-      const docType = file.type.startsWith("image/") ? "image" :
-        file.name.endsWith(".pdf") ? "pdf" :
-        file.name.match(/\.(doc|docx)$/) ? "document" : "other";
-
       const docRes = await fetch(`/api/vehicles/${vehicleId}/documents`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: file.name,
-          type: docType,
+          name: docName || docFile.name,
+          type: docCategory,
           fileUrl: imageUrl,
-          fileSize: file.size,
+          fileSize: docFile.size,
+          expiryDate: docExpiry || null,
+          notes: docNotes || null,
         }),
       });
 
@@ -450,7 +467,12 @@ export default function VehicleDetailPage() {
       console.error("Failed to upload document:", err);
     } finally {
       setUploadingDoc(false);
-      e.target.value = "";
+      setShowDocForm(false);
+      setDocFile(null);
+      setDocName("");
+      setDocCategory("other");
+      setDocExpiry("");
+      setDocNotes("");
     }
   };
 
@@ -697,17 +719,13 @@ export default function VehicleDetailPage() {
                   <FolderOpen className="w-5 h-5" />
                   Digital Glovebox
                 </h2>
-                <label className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 cursor-pointer text-sm">
-                  {uploadingDoc ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                  {uploadingDoc ? "Uploading..." : "Upload"}
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                    onChange={handleDocUpload}
-                    disabled={uploadingDoc}
-                  />
-                </label>
+                <button
+                  onClick={() => setShowDocForm(true)}
+                  className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 text-sm"
+                >
+                  <Upload className="w-4 h-4" />
+                  Upload
+                </button>
               </div>
 
               {documentsLoading ? (
@@ -720,36 +738,56 @@ export default function VehicleDetailPage() {
                 </p>
               ) : (
                 <div className="space-y-2">
-                  {documents.map((doc) => (
-                    <div key={doc.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <FileText className="w-4 h-4 text-primary flex-shrink-0" />
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{doc.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(doc.createdAt).toLocaleDateString()}
-                            {doc.fileSize && ` • ${(doc.fileSize / 1024).toFixed(0)} KB`}
-                          </p>
+                  {documents.map((doc) => {
+                    const isExpired = doc.expiryDate && new Date(doc.expiryDate) < new Date();
+                    const expiresSoon = doc.expiryDate && !isExpired && new Date(doc.expiryDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+                    return (
+                      <div key={doc.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <FileText className="w-4 h-4 text-primary flex-shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-foreground truncate">{doc.name}</p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {doc.type !== "other" && doc.type !== "image" && doc.type !== "pdf" && doc.type !== "document" && (
+                                <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
+                                  {doc.type}
+                                </span>
+                              )}
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(doc.createdAt).toLocaleDateString()}
+                                {doc.fileSize && ` • ${(doc.fileSize / 1024).toFixed(0)} KB`}
+                              </p>
+                              {doc.expiryDate && (
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                                  isExpired ? "bg-red-100 text-red-700" :
+                                  expiresSoon ? "bg-amber-100 text-amber-700" :
+                                  "bg-green-100 text-green-700"
+                                }`}>
+                                  {isExpired ? "Expired" : expiresSoon ? "Expiring Soon" : `Exp: ${new Date(doc.expiryDate).toLocaleDateString()}`}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          <a
+                            href={doc.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 text-muted-foreground hover:text-foreground"
+                          >
+                            <Download className="w-4 h-4" />
+                          </a>
+                          <button
+                            onClick={() => deleteDocument(doc.id)}
+                            className="p-2 text-muted-foreground hover:text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 flex-shrink-0">
-                        <a
-                          href={doc.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 text-muted-foreground hover:text-foreground"
-                        >
-                          <Download className="w-4 h-4" />
-                        </a>
-                        <button
-                          onClick={() => deleteDocument(doc.id)}
-                          className="p-2 text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -849,7 +887,46 @@ export default function VehicleDetailPage() {
             </div>
 
             <div className="bg-card rounded-lg border border-border p-6">
-              <h2 className="text-lg font-semibold mb-4 text-foreground">Quick Actions</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                  <Car className="w-5 h-5" />
+                  Assigned Drivers
+                </h2>
+                <Link
+                  href="/dashboard/drivers"
+                  className="text-sm text-primary hover:underline"
+                >
+                  Manage
+                </Link>
+              </div>
+
+              {assignments.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No drivers assigned</p>
+              ) : (
+                <div className="space-y-3">
+                  {assignments.map((a) => (
+                    <div key={a.id} className="flex items-center gap-3 p-3 bg-secondary rounded-lg">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Car className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {a.driver.name}
+                          {a.isPrimary && (
+                            <span className="ml-2 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">Primary</span>
+                          )}
+                        </p>
+                        {a.driver.email && (
+                          <p className="text-xs text-muted-foreground truncate">{a.driver.email}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="bg-card rounded-lg border border-border p-6">
               <div className="space-y-2">
                 <Link
                   href={`/dashboard/vehicles/${vehicle.id}/transfer`}
@@ -871,6 +948,85 @@ export default function VehicleDetailPage() {
           </div>
         </div>
       </main>
+
+      {showDocForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-card rounded-lg p-6 max-w-md mx-4 border border-border w-full">
+            <h2 className="text-lg font-semibold mb-4 text-foreground">Upload Document</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">File</label>
+                <input
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                  onChange={(e) => setDocFile(e.target.files?.[0] || null)}
+                  className="w-full text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Document Name</label>
+                <input
+                  type="text"
+                  value={docName}
+                  onChange={(e) => setDocName(e.target.value)}
+                  placeholder="e.g. Insurance Card"
+                  className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-background"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Type</label>
+                <select
+                  value={docCategory}
+                  onChange={(e) => setDocCategory(e.target.value)}
+                  className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-background"
+                >
+                  <option value="registration">Registration</option>
+                  <option value="insurance">Insurance</option>
+                  <option value="warranty">Warranty</option>
+                  <option value="inspection">Inspection</option>
+                  <option value="receipt">Receipt</option>
+                  <option value="manual">Manual</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Expiry Date</label>
+                <input
+                  type="date"
+                  value={docExpiry}
+                  onChange={(e) => setDocExpiry(e.target.value)}
+                  className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-background"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Notes</label>
+                <input
+                  type="text"
+                  value={docNotes}
+                  onChange={(e) => setDocNotes(e.target.value)}
+                  placeholder="Optional notes"
+                  className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-background"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => { setShowDocForm(false); setDocFile(null); }}
+                className="flex-1 px-4 py-2.5 border border-border rounded-lg text-sm hover:bg-accent"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDocUpload}
+                disabled={uploadingDoc || !docFile}
+                className="flex-1 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg text-sm hover:opacity-90 disabled:opacity-50"
+              >
+                {uploadingDoc ? "Uploading..." : "Upload"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Car, Bell, Building2 } from "lucide-react";
+import { Car, Bell, Building2, Package, Wrench, Users, Scan } from "lucide-react";
 import Link from "next/link";
 import OrgSwitcher from "@/components/OrgSwitcher";
 
@@ -24,6 +24,34 @@ export function DashboardNav() {
                 title="Construction Sites"
               >
                 <Building2 className="w-5 h-5" />
+              </Link>
+              <Link
+                href="/dashboard/parts"
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+                title="Parts Inventory"
+              >
+                <Package className="w-5 h-5" />
+              </Link>
+              <Link
+                href="/dashboard/service-providers"
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+                title="Service Providers"
+              >
+                <Wrench className="w-5 h-5" />
+              </Link>
+              <Link
+                href="/dashboard/drivers"
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+                title="Drivers"
+              >
+                <Users className="w-5 h-5" />
+              </Link>
+              <Link
+                href="/dashboard/scan"
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+                title="Scan VIN"
+              >
+                <Scan className="w-5 h-5" />
               </Link>
             </div>
           </div>
