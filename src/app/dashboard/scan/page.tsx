@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
-import { ArrowLeft, Camera, Loader2, Scan } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, Camera, Loader2, Scan, Smartphone } from "lucide-react";
 import Link from "next/link";
 
 export default function ScanVINPage() {
@@ -13,6 +13,25 @@ export default function ScanVINPage() {
   const [manualVin, setManualVin] = useState("");
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraLoading, setCameraLoading] = useState(false);
+  const [hasCamera, setHasCamera] = useState(true);
+
+  useEffect(() => {
+    if (!navigator.mediaDevices?.enumerateDevices) {
+      setHasCamera(false);
+      return;
+    }
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      const has = devices.some((d) => d.kind === "videoinput");
+      setHasCamera(has);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+      videoRef.current.play().catch(() => {});
+    }
+  }, [stream]);
 
   const stopCamera = () => {
     if (stream) {
@@ -27,15 +46,15 @@ export default function ScanVINPage() {
     setCameraError("");
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
+        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
       });
       setStream(mediaStream);
       setCameraActive(true);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-      }
-    } catch {
-      setCameraError("Camera access denied or unavailable on this device.");
+    } catch (err: unknown) {
+      const msg = err instanceof DOMException && err.name === "NotAllowedError"
+        ? "Camera permission denied. Type the VIN manually below."
+        : "Camera access denied or unavailable on this device.";
+      setCameraError(msg);
     } finally {
       setCameraLoading(false);
     }
@@ -78,7 +97,7 @@ export default function ScanVINPage() {
 
           <div className="border-t border-border pt-6">
             <div className="flex items-center gap-2 mb-3">
-              <Camera className="w-4 h-4 text-muted-foreground" />
+              <Smartphone className="w-4 h-4 text-muted-foreground" />
               <p className="text-sm font-medium text-foreground">Type VIN</p>
             </div>
             <form onSubmit={handleManualSubmit} className="flex gap-2 mb-6">
@@ -100,51 +119,54 @@ export default function ScanVINPage() {
             </form>
           </div>
 
-          <div className="border-t border-border pt-6">
-            {!cameraActive ? (
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground mb-3">
-                  Or use your camera to scan the VIN barcode
-                </p>
-                <button
-                  onClick={startCamera}
-                  disabled={cameraLoading}
-                  className="inline-flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-                >
-                  {cameraLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Camera className="w-4 h-4" />
-                  )}
-                  {cameraLoading ? "Requesting Camera..." : "Open Camera"}
-                </button>
-              </div>
-            ) : (
-              <div>
-                <div className="relative mb-4 rounded-lg overflow-hidden bg-black">
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    className="w-full h-auto max-h-80 object-cover"
-                  />
-                  <div className="absolute inset-0 border-2 border-dashed border-primary/40 rounded-lg pointer-events-none" />
+          {hasCamera && (
+            <div className="border-t border-border pt-6">
+              {!cameraActive ? (
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Or use your camera to scan the VIN barcode
+                  </p>
+                  <button
+                    onClick={startCamera}
+                    disabled={cameraLoading}
+                    className="inline-flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                  >
+                    {cameraLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Camera className="w-4 h-4" />
+                    )}
+                    {cameraLoading ? "Requesting Camera..." : "Open Camera"}
+                  </button>
                 </div>
-                <button
-                  onClick={stopCamera}
-                  className="text-sm text-muted-foreground hover:text-foreground"
-                >
-                  Close Camera
-                </button>
-              </div>
-            )}
+              ) : (
+                <div>
+                  <div className="relative mb-4 rounded-lg overflow-hidden bg-black" style={{ minHeight: 240 }}>
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      muted
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 border-2 border-dashed border-primary/40 rounded-lg pointer-events-none" />
+                  </div>
+                  <button
+                    onClick={stopCamera}
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Close Camera
+                  </button>
+                </div>
+              )}
 
-            {cameraError && (
-              <div className="mt-4 p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
-                {cameraError}
-              </div>
-            )}
-          </div>
+              {cameraError && (
+                <div className="mt-4 p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
+                  {cameraError}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
     </div>
