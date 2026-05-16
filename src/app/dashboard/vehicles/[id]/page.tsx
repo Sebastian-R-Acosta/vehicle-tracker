@@ -133,6 +133,8 @@ export default function VehicleDetailPage() {
   const [docNotes, setDocNotes] = useState("");
   const [docError, setDocError] = useState("");
   const [docFile, setDocFile] = useState<File | null>(null);
+  const [viewingDoc, setViewingDoc] = useState<VehicleDocument | null>(null);
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -755,27 +757,39 @@ export default function VehicleDetailPage() {
                   {documents.map((doc) => {
                     const isExpired = doc.expiryDate && new Date(doc.expiryDate) < new Date();
                     const expiresSoon = doc.expiryDate && !isExpired && new Date(doc.expiryDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-                    const cardColors: Record<string, { bg: string; gradient: string; icon: string; label: string }> = {
-                      registration: { bg: "bg-blue-500", gradient: "from-blue-500 to-blue-600", icon: "bg-blue-400/30", label: "Registration" },
-                      insurance: { bg: "bg-emerald-500", gradient: "from-emerald-500 to-emerald-600", icon: "bg-emerald-400/30", label: "Insurance" },
-                      warranty: { bg: "bg-violet-500", gradient: "from-violet-500 to-violet-600", icon: "bg-violet-400/30", label: "Warranty" },
-                      inspection: { bg: "bg-orange-500", gradient: "from-orange-500 to-orange-600", icon: "bg-orange-400/30", label: "Inspection" },
-                      receipt: { bg: "bg-rose-500", gradient: "from-rose-500 to-rose-600", icon: "bg-rose-400/30", label: "Receipt" },
-                      manual: { bg: "bg-slate-500", gradient: "from-slate-500 to-slate-600", icon: "bg-slate-400/30", label: "Manual" },
+                    const cardColors: Record<string, { bg: string; gradient: string; label: string }> = {
+                      registration: { bg: "bg-blue-500", gradient: "from-blue-500 to-blue-600", label: "Registration" },
+                      insurance: { bg: "bg-emerald-500", gradient: "from-emerald-500 to-emerald-600", label: "Insurance" },
+                      warranty: { bg: "bg-violet-500", gradient: "from-violet-500 to-violet-600", label: "Warranty" },
+                      inspection: { bg: "bg-orange-500", gradient: "from-orange-500 to-orange-600", label: "Inspection" },
+                      receipt: { bg: "bg-rose-500", gradient: "from-rose-500 to-rose-600", label: "Receipt" },
+                      manual: { bg: "bg-slate-500", gradient: "from-slate-500 to-slate-600", label: "Manual" },
                     };
-                    const colors = cardColors[doc.type] || { bg: "bg-gray-500", gradient: "from-gray-500 to-gray-600", icon: "bg-gray-400/30", label: doc.type.charAt(0).toUpperCase() + doc.type.slice(1) };
+                    const colors = cardColors[doc.type] || { bg: "bg-gray-500", gradient: "from-gray-500 to-gray-600", label: doc.type.charAt(0).toUpperCase() + doc.type.slice(1) };
+                    const docUrl = `/api/vehicles/${vehicle.id}/documents/${doc.id}`;
                     return (
-                      <div key={doc.id} className="bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow overflow-hidden group">
-                        <div className={`bg-gradient-to-r ${colors.gradient} px-4 pt-4 pb-3`}>
-                          <div className="flex items-start justify-between">
-                            <div className={`w-9 h-9 rounded-full ${colors.icon} flex items-center justify-center backdrop-blur`}>
-                              <FileText className="w-4 h-4 text-white" />
-                            </div>
-                            <span className="text-[10px] font-semibold uppercase tracking-widest text-white/70">{colors.label}</span>
-                          </div>
-                          <p className="text-sm font-semibold text-white mt-2 truncate">{doc.name}</p>
+                      <div key={doc.id} className="bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow overflow-hidden group cursor-pointer"
+                        onClick={() => setViewingDoc(doc)}>
+                        <div className={`bg-gradient-to-r ${colors.gradient} px-4 py-2.5 flex items-center justify-between`}>
+                          <p className="text-sm font-semibold text-white truncate flex-1">{doc.name}</p>
+                          <span className="text-[10px] font-semibold uppercase tracking-widest text-white/70 ml-2 flex-shrink-0">{colors.label}</span>
                         </div>
-                        <div className="px-4 py-3 space-y-2">
+                        <div className="relative bg-muted/20">
+                          {failedImages.has(doc.id) ? (
+                            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+                              <FileText className="w-10 h-10 mb-2" />
+                              <span className="text-xs">Preview not available</span>
+                            </div>
+                          ) : (
+                            <img
+                              src={docUrl}
+                              alt={doc.name}
+                              className="w-full h-44 object-contain bg-white/50 dark:bg-black/20 p-2"
+                              onError={() => setFailedImages((prev) => new Set(prev).add(doc.id))}
+                            />
+                          )}
+                        </div>
+                        <div className="px-4 py-3 space-y-1.5">
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-muted-foreground">Added</span>
                             <span className="text-foreground font-medium">{new Date(doc.createdAt).toLocaleDateString()}</span>
@@ -795,16 +809,16 @@ export default function VehicleDetailPage() {
                             </div>
                           )}
                           {doc.notes && (
-                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{doc.notes}</p>
+                            <p className="text-xs text-muted-foreground line-clamp-2">{doc.notes}</p>
                           )}
                         </div>
                         <div className="px-4 pb-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <a href={`/api/vehicles/${vehicle.id}/documents/${doc.id}`} target="_blank" rel="noopener noreferrer"
+                          <a href={docUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
                             className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
                             <Download className="w-3.5 h-3.5" />
                             Open
                           </a>
-                          <button onClick={() => deleteDocument(doc.id)}
+                          <button onClick={(e) => { e.stopPropagation(); deleteDocument(doc.id); }}
                             className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-medium text-red-600 bg-red-50 dark:bg-red-950/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors">
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -972,6 +986,70 @@ export default function VehicleDetailPage() {
           </div>
         </div>
       </main>
+
+      {viewingDoc && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => { setViewingDoc(null); setFailedImages((prev) => { const next = new Set(prev); next.delete(viewingDoc.id); return next; }); }}>
+          <div className="bg-card rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className={`bg-gradient-to-r ${(() => { const c = { registration: "from-blue-500 to-blue-600", insurance: "from-emerald-500 to-emerald-600", warranty: "from-violet-500 to-violet-600", inspection: "from-orange-500 to-orange-600", receipt: "from-rose-500 to-rose-600", manual: "from-slate-500 to-slate-600" } as Record<string, string>; return c[viewingDoc.type] || "from-gray-500 to-gray-600"; })()} px-6 py-4 flex items-center justify-between sticky top-0 z-10`}>
+              <h3 className="text-lg font-semibold text-white truncate flex-1">{viewingDoc.name}</h3>
+              <button onClick={() => setViewingDoc(null)} className="p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="bg-muted/20 rounded-xl overflow-hidden">
+                <img
+                  src={`/api/vehicles/${vehicle.id}/documents/${viewingDoc.id}`}
+                  alt={viewingDoc.name}
+                  className="w-full max-h-[50vh] object-contain mx-auto"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-muted-foreground block">Type</span>
+                  <span className="font-medium text-foreground">{(() => { const c = { registration: "Registration", insurance: "Insurance", warranty: "Warranty", inspection: "Inspection", receipt: "Receipt", manual: "Manual" } as Record<string, string>; return c[viewingDoc.type] || viewingDoc.type; })()}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground block">Added</span>
+                  <span className="font-medium text-foreground">{new Date(viewingDoc.createdAt).toLocaleDateString()}</span>
+                </div>
+                {viewingDoc.fileSize && (
+                  <div>
+                    <span className="text-muted-foreground block">Size</span>
+                    <span className="font-medium text-foreground">{(viewingDoc.fileSize / 1024).toFixed(0)} KB</span>
+                  </div>
+                )}
+                {viewingDoc.expiryDate && (
+                  <div>
+                    <span className="text-muted-foreground block">Expires</span>
+                    <span className={`font-medium ${new Date(viewingDoc.expiryDate) < new Date() ? "text-red-600" : "text-foreground"}`}>
+                      {new Date(viewingDoc.expiryDate).toLocaleDateString()}
+                      {new Date(viewingDoc.expiryDate) < new Date() && " (Expired)"}
+                    </span>
+                  </div>
+                )}
+              </div>
+              {viewingDoc.notes && (
+                <div>
+                  <span className="text-sm text-muted-foreground block mb-1">Notes</span>
+                  <p className="text-sm text-foreground bg-muted/20 rounded-lg p-3">{viewingDoc.notes}</p>
+                </div>
+              )}
+              <div className="flex gap-3">
+                <a href={`/api/vehicles/${vehicle.id}/documents/${viewingDoc.id}`} target="_blank" rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-opacity">
+                  <Download className="w-4 h-4" />
+                  Open Full Document
+                </a>
+                <button onClick={() => { setViewingDoc(null); }}
+                  className="flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-medium text-foreground bg-muted rounded-xl hover:bg-muted/80 transition-colors">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showDocForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
