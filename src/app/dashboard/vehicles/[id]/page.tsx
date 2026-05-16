@@ -751,22 +751,69 @@ export default function VehicleDetailPage() {
                   No documents yet. Upload insurance, registration, warranty, or receipts.
                 </p>
               ) : (
-                <div className="space-y-2">
+                <div className="grid gap-4 sm:grid-cols-2">
                   {documents.map((doc) => {
                     const isExpired = doc.expiryDate && new Date(doc.expiryDate) < new Date();
                     const expiresSoon = doc.expiryDate && !isExpired && new Date(doc.expiryDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+                    const cardColors: Record<string, { bg: string; gradient: string; icon: string; label: string }> = {
+                      registration: { bg: "bg-blue-500", gradient: "from-blue-500 to-blue-600", icon: "bg-blue-400/30", label: "Registration" },
+                      insurance: { bg: "bg-emerald-500", gradient: "from-emerald-500 to-emerald-600", icon: "bg-emerald-400/30", label: "Insurance" },
+                      warranty: { bg: "bg-violet-500", gradient: "from-violet-500 to-violet-600", icon: "bg-violet-400/30", label: "Warranty" },
+                      inspection: { bg: "bg-orange-500", gradient: "from-orange-500 to-orange-600", icon: "bg-orange-400/30", label: "Inspection" },
+                      receipt: { bg: "bg-rose-500", gradient: "from-rose-500 to-rose-600", icon: "bg-rose-400/30", label: "Receipt" },
+                      manual: { bg: "bg-slate-500", gradient: "from-slate-500 to-slate-600", icon: "bg-slate-400/30", label: "Manual" },
+                    };
+                    const colors = cardColors[doc.type] || { bg: "bg-gray-500", gradient: "from-gray-500 to-gray-600", icon: "bg-gray-400/30", label: doc.type.charAt(0).toUpperCase() + doc.type.slice(1) };
                     return (
-                      <div key={doc.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <FileText className="w-4 h-4 text-primary flex-shrink-0" />
-                          <div className="min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">{doc.name}</p>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              {doc.type !== "other" && doc.type !== "image" && doc.type !== "pdf" && doc.type !== "document" && (
-                                <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
-                                  {doc.type}
-                                </span>
-                              )}
+                      <div key={doc.id} className="bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow overflow-hidden group">
+                        <div className={`bg-gradient-to-r ${colors.gradient} px-4 pt-4 pb-3`}>
+                          <div className="flex items-start justify-between">
+                            <div className={`w-9 h-9 rounded-full ${colors.icon} flex items-center justify-center backdrop-blur`}>
+                              <FileText className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-[10px] font-semibold uppercase tracking-widest text-white/70">{colors.label}</span>
+                          </div>
+                          <p className="text-sm font-semibold text-white mt-2 truncate">{doc.name}</p>
+                        </div>
+                        <div className="px-4 py-3 space-y-2">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-muted-foreground">Added</span>
+                            <span className="text-foreground font-medium">{new Date(doc.createdAt).toLocaleDateString()}</span>
+                          </div>
+                          {doc.fileSize && (
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-muted-foreground">Size</span>
+                              <span className="text-foreground font-medium">{(doc.fileSize / 1024).toFixed(0)} KB</span>
+                            </div>
+                          )}
+                          {doc.expiryDate && (
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-muted-foreground">Expires</span>
+                              <span className={`font-medium ${isExpired ? "text-red-600" : expiresSoon ? "text-amber-600" : "text-foreground"}`}>
+                                {isExpired ? "Expired" : expiresSoon ? "Expiring Soon" : new Date(doc.expiryDate).toLocaleDateString()}
+                              </span>
+                            </div>
+                          )}
+                          {doc.notes && (
+                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{doc.notes}</p>
+                          )}
+                        </div>
+                        <div className="px-4 pb-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer"
+                            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
+                            <Download className="w-3.5 h-3.5" />
+                            Open
+                          </a>
+                          <button onClick={() => deleteDocument(doc.id)}
+                            className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-medium text-red-600 bg-red-50 dark:bg-red-950/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
                               <p className="text-xs text-muted-foreground">
                                 {new Date(doc.createdAt).toLocaleDateString()}
                                 {doc.fileSize && ` • ${(doc.fileSize / 1024).toFixed(0)} KB`}
