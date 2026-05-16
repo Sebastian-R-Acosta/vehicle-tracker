@@ -45,7 +45,7 @@ export async function POST(
   }
 
   const body = await request.json();
-  const { name, type, fileUrl, fileSize } = body;
+  const { name, type, fileUrl, fileSize, expiryDate, notes } = body;
 
   if (!name || !fileUrl) {
     return new NextResponse("Name and fileUrl are required", { status: 400 });
@@ -58,6 +58,8 @@ export async function POST(
       type: type || "other",
       fileUrl,
       fileSize: fileSize || null,
+      expiryDate: expiryDate ? new Date(expiryDate) : null,
+      notes: notes || null,
     },
   });
 

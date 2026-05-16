@@ -131,6 +131,7 @@ export default function VehicleDetailPage() {
   const [docCategory, setDocCategory] = useState("other");
   const [docExpiry, setDocExpiry] = useState("");
   const [docNotes, setDocNotes] = useState("");
+  const [docError, setDocError] = useState("");
   const [docFile, setDocFile] = useState<File | null>(null);
 
   useEffect(() => {
@@ -422,6 +423,13 @@ export default function VehicleDetailPage() {
   const handleDocUpload = async () => {
     if (!docFile) return;
 
+    setDocError("");
+
+    if (docFile.size > 10 * 1024 * 1024) {
+      setDocError("File too large. Maximum size is 10MB.");
+      return;
+    }
+
     setUploadingDoc(true);
     try {
       const base64 = await new Promise<string>((resolve) => {
@@ -442,7 +450,10 @@ export default function VehicleDetailPage() {
         }),
       });
 
-      if (!uploadRes.ok) throw new Error("Upload failed");
+      if (!uploadRes.ok) {
+        const text = await uploadRes.text();
+        throw new Error(text || "Upload failed");
+      }
 
       const { imageUrl } = await uploadRes.json();
 
@@ -459,20 +470,23 @@ export default function VehicleDetailPage() {
         }),
       });
 
+      if (!docRes.ok) throw new Error("Failed to save document metadata");
+
       if (docRes.ok) {
         const newDoc = await docRes.json();
         setDocuments((prev) => [newDoc, ...prev]);
+        setShowDocForm(false);
+        setDocFile(null);
+        setDocName("");
+        setDocCategory("other");
+        setDocExpiry("");
+        setDocNotes("");
       }
-    } catch (err) {
+    } catch (err: any) {
+      setDocError(err.message || "Upload failed. Try a smaller file.");
       console.error("Failed to upload document:", err);
     } finally {
       setUploadingDoc(false);
-      setShowDocForm(false);
-      setDocFile(null);
-      setDocName("");
-      setDocCategory("other");
-      setDocExpiry("");
-      setDocNotes("");
     }
   };
 
@@ -1009,9 +1023,14 @@ export default function VehicleDetailPage() {
                 />
               </div>
             </div>
-            <div className="flex gap-3 mt-6">
+            {docError && (
+              <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-lg mt-4">
+                {docError}
+              </div>
+            )}
+            <div className="flex gap-3 mt-4">
               <button
-                onClick={() => { setShowDocForm(false); setDocFile(null); }}
+                onClick={() => { setShowDocForm(false); setDocFile(null); setDocError(""); }}
                 className="flex-1 px-4 py-2.5 border border-border rounded-lg text-sm hover:bg-accent"
               >
                 Cancel
