@@ -45,16 +45,37 @@ export default function ScanVINPage() {
     setCameraLoading(true);
     setCameraError("");
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
-      });
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const hasEnvironment = devices
+        .filter((d) => d.kind === "videoinput")
+        .some((d) => /back|environment|rear/i.test(d.label));
+
+      const videoConstraints: object = hasEnvironment
+        ? { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } }
+        : { width: { ideal: 1280 }, height: { ideal: 720 } };
+
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints });
       setStream(mediaStream);
       setCameraActive(true);
     } catch (err: unknown) {
-      const msg = err instanceof DOMException && err.name === "NotAllowedError"
-        ? "Camera permission denied. Type the VIN manually below."
-        : "Camera access denied or unavailable on this device.";
-      setCameraError(msg);
+      if (err instanceof DOMException && err.name === "NotAllowedError") {
+        setCameraError(
+          "Camera permission was blocked in your browser settings. " +
+          "Go to your browser's site settings, allow camera access, then reload. " +
+          "Or type the VIN manually below."
+        );
+      } else if (err instanceof DOMException && err.name === "OverconstrainedError") {
+        try {
+          const fallback = await navigator.mediaDevices.getUserMedia({ video: true });
+          setStream(fallback);
+          setCameraActive(true);
+          return;
+        } catch {
+          setCameraError("No camera found. Type the VIN manually below.");
+        }
+      } else {
+        setCameraError("Camera access denied or unavailable on this device.");
+      }
     } finally {
       setCameraLoading(false);
     }

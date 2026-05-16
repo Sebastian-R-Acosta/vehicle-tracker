@@ -5,3 +5,10 @@
 .env.production
 .env.vercel
 !.env.example
+
+# Debug scripts
+*.js
+!jest.config.ts
+!next.config.mjs
+dev-server*.log
+
