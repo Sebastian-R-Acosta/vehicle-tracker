@@ -799,7 +799,7 @@ export default function VehicleDetailPage() {
                           )}
                         </div>
                         <div className="px-4 pb-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer"
+                          <a href={`/api/vehicles/${vehicle.id}/documents/${doc.id}`} target="_blank" rel="noopener noreferrer"
                             className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
                             <Download className="w-3.5 h-3.5" />
                             Open
