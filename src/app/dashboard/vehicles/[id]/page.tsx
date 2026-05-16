@@ -61,6 +61,7 @@ interface VehicleDocument {
   name: string;
   type: string;
   fileUrl: string;
+  signedUrl: string | null;
   fileSize: number | null;
   expiryDate: string | null;
   notes: string | null;
@@ -134,7 +135,6 @@ export default function VehicleDetailPage() {
   const [docError, setDocError] = useState("");
   const [docFile, setDocFile] = useState<File | null>(null);
   const [viewingDoc, setViewingDoc] = useState<VehicleDocument | null>(null);
-  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -754,75 +754,70 @@ export default function VehicleDetailPage() {
                 </p>
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {documents.map((doc) => {
+                  {documents.map((doc, idx) => {
                     const isExpired = doc.expiryDate && new Date(doc.expiryDate) < new Date();
                     const expiresSoon = doc.expiryDate && !isExpired && new Date(doc.expiryDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-                    const cardColors: Record<string, { bg: string; gradient: string; label: string }> = {
-                      registration: { bg: "bg-blue-500", gradient: "from-blue-500 to-blue-600", label: "Registration" },
-                      insurance: { bg: "bg-emerald-500", gradient: "from-emerald-500 to-emerald-600", label: "Insurance" },
-                      warranty: { bg: "bg-violet-500", gradient: "from-violet-500 to-violet-600", label: "Warranty" },
-                      inspection: { bg: "bg-orange-500", gradient: "from-orange-500 to-orange-600", label: "Inspection" },
-                      receipt: { bg: "bg-rose-500", gradient: "from-rose-500 to-rose-600", label: "Receipt" },
-                      manual: { bg: "bg-slate-500", gradient: "from-slate-500 to-slate-600", label: "Manual" },
+                    const cardColors: Record<string, { gradient: string; label: string }> = {
+                      registration: { gradient: "from-blue-500 via-blue-600 to-blue-700", label: "Registration" },
+                      insurance: { gradient: "from-emerald-500 via-emerald-600 to-emerald-700", label: "Insurance" },
+                      warranty: { gradient: "from-violet-500 via-violet-600 to-violet-700", label: "Warranty" },
+                      inspection: { gradient: "from-orange-500 via-orange-600 to-orange-700", label: "Inspection" },
+                      receipt: { gradient: "from-rose-500 via-rose-600 to-rose-700", label: "Receipt" },
+                      manual: { gradient: "from-slate-500 via-slate-600 to-slate-700", label: "Manual" },
                     };
-                    const colors = cardColors[doc.type] || { bg: "bg-gray-500", gradient: "from-gray-500 to-gray-600", label: doc.type.charAt(0).toUpperCase() + doc.type.slice(1) };
-                    const docUrl = `/api/vehicles/${vehicle.id}/documents/${doc.id}`;
+                    const colors = cardColors[doc.type] || { gradient: "from-gray-500 via-gray-600 to-gray-700", label: doc.type.charAt(0).toUpperCase() + doc.type.slice(1) };
+                    const docUrl = doc.signedUrl || `/api/vehicles/${vehicle.id}/documents/${doc.id}`;
                     return (
-                      <div key={doc.id} className="bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow overflow-hidden group cursor-pointer"
+                      <div key={doc.id} className="group relative bg-card rounded-2xl border border-border/50 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
+                        style={{ animationDelay: `${idx * 80}ms` }}
                         onClick={() => setViewingDoc(doc)}>
-                        <div className={`bg-gradient-to-r ${colors.gradient} px-4 py-2.5 flex items-center justify-between`}>
-                          <p className="text-sm font-semibold text-white truncate flex-1">{doc.name}</p>
-                          <span className="text-[10px] font-semibold uppercase tracking-widest text-white/70 ml-2 flex-shrink-0">{colors.label}</span>
-                        </div>
-                        <div className="relative bg-muted/20">
-                          {failedImages.has(doc.id) ? (
-                            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-                              <FileText className="w-10 h-10 mb-2" />
-                              <span className="text-xs">Preview not available</span>
-                            </div>
-                          ) : (
+                        <div className={`relative h-48 bg-gradient-to-br ${colors.gradient}`}>
+                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)] opacity-20" />
+                          {doc.signedUrl && (
                             <img
-                              src={docUrl}
+                              src={doc.signedUrl}
                               alt={doc.name}
-                              className="w-full h-44 object-contain bg-white/50 dark:bg-black/20 p-2"
-                              onError={() => setFailedImages((prev) => new Set(prev).add(doc.id))}
+                              className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-500"
+                              loading="lazy"
                             />
                           )}
-                        </div>
-                        <div className="px-4 py-3 space-y-1.5">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">Added</span>
-                            <span className="text-foreground font-medium">{new Date(doc.createdAt).toLocaleDateString()}</span>
+                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent h-24" />
+                          <div className="absolute top-3 right-3">
+                            <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white bg-white/20 backdrop-blur-md rounded-full">
+                              {colors.label}
+                            </span>
                           </div>
-                          {doc.fileSize && (
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-muted-foreground">Size</span>
-                              <span className="text-foreground font-medium">{(doc.fileSize / 1024).toFixed(0)} KB</span>
-                            </div>
-                          )}
-                          {doc.expiryDate && (
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-muted-foreground">Expires</span>
-                              <span className={`font-medium ${isExpired ? "text-red-600" : expiresSoon ? "text-amber-600" : "text-foreground"}`}>
-                                {isExpired ? "Expired" : expiresSoon ? "Expiring Soon" : new Date(doc.expiryDate).toLocaleDateString()}
+                          <div className="absolute bottom-3 left-4 right-4">
+                            <p className="text-sm font-bold text-white truncate drop-shadow-sm">{doc.name}</p>
+                          </div>
+                        </div>
+                        <div className="px-4 py-3 flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
+                            {doc.fileSize && <span>• {(doc.fileSize / 1024).toFixed(0)} KB</span>}
+                            {doc.expiryDate && (
+                              <span className={`${isExpired ? "text-red-500" : expiresSoon ? "text-amber-500" : "text-muted-foreground"}`}>
+                                • {isExpired ? "Expired" : expiresSoon ? "Expiring" : new Date(doc.expiryDate).toLocaleDateString()}
                               </span>
-                            </div>
-                          )}
-                          {doc.notes && (
-                            <p className="text-xs text-muted-foreground line-clamp-2">{doc.notes}</p>
-                          )}
+                            )}
+                          </div>
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
+                            <a href={docUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+                              className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors">
+                              <Download className="w-3.5 h-3.5" />
+                            </a>
+                            <button onClick={(e) => { e.stopPropagation(); deleteDocument(doc.id); }}
+                              className="p-1.5 rounded-lg bg-red-50 dark:bg-red-950/30 text-red-500 hover:bg-red-500 hover:text-white transition-colors">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
-                        <div className="px-4 pb-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <a href={docUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
-                            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
-                            <Download className="w-3.5 h-3.5" />
-                            Open
-                          </a>
-                          <button onClick={(e) => { e.stopPropagation(); deleteDocument(doc.id); }}
-                            className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-medium text-red-600 bg-red-50 dark:bg-red-950/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors">
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
+                        {doc.notes && (
+                          <div className="px-4 pb-3">
+                            <p className="text-[11px] text-muted-foreground/70 italic line-clamp-1">{doc.notes}</p>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 ring-1 ring-inset ring-white/10 group-hover:ring-primary/20 rounded-2xl transition-all duration-300 pointer-events-none" />
                       </div>
                     );
                   })}
@@ -988,61 +983,65 @@ export default function VehicleDetailPage() {
       </main>
 
       {viewingDoc && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => { setViewingDoc(null); setFailedImages((prev) => { const next = new Set(prev); next.delete(viewingDoc.id); return next; }); }}>
-          <div className="bg-card rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <div className={`bg-gradient-to-r ${(() => { const c = { registration: "from-blue-500 to-blue-600", insurance: "from-emerald-500 to-emerald-600", warranty: "from-violet-500 to-violet-600", inspection: "from-orange-500 to-orange-600", receipt: "from-rose-500 to-rose-600", manual: "from-slate-500 to-slate-600" } as Record<string, string>; return c[viewingDoc.type] || "from-gray-500 to-gray-600"; })()} px-6 py-4 flex items-center justify-between sticky top-0 z-10`}>
-              <h3 className="text-lg font-semibold text-white truncate flex-1">{viewingDoc.name}</h3>
-              <button onClick={() => setViewingDoc(null)} className="p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
-                <X className="w-5 h-5 text-white" />
-              </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setViewingDoc(null)}>
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <div className="relative bg-card rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/10 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+            <div className={`relative bg-gradient-to-br ${(() => { const c = { registration: "from-blue-500 via-blue-600 to-blue-700", insurance: "from-emerald-500 via-emerald-600 to-emerald-700", warranty: "from-violet-500 via-violet-600 to-violet-700", inspection: "from-orange-500 via-orange-600 to-orange-700", receipt: "from-rose-500 via-rose-600 to-rose-700", manual: "from-slate-500 via-slate-600 to-slate-700" } as Record<string, string>; return c[viewingDoc.type] || "from-gray-500 via-gray-600 to-gray-700"; })()} px-6 py-5 sticky top-0 z-10`}>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)] opacity-20" />
+              <div className="relative flex items-center justify-between">
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-white/60">
+                    {(() => { const c = { registration: "Registration", insurance: "Insurance", warranty: "Warranty", inspection: "Inspection", receipt: "Receipt", manual: "Manual" } as Record<string, string>; return c[viewingDoc.type] || viewingDoc.type; })()}
+                  </p>
+                  <h3 className="text-lg font-bold text-white truncate mt-0.5">{viewingDoc.name}</h3>
+                </div>
+                <button onClick={() => setViewingDoc(null)} className="p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors flex-shrink-0 ml-4">
+                  <X className="w-5 h-5 text-white" />
+                </button>
+              </div>
             </div>
-            <div className="p-6 space-y-6">
-              <div className="bg-muted/20 rounded-xl overflow-hidden">
+            <div className="p-6 space-y-5">
+              <div className="bg-muted/10 rounded-2xl overflow-hidden border border-border/50">
                 <img
-                  src={`/api/vehicles/${vehicle.id}/documents/${viewingDoc.id}`}
+                  src={viewingDoc.signedUrl || `/api/vehicles/${vehicle.id}/documents/${viewingDoc.id}`}
                   alt={viewingDoc.name}
-                  className="w-full max-h-[50vh] object-contain mx-auto"
+                  className="w-full max-h-[55vh] object-contain mx-auto"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-muted-foreground block">Type</span>
-                  <span className="font-medium text-foreground">{(() => { const c = { registration: "Registration", insurance: "Insurance", warranty: "Warranty", inspection: "Inspection", receipt: "Receipt", manual: "Manual" } as Record<string, string>; return c[viewingDoc.type] || viewingDoc.type; })()}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground block">Added</span>
-                  <span className="font-medium text-foreground">{new Date(viewingDoc.createdAt).toLocaleDateString()}</span>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-muted/10 rounded-xl p-3">
+                  <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Added</p>
+                  <p className="text-sm font-semibold text-foreground mt-0.5">{new Date(viewingDoc.createdAt).toLocaleDateString()}</p>
                 </div>
                 {viewingDoc.fileSize && (
-                  <div>
-                    <span className="text-muted-foreground block">Size</span>
-                    <span className="font-medium text-foreground">{(viewingDoc.fileSize / 1024).toFixed(0)} KB</span>
+                  <div className="bg-muted/10 rounded-xl p-3">
+                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Size</p>
+                    <p className="text-sm font-semibold text-foreground mt-0.5">{(viewingDoc.fileSize / 1024).toFixed(0)} KB</p>
                   </div>
                 )}
                 {viewingDoc.expiryDate && (
-                  <div>
-                    <span className="text-muted-foreground block">Expires</span>
-                    <span className={`font-medium ${new Date(viewingDoc.expiryDate) < new Date() ? "text-red-600" : "text-foreground"}`}>
+                  <div className="bg-muted/10 rounded-xl p-3">
+                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Expires</p>
+                    <p className={`text-sm font-semibold mt-0.5 ${new Date(viewingDoc.expiryDate) < new Date() ? "text-red-500" : "text-foreground"}`}>
                       {new Date(viewingDoc.expiryDate).toLocaleDateString()}
-                      {new Date(viewingDoc.expiryDate) < new Date() && " (Expired)"}
-                    </span>
+                    </p>
                   </div>
                 )}
               </div>
               {viewingDoc.notes && (
                 <div>
-                  <span className="text-sm text-muted-foreground block mb-1">Notes</span>
-                  <p className="text-sm text-foreground bg-muted/20 rounded-lg p-3">{viewingDoc.notes}</p>
+                  <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mb-1.5">Notes</p>
+                  <p className="text-sm text-foreground/80 bg-muted/10 rounded-xl p-3 leading-relaxed">{viewingDoc.notes}</p>
                 </div>
               )}
-              <div className="flex gap-3">
-                <a href={`/api/vehicles/${vehicle.id}/documents/${viewingDoc.id}`} target="_blank" rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-opacity">
+              <div className="flex gap-3 pt-1">
+                <a href={viewingDoc.signedUrl || `/api/vehicles/${vehicle.id}/documents/${viewingDoc.id}`} target="_blank" rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-semibold bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-primary/25">
                   <Download className="w-4 h-4" />
                   Open Full Document
                 </a>
-                <button onClick={() => { setViewingDoc(null); }}
-                  className="flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-medium text-foreground bg-muted rounded-xl hover:bg-muted/80 transition-colors">
+                <button onClick={() => setViewingDoc(null)}
+                  className="flex items-center justify-center gap-2 py-3 px-5 text-sm font-medium text-foreground bg-muted/20 hover:bg-muted/40 rounded-xl transition-colors border border-border/50">
                   Close
                 </button>
               </div>

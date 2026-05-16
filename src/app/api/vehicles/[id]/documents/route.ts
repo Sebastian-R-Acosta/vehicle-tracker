@@ -1,6 +1,16 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION || "us-east-2",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
 
 export async function GET(
   request: Request,
@@ -24,7 +34,23 @@ export async function GET(
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json(docs);
+  const docsWithUrls = await Promise.all(docs.map(async (doc) => {
+    const s3Key = doc.fileUrl.split(".amazonaws.com/")[1];
+    if (!s3Key) return { ...doc, signedUrl: null };
+
+    try {
+      const command = new GetObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET!,
+        Key: s3Key,
+      });
+      const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 7200 });
+      return { ...doc, signedUrl };
+    } catch {
+      return { ...doc, signedUrl: null };
+    }
+  }));
+
+  return NextResponse.json(docsWithUrls);
 }
 
 export async function POST(
