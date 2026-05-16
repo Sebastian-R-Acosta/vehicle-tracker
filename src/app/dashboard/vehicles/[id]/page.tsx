@@ -814,43 +814,6 @@ export default function VehicleDetailPage() {
                   })}
                 </div>
               )}
-                              <p className="text-xs text-muted-foreground">
-                                {new Date(doc.createdAt).toLocaleDateString()}
-                                {doc.fileSize && ` • ${(doc.fileSize / 1024).toFixed(0)} KB`}
-                              </p>
-                              {doc.expiryDate && (
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                                  isExpired ? "bg-red-100 text-red-700" :
-                                  expiresSoon ? "bg-amber-100 text-amber-700" :
-                                  "bg-green-100 text-green-700"
-                                }`}>
-                                  {isExpired ? "Expired" : expiresSoon ? "Expiring Soon" : `Exp: ${new Date(doc.expiryDate).toLocaleDateString()}`}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1 flex-shrink-0">
-                          <a
-                            href={doc.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 text-muted-foreground hover:text-foreground"
-                          >
-                            <Download className="w-4 h-4" />
-                          </a>
-                          <button
-                            onClick={() => deleteDocument(doc.id)}
-                            className="p-2 text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
             </div>
           </div>
 
