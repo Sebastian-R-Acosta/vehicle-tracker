@@ -7,6 +7,7 @@ import {
   Plus, Loader2, Building2, Star, Phone, MapPin, Search, Filter,
 } from "lucide-react";
 import Link from "next/link";
+import { useFetch } from "@/lib/queries";
 
 interface Review {
   id: string;
@@ -46,10 +47,15 @@ function avgRating(reviews: Review[]): number {
 export default function ServiceProvidersPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [providers, setProviders] = useState<ServiceProvider[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+
+  const orgId = session?.user?.currentOrganizationId || "";
+  const { data: providers = [], isLoading } = useFetch<ServiceProvider[]>(
+    ["service-providers", orgId, categoryFilter],
+    `/api/service-providers?organizationId=${orgId}${categoryFilter ? `&category=${categoryFilter}` : ""}`,
+    { enabled: !!session?.user?.currentOrganizationId },
+  );
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -57,42 +63,11 @@ export default function ServiceProvidersPage() {
     }
   }, [status, router]);
 
-  useEffect(() => {
-    if (session?.user?.currentOrganizationId) {
-      fetchProviders();
-    } else {
-      setLoading(false);
-    }
-  }, [session]);
-
-  const fetchProviders = async () => {
-    try {
-      const params = new URLSearchParams({
-        organizationId: session?.user?.currentOrganizationId ?? "",
-      });
-      if (categoryFilter) params.set("category", categoryFilter);
-      const res = await fetch(`/api/service-providers?${params}`);
-      if (res.ok) {
-        setProviders(await res.json());
-      }
-    } catch (err) {
-      console.error("Failed to fetch providers:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (session?.user?.currentOrganizationId) {
-      fetchProviders();
-    }
-  }, [categoryFilter]);
-
   const filtered = providers.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase()),
   );
 
-  if (status === "loading" || loading) {
+  if (status === "loading" || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />

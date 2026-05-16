@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import {
   Car,
@@ -27,6 +27,9 @@ import {
   TrendingDown,
   Minus,
 } from "lucide-react";
+import { useFetch } from "@/lib/queries";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import toast from "react-hot-toast";
 
 interface MaintenanceRecord {
   id: string;
@@ -113,8 +116,6 @@ export default function VehicleDetailPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
-  const [loading, setLoading] = useState(true);
   const [generatingReport, setGeneratingReport] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -136,33 +137,23 @@ export default function VehicleDetailPage() {
   const [docFile, setDocFile] = useState<File | null>(null);
   const [viewingDoc, setViewingDoc] = useState<VehicleDocument | null>(null);
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
+  const vehicleId = Array.isArray(params.id) ? params.id[0] : params.id;
 
-  useEffect(() => {
-    if (session?.user && params.id) {
-      fetchVehicle();
-    }
-  }, [session, params.id]);
+  const { data: vehicle, isLoading } = useFetch<Vehicle>(
+    ["vehicle", vehicleId],
+    `/api/vehicles/${vehicleId}`,
+    { enabled: status === "authenticated" && !!vehicleId }
+  );
 
-  const fetchVehicle = async () => {
-    try {
-      const res = await fetch(`/api/vehicles/${params.id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setVehicle(data);
-      } else {
-        router.push("/dashboard");
-      }
-    } catch (err) {
-      console.error("Failed to fetch vehicle:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (status === "unauthenticated") {
+    router.push("/login");
+    return null;
+  }
+
+  if (!isLoading && !vehicle) {
+    router.push("/dashboard");
+    return null;
+  }
 
   const fetchRecalls = useCallback(async () => {
     if (!vehicle?.vin) return;
@@ -214,14 +205,15 @@ export default function VehicleDetailPage() {
         method: "DELETE",
       });
       if (res.ok) {
+        toast.success("Vehicle deleted");
         router.push("/dashboard");
+      } else {
+        toast.error("Failed to delete vehicle");
       }
     } catch (err) {
-      console.error("Failed to delete vehicle:", err);
+      toast.error("Failed to delete vehicle");
     }
   };
-
-  const vehicleId = Array.isArray(params.id) ? params.id[0] : params.id;
 
   const serviceTypes = [
     "Oil Change", "Tire Rotation", "Brake Service", "Air Filter",
@@ -483,6 +475,7 @@ export default function VehicleDetailPage() {
         setDocCategory("other");
         setDocExpiry("");
         setDocNotes("");
+        toast.success("Document uploaded");
       }
     } catch (err: any) {
       setDocError(err.message || "Upload failed. Try a smaller file.");
@@ -494,14 +487,17 @@ export default function VehicleDetailPage() {
 
   const deleteDocument = async (docId: string) => {
     try {
-      await fetch(`/api/vehicles/${vehicleId}/documents/${docId}`, { method: "DELETE" });
-      setDocuments((prev) => prev.filter((d) => d.id !== docId));
+      const res = await fetch(`/api/vehicles/${vehicleId}/documents/${docId}`, { method: "DELETE" });
+      if (res.ok) {
+        setDocuments((prev) => prev.filter((d) => d.id !== docId));
+        toast.success("Document deleted");
+      }
     } catch (err) {
-      console.error("Failed to delete document:", err);
+      toast.error("Failed to delete document");
     }
   };
 
-  if (status === "loading" || loading || !vehicle) {
+  if (status === "loading" || isLoading || !vehicle) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
@@ -1135,29 +1131,18 @@ export default function VehicleDetailPage() {
       )}
 
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-card rounded-lg p-6 max-w-md mx-4 border border-border">
-            <h2 className="text-lg font-semibold mb-4 text-foreground">Delete Vehicle</h2>
-            <p className="text-muted-foreground mb-6">
-              Are you sure you want to delete this vehicle? This will also delete all
-              maintenance records, reminders, and documents. This action cannot be undone.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="flex-1 px-4 py-3 border border-input rounded-lg hover:bg-accent"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDelete}
-                className="flex-1 px-4 py-3 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          open={showDeleteModal}
+          title="Delete Vehicle"
+          message="Are you sure you want to delete this vehicle? This will also delete all maintenance records, reminders, and documents. This action cannot be undone."
+          confirmLabel="Delete"
+          variant="danger"
+          onConfirm={async () => {
+            await handleDelete();
+            setShowDeleteModal(false);
+          }}
+          onCancel={() => setShowDeleteModal(false)}
+        />
       )}
 
       {selectedImage && (

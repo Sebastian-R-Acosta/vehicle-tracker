@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Package, Plus, Search, Filter, Loader2, AlertTriangle, PackageOpen } from "lucide-react";
 import Link from "next/link";
+import { useFetch } from "@/lib/queries";
 
 interface VehicleRef {
   id: string;
@@ -28,11 +29,16 @@ interface Part {
 export default function PartsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [parts, setParts] = useState<Part[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
+
+  const orgId = session?.user?.currentOrganizationId || "";
+  const { data: parts = [], isLoading } = useFetch<Part[]>(
+    ["parts", orgId, categoryFilter],
+    `/api/parts?organizationId=${orgId}${categoryFilter ? `&category=${categoryFilter}` : ""}`,
+    { enabled: !!session?.user?.currentOrganizationId }
+  );
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -42,33 +48,9 @@ export default function PartsPage() {
 
   useEffect(() => {
     if (session?.user?.currentOrganizationId) {
-      fetchParts();
       fetchCategories();
-    } else {
-      setLoading(false);
     }
   }, [session]);
-
-  useEffect(() => {
-    if (session?.user?.currentOrganizationId) {
-      fetchParts();
-    }
-  }, [categoryFilter]);
-
-  const fetchParts = async () => {
-    try {
-      const url = new URL("/api/parts", window.location.origin);
-      if (categoryFilter) url.searchParams.set("category", categoryFilter);
-      const res = await fetch(url.toString());
-      if (res.ok) {
-        setParts(await res.json());
-      }
-    } catch (err) {
-      console.error("Failed to fetch parts:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fetchCategories = async () => {
     try {
@@ -89,7 +71,7 @@ export default function PartsPage() {
 
   const lowStockCount = parts.filter((p) => p.quantity < p.minStock).length;
 
-  if (status === "loading" || loading) {
+  if (status === "loading" || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -232,7 +214,7 @@ export default function PartsPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-muted-foreground">
-                          {part.partNumber || "—"}
+                          {part.partNumber || "\u2014"}
                         </td>
                         <td className="px-6 py-4">
                           <span className="px-2 py-1 text-xs font-medium rounded-full bg-secondary text-secondary-foreground">
@@ -247,7 +229,7 @@ export default function PartsPage() {
                         <td className="px-6 py-4 text-muted-foreground">{part.minStock}</td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">{part.supplier || "—"}</span>
+                            <span className="text-muted-foreground">{part.supplier || "\u2014"}</span>
                             {isLowStock && (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
                                 <AlertTriangle className="w-3 h-3" />

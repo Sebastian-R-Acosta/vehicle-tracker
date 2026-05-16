@@ -2,9 +2,10 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Plus, Loader2, Users, Search, CheckCircle, XCircle, Mail, Phone, BadgeCheck } from "lucide-react";
+import { useFetch } from "@/lib/queries";
 
 interface Driver {
   id: string;
@@ -18,36 +19,19 @@ interface Driver {
 export default function DriversPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
+  const orgId = session?.user?.currentOrganizationId || "";
+  const { data: drivers = [], isLoading } = useFetch<Driver[]>(
+    ["drivers", orgId],
+    `/api/drivers?organizationId=${orgId}`,
+    { enabled: !!session?.user?.currentOrganizationId }
+  );
 
-  useEffect(() => {
-    if (session?.user?.currentOrganizationId) {
-      fetchDrivers();
-    } else if (status !== "loading") {
-      setLoading(false);
-    }
-  }, [session, status]);
-
-  const fetchDrivers = async () => {
-    try {
-      const res = await fetch(`/api/drivers?organizationId=${session?.user?.currentOrganizationId}`);
-      if (res.ok) {
-        setDrivers(await res.json());
-      }
-    } catch (err) {
-      console.error("Failed to fetch drivers:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (status === "unauthenticated") {
+    router.push("/login");
+    return null;
+  }
 
   const filteredDrivers = drivers.filter((d) =>
     d.name.toLowerCase().includes(search.toLowerCase())
@@ -56,7 +40,7 @@ export default function DriversPage() {
   const totalDrivers = drivers.length;
   const activeDrivers = drivers.filter((d) => d.isActive).length;
 
-  if (status === "loading" || loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-32">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />

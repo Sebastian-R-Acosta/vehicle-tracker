@@ -2,10 +2,9 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
-  Car,
   Bell,
   Check,
   CheckCircle,
@@ -13,8 +12,11 @@ import {
   ArrowLeft,
   Loader2,
   Plus,
+  Search,
   Trash2,
 } from "lucide-react";
+import { useFetch } from "@/lib/queries";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Reminder {
   id: string;
@@ -34,34 +36,35 @@ interface Reminder {
 export default function RemindersPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [reminders, setReminders] = useState<Reminder[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (session?.user) {
-      fetchReminders();
-    }
-  }, [session]);
+  const { data: reminders = [], isLoading } = useFetch<Reminder[]>(
+    ["reminders"],
+    "/api/reminders",
+    { enabled: status === "authenticated" }
+  );
 
-  const fetchReminders = async () => {
-    try {
-      const res = await fetch("/api/reminders");
-      if (res.ok) {
-        const data = await res.json();
-        setReminders(data);
-      }
-    } catch (err) {
-      console.error("Failed to fetch reminders:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (status === "unauthenticated") {
+    router.push("/login");
+    return null;
+  }
+
+  if (status === "loading" || isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  const filteredReminders = reminders.filter((r) =>
+    r.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const activeReminders = filteredReminders.filter((r) => !r.isCompleted);
+  const completedReminders = filteredReminders.filter((r) => r.isCompleted);
 
   const toggleComplete = async (id: string) => {
     try {
@@ -69,7 +72,7 @@ export default function RemindersPage() {
         method: "POST",
       });
       if (res.ok) {
-        fetchReminders();
+        queryClient.invalidateQueries({ queryKey: ["reminders"] });
       }
     } catch (err) {
       console.error("Failed to toggle reminder:", err);
@@ -82,23 +85,12 @@ export default function RemindersPage() {
         method: "DELETE",
       });
       if (res.ok) {
-        fetchReminders();
+        queryClient.invalidateQueries({ queryKey: ["reminders"] });
       }
     } catch (err) {
       console.error("Failed to delete reminder:", err);
     }
   };
-
-  if (status === "loading" || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
-
-  const activeReminders = reminders.filter((r) => !r.isCompleted);
-  const completedReminders = reminders.filter((r) => r.isCompleted);
 
   const isOverdue = (reminder: Reminder) => {
     if (reminder.dueDate && new Date(reminder.dueDate) < new Date()) {
@@ -137,20 +129,35 @@ export default function RemindersPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-2xl font-bold mb-8 text-foreground">Reminders</h1>
 
-        {reminders.length === 0 ? (
+        <div className="relative mb-6">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search reminders by title..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+          />
+        </div>
+
+        {filteredReminders.length === 0 ? (
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <Bell className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-lg font-medium mb-2 text-foreground">No reminders yet</h2>
+            <h2 className="text-lg font-medium mb-2 text-foreground">
+              {search ? "No reminders match your search" : "No reminders yet"}
+            </h2>
             <p className="text-muted-foreground mb-4">
-              Set reminders for maintenance and services
+              {search ? "Try a different title" : "Set reminders for maintenance and services"}
             </p>
-            <Link
-              href="/dashboard/reminders/new"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
-            >
-              <Plus className="w-4 h-4" />
-              New Reminder
-            </Link>
+            {!search && (
+              <Link
+                href="/dashboard/reminders/new"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
+              >
+                <Plus className="w-4 h-4" />
+                New Reminder
+              </Link>
+            )}
           </div>
         ) : (
           <div className="space-y-8">
