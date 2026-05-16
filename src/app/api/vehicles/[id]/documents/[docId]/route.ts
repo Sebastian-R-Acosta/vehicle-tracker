@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION || "us-east-2",
@@ -34,15 +33,30 @@ export async function GET(
     return NextResponse.redirect(doc.fileUrl);
   }
 
-  const command = new GetObjectCommand({
-    Bucket: process.env.AWS_S3_BUCKET!,
-    Key: s3Key,
-    ResponseContentDisposition: `inline; filename="${doc.name}"`,
-  });
+  try {
+    const command = new GetObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET!,
+      Key: s3Key,
+    });
 
-  const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+    const s3Response = await s3Client.send(command);
 
-  return NextResponse.redirect(presignedUrl);
+    const body = await s3Response.Body?.transformToByteArray();
+    if (!body) {
+      return new NextResponse("Empty document", { status: 500 });
+    }
+
+    return new NextResponse(Buffer.from(body), {
+      headers: {
+        "Content-Type": s3Response.ContentType || "application/octet-stream",
+        "Content-Length": String(s3Response.ContentLength || body.length),
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    });
+  } catch (error) {
+    console.error("Failed to fetch document from S3:", error);
+    return new NextResponse("Failed to fetch document", { status: 500 });
+  }
 }
 
 export async function DELETE(
