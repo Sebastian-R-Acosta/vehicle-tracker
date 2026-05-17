@@ -13,18 +13,6 @@ export default function ScanVINPage() {
   const [manualVin, setManualVin] = useState("");
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraLoading, setCameraLoading] = useState(false);
-  const [hasCamera, setHasCamera] = useState(true);
-
-  useEffect(() => {
-    if (!navigator.mediaDevices?.enumerateDevices) {
-      setHasCamera(false);
-      return;
-    }
-    navigator.mediaDevices.enumerateDevices().then((devices) => {
-      const has = devices.some((d) => d.kind === "videoinput");
-      setHasCamera(has);
-    });
-  }, []);
 
   useEffect(() => {
     if (videoRef.current && stream) {
@@ -45,36 +33,23 @@ export default function ScanVINPage() {
     setCameraLoading(true);
     setCameraError("");
     try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const hasEnvironment = devices
-        .filter((d) => d.kind === "videoinput")
-        .some((d) => /back|environment|rear/i.test(d.label));
-
-      const videoConstraints: object = hasEnvironment
-        ? { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } }
-        : { width: { ideal: 1280 }, height: { ideal: 720 } };
-
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints });
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+      });
       setStream(mediaStream);
       setCameraActive(true);
-    } catch (err: unknown) {
-      if (err instanceof DOMException && err.name === "NotAllowedError") {
-        setCameraError(
-          "Camera permission was blocked in your browser settings. " +
-          "Go to your browser's site settings, allow camera access, then reload. " +
-          "Or type the VIN manually below."
-        );
-      } else if (err instanceof DOMException && err.name === "OverconstrainedError") {
-        try {
-          const fallback = await navigator.mediaDevices.getUserMedia({ video: true });
-          setStream(fallback);
-          setCameraActive(true);
-          return;
-        } catch {
-          setCameraError("No camera found. Type the VIN manually below.");
-        }
-      } else {
-        setCameraError("Camera access denied or unavailable on this device.");
+    } catch {
+      try {
+        const fallback = await navigator.mediaDevices.getUserMedia({ video: true });
+        setStream(fallback);
+        setCameraActive(true);
+        return;
+      } catch {
+        setCameraError("Camera unavailable. Type the VIN manually below.");
       }
     } finally {
       setCameraLoading(false);
@@ -140,26 +115,24 @@ export default function ScanVINPage() {
             </form>
           </div>
 
-          {hasCamera && (
-            <div className="border-t border-border pt-6">
+          <div className="border-t border-border pt-6">
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-3">
+                Or use your camera to scan the VIN barcode
+              </p>
               {!cameraActive ? (
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Or use your camera to scan the VIN barcode
-                  </p>
-                  <button
-                    onClick={startCamera}
-                    disabled={cameraLoading}
-                    className="inline-flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-                  >
-                    {cameraLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Camera className="w-4 h-4" />
-                    )}
-                    {cameraLoading ? "Requesting Camera..." : "Open Camera"}
-                  </button>
-                </div>
+                <button
+                  onClick={startCamera}
+                  disabled={cameraLoading}
+                  className="inline-flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {cameraLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Camera className="w-4 h-4" />
+                  )}
+                  {cameraLoading ? "Requesting Camera..." : "Open Camera"}
+                </button>
               ) : (
                 <div>
                   <div className="relative mb-4 rounded-lg overflow-hidden bg-black" style={{ minHeight: 240 }}>
@@ -180,14 +153,14 @@ export default function ScanVINPage() {
                   </button>
                 </div>
               )}
-
-              {cameraError && (
-                <div className="mt-4 p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
-                  {cameraError}
-                </div>
-              )}
             </div>
-          )}
+
+            {cameraError && (
+              <div className="mt-4 p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
+                {cameraError}
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>
