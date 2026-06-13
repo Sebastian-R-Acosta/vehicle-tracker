@@ -4,6 +4,10 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Seed script cannot be executed in production');
+  }
+
   const hashedPassword = await bcrypt.hash('demo123', 10);
 
   const user = await prisma.user.upsert({

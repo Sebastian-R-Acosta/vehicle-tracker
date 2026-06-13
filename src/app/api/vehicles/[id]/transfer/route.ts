@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { randomBytes } from "crypto";
 
 export async function POST(
   request: Request,
@@ -23,7 +24,7 @@ export async function POST(
     return new NextResponse("Vehicle not found", { status: 404 });
   }
 
-  const code = Math.random().toString(36).substring(2, 10).toUpperCase();
+  const code = randomBytes(6).toString("hex").toUpperCase();
 
   const transferCode = await prisma.transferCode.create({
     data: {

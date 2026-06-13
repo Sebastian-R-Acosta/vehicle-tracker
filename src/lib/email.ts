@@ -3,6 +3,10 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const fromEmail = "Vehicle Tracker <onboarding@resend.dev>";
 
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 interface VehicleReminder {
   id: string;
   title: string;
@@ -98,7 +102,7 @@ export async function sendMaintenanceConfirmation(
             <span class="label">Mileage</span>
             <span class="value">${maintenance.mileage.toLocaleString()} mi</span>
           </div>
-          ${maintenance.notes ? `<div class="notes"><strong>Notes:</strong><br>${maintenance.notes}</div>` : ""}
+          ${maintenance.notes ? `<div class="notes"><strong>Notes:</strong><br>${escapeHtml(maintenance.notes)}</div>` : ""}
         </div>
         <div class="footer">
           Vehicle Tracker - Keep your vehicles in top shape
@@ -379,16 +383,15 @@ export async function sendWelcomeEmail(to: string, name?: string) {
           <h1 style="margin: 0;">Welcome to Vehicle Tracker</h1>
         </div>
         <div class="content">
-          <p>Hi ${name || "there"},</p>
-          <p>Thanks for signing up! You now have a free account with 2 vehicle slots.</p>
+          <p>Hi ${escapeHtml(name || "there")},</p>
+          <p>Thanks for signing up! You now have a free account with 1 vehicle slot.</p>
           <div style="text-align: center;">
             <a href="${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/onboarding" class="button">Get Started</a>
           </div>
           <div class="features">
-            <div class="feature">Track 2 vehicles free</div>
+            <div class="feature">Track 1 vehicle free</div>
             <div class="feature">Maintenance logging</div>
             <div class="feature">Smart reminders</div>
-            <div class="feature">PDF reports</div>
           </div>
           <p style="font-size: 14px; color: #6b7280;">
             Upgrade to Pro anytime for unlimited vehicles and premium features.
@@ -440,7 +443,7 @@ export async function sendPasswordResetEmail(
           <h1>Password Reset Request</h1>
         </div>
         <div class="content">
-          <p>Hi ${data.userName},</p>
+          <p>Hi ${escapeHtml(data.userName)},</p>
           <p>We received a request to reset your password. Click the button below to create a new password:</p>
           <div style="text-align: center;">
             <a href="${data.resetUrl}" class="button">Reset Password</a>
@@ -499,26 +502,26 @@ export async function sendDemoRequestEmail(
       <div class="container">
         <div class="header">
           <h1 style="margin: 0;">New Demo Request</h1>
-          <p style="margin: 8px 0 0; opacity: 0.9;">${data.company}</p>
+          <p style="margin: 8px 0 0; opacity: 0.9;">${escapeHtml(data.company)}</p>
         </div>
         <div class="content">
           <div class="field">
             <div class="label">Name</div>
-            <div class="value">${data.name}</div>
+            <div class="value">${escapeHtml(data.name)}</div>
           </div>
           <div class="field">
             <div class="label">Email</div>
-            <div class="value">${data.email}</div>
+            <div class="value">${escapeHtml(data.email)}</div>
           </div>
           <div class="field">
             <div class="label">Company</div>
-            <div class="value">${data.company}</div>
+            <div class="value">${escapeHtml(data.company)}</div>
           </div>
           <div class="field">
             <div class="label">Phone</div>
-            <div class="value">${data.phone || "Not provided"}</div>
+            <div class="value">${escapeHtml(data.phone || "Not provided")}</div>
           </div>
-          ${data.message ? `<hr class="divider" /><div class="field"><div class="label">Message</div><div class="value">${data.message}</div></div>` : ""}
+          ${data.message ? `<hr class="divider" /><div class="field"><div class="label">Message</div><div class="value">${escapeHtml(data.message)}</div></div>` : ""}
         </div>
         <div class="footer">
           Vehicle Tracker - Demo Request Notification
@@ -531,7 +534,7 @@ export async function sendDemoRequestEmail(
   const { data: result, error } = await resend.emails.send({
     from: fromEmail,
     to: [to],
-    subject: `New Demo Request from ${data.name} at ${data.company}`,
+    subject: `New Demo Request from ${data.name} at ${data.company}`.replace(/<[^>]*>/g, ""),
     html,
   });
 

@@ -21,7 +21,7 @@ export async function GET(
   }
 
   const doc = await prisma.vehicleDocument.findFirst({
-    where: { id: params.docId, vehicleId: params.id },
+    where: { id: params.docId, vehicleId: params.id, vehicle: { userId: session.user.id } },
   });
 
   if (!doc) {
@@ -69,7 +69,7 @@ export async function DELETE(
   }
 
   const doc = await prisma.vehicleDocument.findFirst({
-    where: { id: params.docId, vehicleId: params.id },
+    where: { id: params.docId, vehicleId: params.id, vehicle: { userId: session.user.id } },
   });
 
   if (!doc) {

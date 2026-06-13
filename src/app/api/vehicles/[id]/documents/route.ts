@@ -22,7 +22,7 @@ export async function GET(
   }
 
   const vehicle = await prisma.vehicle.findFirst({
-    where: { id: params.id },
+    where: { id: params.id, userId: session.user.id },
   });
 
   if (!vehicle) {
@@ -63,7 +63,7 @@ export async function POST(
   }
 
   const vehicle = await prisma.vehicle.findFirst({
-    where: { id: params.id },
+    where: { id: params.id, userId: session.user.id },
   });
 
   if (!vehicle) {
