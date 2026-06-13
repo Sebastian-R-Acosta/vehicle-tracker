@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { requirePro } from "@/lib/billing";
 
 const region = process.env.AWS_REGION || "us-east-2";
 
@@ -17,6 +18,11 @@ export async function POST(request: Request) {
   
   if (!session?.user?.id) {
     return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const { allowed, error } = await requirePro(session.user.id);
+  if (!allowed) {
+    return NextResponse.json({ error }, { status: 403 });
   }
 
   try {

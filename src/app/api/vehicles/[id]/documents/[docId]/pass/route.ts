@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { generateAppleWalletPass, generateGoogleWalletPass } from "@/lib/wallet";
+import { requirePro } from "@/lib/billing";
 
 export async function POST(
   request: Request,
@@ -10,6 +11,11 @@ export async function POST(
   const session = await auth();
   if (!session?.user?.id) {
     return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const { allowed, error } = await requirePro(session.user.id);
+  if (!allowed) {
+    return NextResponse.json({ error }, { status: 403 });
   }
 
   const body = await request.json();

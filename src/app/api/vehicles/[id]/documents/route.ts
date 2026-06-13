@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { requirePro } from "@/lib/billing";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION || "us-east-2",
@@ -60,6 +61,11 @@ export async function POST(
   const session = await auth();
   if (!session?.user?.id) {
     return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const { allowed, error } = await requirePro(session.user.id);
+  if (!allowed) {
+    return NextResponse.json({ error }, { status: 403 });
   }
 
   const vehicle = await prisma.vehicle.findFirst({
