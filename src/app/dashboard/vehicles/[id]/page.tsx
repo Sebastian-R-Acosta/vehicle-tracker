@@ -26,6 +26,7 @@ import {
   TrendingUp,
   TrendingDown,
   Minus,
+  Wallet,
 } from "lucide-react";
 import { useFetch } from "@/lib/queries";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -245,6 +246,44 @@ export default function VehicleDetailPage() {
       nextMileage = mileage + interval.miles;
     }
     return { date: nextDate, mileage: nextMileage };
+  };
+
+  const addToWallet = async (doc: VehicleDocument) => {
+    try {
+      const res = await fetch(`/api/vehicles/${vehicleId}/documents/${doc.id}/pass`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ platform: "apple" }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        toast.error(err.error || "Wallet not configured");
+        return;
+      }
+
+      const contentType = res.headers.get("content-type") || "";
+
+      if (contentType.includes("pkpass")) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${doc.name.replace(/[^a-zA-Z0-9]/g, "_")}.pkpass`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success("Added to Apple Wallet");
+      } else {
+        const data = await res.json();
+        if (data.saveUrl) {
+          window.open(data.saveUrl, "_blank");
+        }
+      }
+    } catch {
+      toast.error("Could not add to wallet");
+    }
   };
 
   const generateReport = async () => {
@@ -1036,6 +1075,11 @@ export default function VehicleDetailPage() {
                   <Download className="w-4 h-4" />
                   Open Full Document
                 </a>
+                <button onClick={() => addToWallet(viewingDoc)}
+                  className="flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-950/40 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 rounded-xl transition-colors border border-yellow-200 dark:border-yellow-800 whitespace-nowrap">
+                  <Wallet className="w-4 h-4" />
+                  Wallet
+                </button>
                 <button onClick={() => setViewingDoc(null)}
                   className="flex items-center justify-center gap-2 py-3 px-5 text-sm font-medium text-foreground bg-muted/20 hover:bg-muted/40 rounded-xl transition-colors border border-border/50">
                   Close

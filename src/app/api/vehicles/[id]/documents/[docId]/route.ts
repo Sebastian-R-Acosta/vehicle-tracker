@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION || "us-east-2",
@@ -74,6 +74,19 @@ export async function DELETE(
 
   if (!doc) {
     return new NextResponse("Not found", { status: 404 });
+  }
+
+  const s3Key = doc.fileUrl.split(".amazonaws.com/")[1];
+  if (s3Key) {
+    try {
+      const deleteCommand = new DeleteObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET!,
+        Key: s3Key,
+      });
+      await s3Client.send(deleteCommand);
+    } catch (err) {
+      console.error("Failed to delete S3 object:", err);
+    }
   }
 
   await prisma.vehicleDocument.delete({
