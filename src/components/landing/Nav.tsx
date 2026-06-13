@@ -10,11 +10,28 @@ const solutions = [
     label: "For Car Owners",
     desc: "Track your personal vehicles for free",
   },
+  {
+    href: "/solutions/dealers",
+    label: "For Dealerships",
+    desc: "Boost service revenue & retention",
+  },
+  {
+    href: "/solutions/insurers",
+    label: "For Insurers",
+    desc: "Risk scoring & claims verification",
+  },
+  {
+    href: "/solutions/construction",
+    label: "For Construction",
+    desc: "Heavy equipment fleet management",
+  },
 ];
 
 const links = [
   { href: "#features", label: "Features" },
   { href: "#for-individuals", label: "For Individuals" },
+  { href: "#for-dealers", label: "For Dealers" },
+  { href: "#for-insurers", label: "For Insurers" },
 ];
 
 export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
