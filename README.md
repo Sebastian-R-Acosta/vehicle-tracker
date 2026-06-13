@@ -315,12 +315,22 @@ Test files cover: auth registration, rate limiting, billing tier logic, Stripe p
 
 ## Deployment
 
-Deploy to Vercel:
+This project is connected to Vercel via GitHub. Every push to `main` triggers an automatic deployment — **no manual steps needed**.
 
 ```bash
-npm run build
-vercel --prod
+# Make changes, then:
+git add .
+git commit -m "describe your change"
+git push
 ```
+
+Vercel will automatically build and deploy the new version.
+
+> Alternatively, deploy manually:
+> ```bash
+> npm run build
+> vercel --prod
+> ```
 
 All 25+ environment variables must be configured in Vercel project settings (see [Environment Variables](#environment-variables)).
 
