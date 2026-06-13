@@ -6,8 +6,9 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, Loader2, Car, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2 } from "lucide-react";
+import { ArrowLeft, Loader2, Car, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2, Sparkles } from "lucide-react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 const vehicleSchema = z.object({
   make: z.string().min(1, "Make is required").max(100),
@@ -128,7 +129,17 @@ export default function NewVehiclePage() {
       const vehicle = result;
       router.push(`/dashboard/vehicles/${vehicle.id}`);
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      const msg = err.message || "Something went wrong";
+      setError(msg);
+      if (msg.toLowerCase().includes("free tier") || msg.toLowerCase().includes("upgrade")) {
+        toast.error(
+          <div className="flex items-center gap-2">
+            <span>{msg}</span>
+            <Link href="/pricing" className="font-semibold underline">Upgrade to Pro</Link>
+          </div>,
+          { duration: 6000 }
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -171,7 +182,11 @@ export default function NewVehiclePage() {
 
           {error && (
             <div className="mb-6 p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
-              {error}
+              {error.toLowerCase().includes("free tier") || error.toLowerCase().includes("upgrade") ? (
+                <span>{error} — <Link href="/pricing" className="font-semibold underline">Upgrade to Pro</Link></span>
+              ) : (
+                error
+              )}
             </div>
           )}
 

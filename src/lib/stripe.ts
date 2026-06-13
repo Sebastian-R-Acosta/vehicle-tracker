@@ -9,7 +9,7 @@ export const stripe = key
 export const PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID || "";
 export const BUSINESS_PRICE_ID = process.env.STRIPE_BUSINESS_PRICE_ID || "";
 
-export const FREE_TIER_MAX_VEHICLES = 2;
+export const FREE_TIER_MAX_VEHICLES = 1;
 export const PRO_TIER = "pro";
 export const BUSINESS_TIER = "business";
 

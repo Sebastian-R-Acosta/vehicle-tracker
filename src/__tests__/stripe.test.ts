@@ -13,7 +13,7 @@ describe("stripe", () => {
   });
 
   it("has correct tier constants", () => {
-    expect(FREE_TIER_MAX_VEHICLES).toBe(2);
+    expect(FREE_TIER_MAX_VEHICLES).toBe(1);
     expect(PRO_TIER).toBe("pro");
     expect(BUSINESS_TIER).toBe("business");
   });

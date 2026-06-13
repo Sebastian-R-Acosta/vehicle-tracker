@@ -13,7 +13,7 @@ jest.mock("@/lib/db", () => ({
 
 jest.mock("@/lib/stripe", () => ({
   ...jest.requireActual("@/lib/stripe"),
-  FREE_TIER_MAX_VEHICLES: 2,
+  FREE_TIER_MAX_VEHICLES: 1,
   PRO_TIER: "pro",
   BUSINESS_TIER: "business",
 }));
@@ -31,8 +31,8 @@ describe("billing utilities", () => {
   });
 
   describe("FREE_TIER_MAX_VEHICLES", () => {
-    it("limits free tier to 2 vehicles", () => {
-      expect(FREE_TIER_MAX_VEHICLES).toBe(2);
+    it("limits free tier to 1 vehicle", () => {
+      expect(FREE_TIER_MAX_VEHICLES).toBe(1);
     });
   });
 
@@ -63,24 +63,24 @@ describe("billing utilities", () => {
   describe("canAddVehicle", () => {
     it("allows adding when under the limit", async () => {
       mockPrisma.subscription.findUnique.mockResolvedValue(null);
-      mockPrisma.vehicle.count.mockResolvedValue(1);
+      mockPrisma.vehicle.count.mockResolvedValue(0);
 
       const { canAddVehicle } = await import("@/lib/billing");
       const result = await canAddVehicle("user-1");
       expect(result.allowed).toBe(true);
-      expect(result.current).toBe(1);
-      expect(result.limit).toBe(2);
+      expect(result.current).toBe(0);
+      expect(result.limit).toBe(1);
     });
 
     it("blocks adding when at the limit", async () => {
       mockPrisma.subscription.findUnique.mockResolvedValue(null);
-      mockPrisma.vehicle.count.mockResolvedValue(2);
+      mockPrisma.vehicle.count.mockResolvedValue(1);
 
       const { canAddVehicle } = await import("@/lib/billing");
       const result = await canAddVehicle("user-1");
       expect(result.allowed).toBe(false);
-      expect(result.current).toBe(2);
-      expect(result.limit).toBe(2);
+      expect(result.current).toBe(1);
+      expect(result.limit).toBe(1);
     });
 
     it("uses pro limits for pro users", async () => {

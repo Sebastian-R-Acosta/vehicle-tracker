@@ -64,7 +64,7 @@ async function main() {
   }
 
   const plans = [
-    { tier: "free", name: "Free", price: 0, maxVehicles: 2, features: ["2 vehicles", "Maintenance logging", "Manual reminders"] },
+    { tier: "free", name: "Free", price: 0, maxVehicles: 1, features: ["1 vehicle", "Maintenance logging", "Manual reminders"] },
     { tier: "pro", name: "Pro", price: 9.99, maxVehicles: 999, features: ["Unlimited vehicles", "PDF reports", "Image uploads", "Smart reminders", "Email notifications"] },
     { tier: "business", name: "Business", price: 99, maxVehicles: 99999, features: ["Everything in Pro", "Multi-tenant orgs", "Team roles", "White-label", "API access"] },
   ];

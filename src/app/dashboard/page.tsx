@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
-import { Car, Plus, Settings, Loader2, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2, Bell as BellIcon, Download } from "lucide-react";
+import { Car, Plus, Settings, Loader2, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2, Bell as BellIcon, Download, Sparkles } from "lucide-react";
 import Link from "next/link";
 import jsPDF from "jspdf";
 import { useFetch } from "@/lib/queries";
@@ -57,6 +57,22 @@ export default function DashboardPage() {
     "/api/vehicles",
     { enabled: authStatus === "authenticated" }
   );
+
+  const { data: plan } = useFetch<{ tier: string; maxVehicles: number; name?: string; status?: string }>(
+    ["plan"],
+    "/api/user/plan",
+    { enabled: authStatus === "authenticated" }
+  );
+
+  const handleManageSubscription = async () => {
+    const res = await fetch("/api/stripe/portal", { method: "POST" });
+    if (res.ok) {
+      const { url } = await res.json();
+      window.location.href = url;
+    } else {
+      toast.error("No active subscription to manage");
+    }
+  };
 
   if (authStatus === "unauthenticated") {
     router.push("/login");
@@ -206,6 +222,36 @@ export default function DashboardPage() {
             Add Vehicle
           </Link>
         </div>
+
+        {plan && plan.tier !== "free" && (
+          <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Sparkles className="w-5 h-5 text-primary" />
+              <div>
+                <p className="text-sm font-medium text-foreground">{plan.name} Plan</p>
+                <p className="text-xs text-muted-foreground">{plan.maxVehicles === 99999 ? "Unlimited" : `${plan.maxVehicles}`} vehicles &middot; {plan.status}</p>
+              </div>
+            </div>
+            <button onClick={handleManageSubscription} className="text-sm text-primary hover:underline font-medium">
+              Manage
+            </button>
+          </div>
+        )}
+
+        {plan && plan.tier === "free" && vehicles.length > 0 && (
+          <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Sparkles className="w-5 h-5 text-amber-500" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Free Plan</p>
+                <p className="text-xs text-muted-foreground">{vehicles.length} of {plan.maxVehicles} vehicle{plan.maxVehicles !== 1 ? "s" : ""} used</p>
+              </div>
+            </div>
+            <Link href="/pricing" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+              Upgrade to Pro &rarr;
+            </Link>
+          </div>
+        )}
 
         <div className="grid gap-4 sm:grid-cols-3 mb-8">
           <div className="p-6 bg-card rounded-lg border border-border">

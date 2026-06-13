@@ -6,7 +6,7 @@ const perks = [
   { icon: Smartphone, title: "Mobile-Friendly Dashboard", description: "Track all your vehicles from any device. No app download needed." },
   { icon: Bell, title: "Smart Service Reminders", description: "Get notified when it's time for an oil change, tire rotation, or inspection." },
   { icon: FileText, title: "Free PDF Reports", description: "Generate a complete vehicle history report to share with buyers or mechanics." },
-  { icon: Car, title: "Up to 2 Vehicles Free", description: "Track two vehicles at no cost. Upgrade to Pro for unlimited." },
+  { icon: Car, title: "1 Vehicle Free", description: "Track one vehicle at no cost. Upgrade to Pro for unlimited." },
   { icon: Gauge, title: "Mileage Tracking", description: "Log odometer readings automatically when you add a service record." },
   { icon: RefreshCw, title: "Transfer Ready", description: "When you sell your car, generate a transfer code so the next owner gets the full history." },
 ];
@@ -51,7 +51,7 @@ export default function IndividualsPage() {
             >
               Get Started Free
             </Link>
-            <p className="mt-3 text-sm text-gray-400">No credit card required. Free forever — 2 vehicles included.</p>
+            <p className="mt-3 text-sm text-gray-400">No credit card required. Free forever — 1 vehicle included.</p>
           </div>
         </div>
       </section>
@@ -62,7 +62,7 @@ export default function IndividualsPage() {
           <div className="grid sm:grid-cols-3 gap-8">
             {[
               { step: "1", title: "Sign Up Free", desc: "Create your account in 30 seconds. No credit card needed." },
-              { step: "2", title: "Add Your Vehicles", desc: "Enter make, model, and mileage. Add up to 2 vehicles free." },
+              { step: "2", title: "Add Your Vehicle", desc: "Enter make, model, and mileage. Add 1 vehicle free." },
               { step: "3", title: "Log & Relax", desc: "Record services as they happen. We handle the reminders." },
             ].map((item) => (
               <div key={item.step}>

@@ -1,7 +1,10 @@
 "use client";
 
-import { Check, ArrowRight, Sparkles, Zap, Shield } from "lucide-react";
+import { Check, ArrowRight, Sparkles, Zap, Shield, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 import { useABTest } from "@/lib/ab-test";
 
 const tiers = [
@@ -14,7 +17,7 @@ const tiers = [
     href: "/register",
     color: "gray",
     features: [
-      "Up to 2 vehicles",
+      "1 vehicle",
       "Maintenance logging",
       "Manual reminders",
       "Basic vehicle info",
@@ -63,7 +66,7 @@ const tiers = [
 ];
 
 const featureCompare = [
-  { name: "Vehicles", free: "2", pro: "Unlimited", business: "Unlimited" },
+  { name: "Vehicles", free: "1", pro: "Unlimited", business: "Unlimited" },
   { name: "Maintenance Logs", free: true, pro: true, business: true },
   { name: "Service Reminders", free: "Manual", pro: "Smart", business: "Smart" },
   { name: "PDF Reports", free: false, pro: true, business: true },
@@ -79,6 +82,38 @@ const featureCompare = [
 ];
 
 function PricingCards({ variant }: { variant: string }) {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const handleUpgrade = async (tier: "pro" | "business") => {
+    if (!session) {
+      router.push("/login?callbackUrl=/pricing");
+      return;
+    }
+    setLoading(tier);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tier }),
+      });
+      if (res.ok) {
+        const { url } = await res.json();
+        window.location.href = url;
+      } else if (res.status === 401) {
+        router.push("/login?callbackUrl=/pricing");
+      } else {
+        const err = await res.json();
+        alert(err.error || "Something went wrong");
+      }
+    } catch {
+      alert("Could not connect to payment server");
+    } finally {
+      setLoading(null);
+    }
+  };
+
   if (variant === "variant_a") {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8 mb-20">
@@ -123,17 +158,23 @@ function PricingCards({ variant }: { variant: string }) {
                 </div>
               )}
 
-              <Link
-                href={tier.href}
-                className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all ${
-                  isFeatured
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:opacity-90 shadow-md"
-                    : "bg-gray-100 text-gray-900 hover:bg-gray-200"
-                }`}
-              >
-                {tier.cta}
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+              {tier.name === "Free" ? (
+                <Link
+                  href="/register"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all bg-gray-100 text-gray-900 hover:bg-gray-200"
+                >
+                  {tier.cta}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              ) : (
+                <button
+                  onClick={() => handleUpgrade(tier.name.toLowerCase() as "pro" | "business")}
+                  disabled={loading === tier.name.toLowerCase()}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:opacity-90 shadow-md disabled:opacity-50"
+                >
+                  {loading === tier.name.toLowerCase() ? <Loader2 className="w-4 h-4 animate-spin" /> : <>{tier.cta}<ArrowRight className="w-3.5 h-3.5" /></>}
+                </button>
+              )}
               <ul className="mt-6 space-y-3">
                 {tier.features.map((f) => (
                   <li key={f} className="flex items-start gap-3 text-sm text-gray-600">
@@ -177,17 +218,23 @@ function PricingCards({ variant }: { variant: string }) {
               <span className="text-gray-400">{tier.period}</span>
             </div>
             <p className="text-sm text-gray-500 mb-6">{tier.desc}</p>
-            <Link
-              href={tier.href}
-              className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all ${
-                isFeatured
-                  ? "bg-blue-600 text-white hover:bg-blue-500 shadow-md"
-                  : "bg-gray-100 text-gray-900 hover:bg-gray-200"
-              }`}
-            >
-              {tier.cta}
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            {tier.name === "Free" ? (
+                <Link
+                  href="/register"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all bg-gray-100 text-gray-900 hover:bg-gray-200"
+                >
+                  {tier.cta}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              ) : (
+                <button
+                  onClick={() => handleUpgrade(tier.name.toLowerCase() as "pro" | "business")}
+                  disabled={loading === tier.name.toLowerCase()}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all bg-blue-600 text-white hover:bg-blue-500 shadow-md disabled:opacity-50"
+                >
+                  {loading === tier.name.toLowerCase() ? <Loader2 className="w-4 h-4 animate-spin" /> : <>{tier.cta}<ArrowRight className="w-3.5 h-3.5" /></>}
+                </button>
+              )}
             {isFeatured && (
               <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-100">
                 <p className="text-xs text-green-700 font-medium">

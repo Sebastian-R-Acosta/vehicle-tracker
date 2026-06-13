@@ -12,7 +12,7 @@ model SubscriptionPlan {
   tier      String   @unique
   name      String
   price     Float    @default(0)
-  maxVehicles Int   @default(2)
+  maxVehicles Int @default(1)
   features  String[]
   stripePriceId String?
   createdAt DateTime @default(now())

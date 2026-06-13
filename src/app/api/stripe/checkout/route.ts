@@ -12,9 +12,11 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { priceId } = body;
+  const { priceId, tier } = body;
 
-  if (!priceId || (priceId !== PRO_PRICE_ID && priceId !== BUSINESS_PRICE_ID)) {
+  const resolvedPriceId = priceId || (tier === "business" ? BUSINESS_PRICE_ID : PRO_PRICE_ID);
+
+  if (!resolvedPriceId || (resolvedPriceId !== PRO_PRICE_ID && resolvedPriceId !== BUSINESS_PRICE_ID)) {
     return new NextResponse("Invalid price ID", { status: 400 });
   }
 
@@ -32,7 +34,7 @@ export async function POST(request: Request) {
   const checkout = await stripe.checkout.sessions.create({
     mode: "subscription",
     payment_method_types: ["card"],
-    line_items: [{ price: priceId, quantity: 1 }],
+    line_items: [{ price: resolvedPriceId, quantity: 1 }],
     customer: customerId || undefined,
     customer_email: customerId ? undefined : user.email,
     client_reference_id: user.id,
