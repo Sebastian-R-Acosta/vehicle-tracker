@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getUserRole } from "@/lib/org";
+import type { Prisma } from "@prisma/client";
 
 const VALID_CATEGORIES = ["general", "dealership", "independent", "tire", "body", "transmission", "oil", "brake", "electrical", "ac", "towing", "detail"];
 
@@ -75,7 +76,7 @@ export async function PUT(
   const body = await request.json();
   const { name, category, address, phone, website, email, notes, isPreferred } = body;
 
-  const updateData: any = {};
+  const updateData: Prisma.ServiceProviderUpdateInput = {};
 
   if (name !== undefined) {
     if (!name || typeof name !== "string" || !name.trim()) {

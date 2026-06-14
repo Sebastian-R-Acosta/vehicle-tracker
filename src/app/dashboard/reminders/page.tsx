@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import {
+  AlertTriangle,
   Bell,
   Check,
   CheckCircle,
@@ -40,7 +41,7 @@ export default function RemindersPage() {
 
   const queryClient = useQueryClient();
 
-  const { data: reminders = [], isLoading } = useFetch<Reminder[]>(
+  const { data: reminders = [], isLoading, error } = useFetch<Reminder[]>(
     ["reminders"],
     "/api/reminders",
     { enabled: status === "authenticated" }
@@ -55,6 +56,21 @@ export default function RemindersPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4" role="alert">
+        <div className="text-center max-w-md">
+          <div className="w-14 h-14 bg-destructive/10 rounded-xl flex items-center justify-center mx-auto mb-6">
+            <AlertTriangle className="w-7 h-7 text-destructive" aria-hidden="true" />
+          </div>
+          <h1 className="text-xl font-bold text-foreground mb-2">Failed to load reminders</h1>
+          <p className="text-muted-foreground mb-6">{error.message}</p>
+          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">Try again</button>
+        </div>
       </div>
     );
   }
@@ -131,13 +147,14 @@ export default function RemindersPage() {
 
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Search reminders by title..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-          />
+            <input
+              type="text"
+              placeholder="Search reminders by title..."
+              aria-label="Search reminders by title"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+            />
         </div>
 
         {filteredReminders.length === 0 ? (
@@ -181,6 +198,7 @@ export default function RemindersPage() {
                         <div className="flex items-start gap-3">
                           <button
                             onClick={() => toggleComplete(reminder.id)}
+                            aria-label={reminder.isCompleted ? "Mark as incomplete" : "Mark as complete"}
                             className={`mt-1 p-1 rounded-full border-2 ${
                               isOverdue(reminder)
                                 ? "border-destructive text-destructive"
@@ -263,6 +281,7 @@ export default function RemindersPage() {
                         </div>
                         <button
                           onClick={() => deleteReminder(reminder.id)}
+                          aria-label={`Delete reminder: ${reminder.title}`}
                           className="p-2 text-muted-foreground hover:text-destructive"
                         >
                           <Trash2 className="w-4 h-4" />

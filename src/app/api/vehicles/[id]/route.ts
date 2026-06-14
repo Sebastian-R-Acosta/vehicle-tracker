@@ -49,7 +49,7 @@ export async function GET(
   return NextResponse.json(vehicle);
 }
 
-function checkOwnerOrRole(vehicle: any, userId: string, role: string | null) {
+function checkOwnerOrRole(vehicle: { userId: string }, userId: string, role: string | null) {
   return vehicle.userId === userId || (role && ["owner", "admin", "technician"].includes(role));
 }
 

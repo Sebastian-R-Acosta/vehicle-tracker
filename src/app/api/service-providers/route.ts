@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getUserRole } from "@/lib/org";
+import type { Prisma } from "@prisma/client";
 
 const VALID_CATEGORIES = ["general", "dealership", "independent", "tire", "body", "transmission", "oil", "brake", "electrical", "ac", "towing", "detail"];
 
@@ -26,7 +27,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");
 
-  const where: any = { organizationId };
+  const where: Prisma.ServiceProviderWhereInput = { organizationId };
 
   if (category && VALID_CATEGORIES.includes(category)) {
     where.category = category;

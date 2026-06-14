@@ -1,5 +1,5 @@
 import { SettingsPageSkeleton } from "@/components/ui/Skeleton";
 
-export default function SettingsMembersLoading() {
+export default function Loading() {
   return <SettingsPageSkeleton />;
 }

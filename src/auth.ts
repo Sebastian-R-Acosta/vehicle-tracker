@@ -6,6 +6,9 @@ import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 declare module "next-auth" {
+  interface User {
+    currentOrganizationId?: string | null;
+  }
   interface Session {
     user: {
       id: string;
@@ -65,7 +68,7 @@ export const authConfig: NextAuthConfig = {
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
-        token.currentOrganizationId = (user as any).currentOrganizationId;
+        token.currentOrganizationId = user.currentOrganizationId;
       }
       if (trigger === "update" && session) {
         token.currentOrganizationId = session.currentOrganizationId;

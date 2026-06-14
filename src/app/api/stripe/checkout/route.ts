@@ -11,6 +11,17 @@ export async function POST(request: Request) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
+  const sub = await prisma.subscription.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!sub?.stripeSubId && !sub?.stripeCustomerId) {
+    return NextResponse.json(
+      { error: "Stripe is only available for existing subscriptions. New subscriptions use PayPal." },
+      { status: 400 }
+    );
+  }
+
   const body = await request.json();
   const { priceId, tier } = body;
 

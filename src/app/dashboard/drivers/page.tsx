@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Loader2, Users, Search, CheckCircle, XCircle, Mail, Phone, BadgeCheck } from "lucide-react";
+import { AlertTriangle, Plus, Loader2, Users, Search, CheckCircle, XCircle, Mail, Phone, BadgeCheck } from "lucide-react";
 import { useFetch } from "@/lib/queries";
 
 interface Driver {
@@ -22,7 +22,7 @@ export default function DriversPage() {
   const [search, setSearch] = useState("");
 
   const orgId = session?.user?.currentOrganizationId || "";
-  const { data: drivers = [], isLoading } = useFetch<Driver[]>(
+  const { data: drivers = [], isLoading, error } = useFetch<Driver[]>(
     ["drivers", orgId],
     `/api/drivers?organizationId=${orgId}`,
     { enabled: !!session?.user?.currentOrganizationId }
@@ -44,6 +44,21 @@ export default function DriversPage() {
     return (
       <div className="flex items-center justify-center py-32">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-32" role="alert">
+        <div className="text-center max-w-md">
+          <div className="w-14 h-14 bg-destructive/10 rounded-xl flex items-center justify-center mx-auto mb-6">
+            <AlertTriangle className="w-7 h-7 text-destructive" aria-hidden="true" />
+          </div>
+          <h1 className="text-xl font-bold text-foreground mb-2">Failed to load drivers</h1>
+          <p className="text-muted-foreground mb-6">{error.message}</p>
+          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">Try again</button>
+        </div>
       </div>
     );
   }
@@ -100,6 +115,7 @@ export default function DriversPage() {
         <input
           type="text"
           placeholder="Search drivers by name..."
+          aria-label="Search drivers by name"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"

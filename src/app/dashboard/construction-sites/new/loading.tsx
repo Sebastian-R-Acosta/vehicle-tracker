@@ -1,5 +1,5 @@
 import { FormPageSkeleton } from "@/components/ui/Skeleton";
 
-export default function NewConstructionSiteLoading() {
+export default function Loading() {
   return <FormPageSkeleton />;
 }

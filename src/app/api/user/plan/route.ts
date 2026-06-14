@@ -15,7 +15,11 @@ export async function GET() {
   });
 
   if (!sub || sub.status !== "active") {
-    return NextResponse.json({ tier: "free", maxVehicles: FREE_TIER_MAX_VEHICLES });
+    return NextResponse.json({
+      tier: "free",
+      maxVehicles: FREE_TIER_MAX_VEHICLES,
+      paymentProcessor: "free",
+    });
   }
 
   return NextResponse.json({
@@ -23,5 +27,6 @@ export async function GET() {
     maxVehicles: sub.plan.maxVehicles,
     name: sub.plan.name,
     status: sub.status,
+    paymentProcessor: sub.paymentProcessor,
   });
 }

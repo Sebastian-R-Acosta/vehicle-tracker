@@ -58,11 +58,14 @@ export default function RootLayout({
         ) : null}
       </head>
       <body className={`${inter.className} bg-background min-h-screen`}>
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:outline-none">
+          Skip to main content
+        </a>
         <Providers>
           <div className="fixed top-4 right-4 z-50">
             <ThemeToggle />
           </div>
-          {children}
+          <div id="main-content">{children}</div>
           <PWAInstallPrompt />
         </Providers>
       </body>

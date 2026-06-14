@@ -1,5 +1,5 @@
 import { ListPageSkeleton } from "@/components/ui/Skeleton";
 
-export default function ConstructionSitesLoading() {
+export default function Loading() {
   return <ListPageSkeleton />;
 }

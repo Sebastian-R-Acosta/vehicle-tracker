@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Package, Plus, Search, Filter, Loader2, AlertTriangle, PackageOpen } from "lucide-react";
+import { AlertTriangle, Package, Plus, Search, Filter, Loader2, PackageOpen } from "lucide-react";
 import Link from "next/link";
 import { useFetch } from "@/lib/queries";
 
@@ -34,7 +34,7 @@ export default function PartsPage() {
   const [categories, setCategories] = useState<string[]>([]);
 
   const orgId = session?.user?.currentOrganizationId || "";
-  const { data: parts = [], isLoading } = useFetch<Part[]>(
+  const { data: parts = [], isLoading, error } = useFetch<Part[]>(
     ["parts", orgId, categoryFilter],
     `/api/parts?organizationId=${orgId}${categoryFilter ? `&category=${categoryFilter}` : ""}`,
     { enabled: !!session?.user?.currentOrganizationId }
@@ -75,6 +75,21 @@ export default function PartsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4" role="alert">
+        <div className="text-center max-w-md">
+          <div className="w-14 h-14 bg-destructive/10 rounded-xl flex items-center justify-center mx-auto mb-6">
+            <AlertTriangle className="w-7 h-7 text-destructive" aria-hidden="true" />
+          </div>
+          <h1 className="text-xl font-bold text-foreground mb-2">Failed to load parts</h1>
+          <p className="text-muted-foreground mb-6">{error.message}</p>
+          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">Try again</button>
+        </div>
       </div>
     );
   }
@@ -139,6 +154,7 @@ export default function PartsPage() {
             <input
               type="text"
               placeholder="Search by name or part number..."
+              aria-label="Search by name or part number"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
@@ -149,6 +165,7 @@ export default function PartsPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
+              aria-label="Filter by category"
               className="pl-10 pr-8 py-2.5 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent appearance-none"
             >
               <option value="">All Categories</option>

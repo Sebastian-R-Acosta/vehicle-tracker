@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   try {
     const headersList = headers();
     const ip = headersList.get("x-forwarded-for") || headersList.get("x-real-ip") || "unknown";
-    const { allowed } = rateLimit(`forgot-password:${ip}`, 3, 60000);
+    const { allowed } = await rateLimit(`forgot-password:${ip}`, 3, 60000);
     if (!allowed) {
       return NextResponse.json({ error: "Too many attempts. Try again later." }, { status: 429 });
     }

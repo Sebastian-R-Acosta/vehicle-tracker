@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getUserRole } from "@/lib/org";
 import { canAddVehicle } from "@/lib/billing";
+import type { Prisma } from "@prisma/client";
 
 export async function GET(request: Request) {
   const session = await auth();
@@ -14,7 +15,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const organizationId = searchParams.get("organizationId");
 
-  let where: any;
+  let where: Prisma.VehicleWhereInput;
 
   if (organizationId) {
     const role = await getUserRole(organizationId, session.user.id);

@@ -3,7 +3,7 @@
 import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
-export default function DashboardError({
+export default function RootError({
   error,
   reset,
 }: {
@@ -11,7 +11,7 @@ export default function DashboardError({
   reset: () => void;
 }) {
   return (
-    <div className="min-h-[60vh] flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="text-center max-w-md">
         <div className="w-14 h-14 bg-destructive/10 rounded-xl flex items-center justify-center mx-auto mb-6">
           <AlertTriangle className="w-7 h-7 text-destructive" aria-hidden="true" />
@@ -28,10 +28,10 @@ export default function DashboardError({
             Try again
           </button>
           <Link
-            href="/dashboard"
+            href="/"
             className="px-6 py-2.5 text-foreground border border-border rounded-lg font-semibold hover:bg-accent transition-colors"
           >
-            Go to Dashboard
+            Go to Home
           </Link>
         </div>
       </div>

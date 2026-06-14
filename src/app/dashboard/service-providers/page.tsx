@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  Plus, Loader2, Building2, Star, Phone, MapPin, Search, Filter,
+  AlertTriangle, Plus, Loader2, Building2, Star, Phone, MapPin, Search, Filter,
 } from "lucide-react";
 import Link from "next/link";
 import { useFetch } from "@/lib/queries";
@@ -51,7 +51,7 @@ export default function ServiceProvidersPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
 
   const orgId = session?.user?.currentOrganizationId || "";
-  const { data: providers = [], isLoading } = useFetch<ServiceProvider[]>(
+  const { data: providers = [], isLoading, error } = useFetch<ServiceProvider[]>(
     ["service-providers", orgId, categoryFilter],
     `/api/service-providers?organizationId=${orgId}${categoryFilter ? `&category=${categoryFilter}` : ""}`,
     { enabled: !!session?.user?.currentOrganizationId },
@@ -71,6 +71,21 @@ export default function ServiceProvidersPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4" role="alert">
+        <div className="text-center max-w-md">
+          <div className="w-14 h-14 bg-destructive/10 rounded-xl flex items-center justify-center mx-auto mb-6">
+            <AlertTriangle className="w-7 h-7 text-destructive" aria-hidden="true" />
+          </div>
+          <h1 className="text-xl font-bold text-foreground mb-2">Failed to load service providers</h1>
+          <p className="text-muted-foreground mb-6">{error.message}</p>
+          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">Try again</button>
+        </div>
       </div>
     );
   }
@@ -120,6 +135,7 @@ export default function ServiceProvidersPage() {
             <input
               type="text"
               placeholder="Search by name..."
+              aria-label="Search by name"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
@@ -130,6 +146,7 @@ export default function ServiceProvidersPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
+              aria-label="Filter by category"
               className="pl-10 p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground min-w-[180px]"
             >
               <option value="">All Categories</option>

@@ -25,8 +25,11 @@ model Subscription {
   id              String    @id @default(cuid())
   userId          String    @unique
   planId          String
+  paymentProcessor String   @default("free")  // "free" | "stripe" | "paypal"
   stripeCustomerId String?
   stripeSubId     String?
+  paypalSubId     String?
+  paypalPayerId   String?
   status          String    @default("active")
   currentPeriodStart DateTime?
   currentPeriodEnd   DateTime?
@@ -38,6 +41,7 @@ model Subscription {
 
   @@index([planId])
   @@index([status])
+  @@index([paymentProcessor])
 }
 
 model User {

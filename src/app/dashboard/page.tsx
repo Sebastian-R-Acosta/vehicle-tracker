@@ -65,9 +65,10 @@ export default function DashboardPage() {
   );
 
   const handleManageSubscription = async () => {
-    const res = await fetch("/api/stripe/portal", { method: "POST" });
+    const res = await fetch("/api/billing/portal", { method: "POST" });
     if (res.ok) {
-      const { url } = await res.json();
+      const { url, message } = await res.json();
+      if (message) toast.success(message);
       window.location.href = url;
     } else {
       toast.error("No active subscription to manage");

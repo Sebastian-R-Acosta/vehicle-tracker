@@ -1,5 +1,5 @@
 import { ListPageSkeleton } from "@/components/ui/Skeleton";
 
-export default function RemindersLoading() {
+export default function Loading() {
   return <ListPageSkeleton />;
 }
