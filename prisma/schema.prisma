@@ -61,6 +61,10 @@ model User {
 
   onboardingCompleted Boolean @default(false)
   currentOrganizationId String?
+  licenseNumber   String?
+  licenseExpiry   DateTime?
+  licenseState    String?
+  licenseClass    String?
 
   currentOrganization  Organization?    @relation("CurrentOrganization", fields: [currentOrganizationId], references: [id])
   organizations        OrganizationMember[]

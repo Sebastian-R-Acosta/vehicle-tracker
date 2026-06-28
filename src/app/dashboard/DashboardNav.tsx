@@ -1,8 +1,10 @@
 "use client";
 
-import { Car, Bell, Building2, Package, Wrench, Users, Scan } from "lucide-react";
+import { Car, Bell, Building2, Package, Wrench, Users, Scan, LogOut, User } from "lucide-react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import OrgSwitcher from "@/components/OrgSwitcher";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 export function DashboardNav() {
   return (
@@ -46,22 +48,38 @@ export function DashboardNav() {
               >
                 <Users className="w-5 h-5" />
               </Link>
-              <Link
-                href="/dashboard/scan"
-                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg shrink-0"
-                title="Scan VIN"
-              >
-                <Scan className="w-5 h-5" />
-              </Link>
+            <Link
+              href="/dashboard/scan"
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg shrink-0"
+              title="Scan VIN"
+            >
+              <Scan className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/dashboard/profile"
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg shrink-0"
+              title="Profile"
+            >
+              <User className="w-5 h-5" />
+            </Link>
             </nav>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Link
-              href="/dashboard/reminders"
+              href="/dashboard/notifications"
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+              title="Notifications"
             >
               <Bell className="w-5 h-5" />
             </Link>
+            <LanguageToggle />
+            <button
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+              title="Log Out"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>

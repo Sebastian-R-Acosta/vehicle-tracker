@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
             We sent a password reset link to <strong>{email}</strong>. Check your inbox and click the link to reset your password.
           </p>
           <p className="text-sm text-muted-foreground mb-6">
-            Didn't receive the email? Check your spam folder or make sure you entered the correct email address.
+            Didn&apos;t receive the email? Check your spam folder or make sure you entered the correct email address.
           </p>
           <Link
             href="/login"
@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
 
         <h1 className="text-2xl font-bold text-foreground mb-2">Forgot Password</h1>
         <p className="text-muted-foreground mb-6">
-          Enter your email address and we'll send you a link to reset your password.
+          Enter your email address and we&apos;ll send you a link to reset your password.
         </p>
 
         {error && (

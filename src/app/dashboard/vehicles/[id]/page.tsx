@@ -146,16 +146,6 @@ export default function VehicleDetailPage() {
     { enabled: status === "authenticated" && !!vehicleId }
   );
 
-  if (status === "unauthenticated") {
-    router.push("/login");
-    return null;
-  }
-
-  if (!isLoading && !vehicle) {
-    router.push("/dashboard");
-    return null;
-  }
-
   const fetchRecalls = useCallback(async () => {
     if (!vehicle?.vin) return;
     setRecallsLoading(true);
@@ -199,6 +189,16 @@ export default function VehicleDetailPage() {
       fetchDocuments();
     }
   }, [vehicle, fetchDocuments]);
+
+  if (status === "unauthenticated") {
+    router.push("/login");
+    return null;
+  }
+
+  if (!isLoading && !vehicle) {
+    router.push("/dashboard");
+    return null;
+  }
 
   const handleDelete = async () => {
     try {

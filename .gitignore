@@ -6,9 +6,18 @@
 .env.vercel
 !.env.example
 
-# Debug scripts
-*.js
+# Logs
+dev-server*.log
+*.log
+
+# Config files that happen to be .js
 !jest.config.ts
 !next.config.mjs
-dev-server*.log
+!postcss.config.js
+
+# Ignore all .js files by default (legacy scripts in root)
+*.js
+
+# Except tracked scripts in scripts/
+!scripts/
 
