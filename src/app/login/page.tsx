@@ -45,7 +45,9 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md p-8 bg-card rounded-lg shadow-md border border-border">
         <div className="flex flex-col items-center mb-8">
-          <img src="/logo.jpg" alt="Vehicle Tracker" className="h-12 w-auto" />
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <img src="/logo.jpg" alt="Vehicle Tracker" className="h-12 w-auto block" />
+          </div>
           <h1 className="mt-4 text-2xl font-bold text-foreground">Welcome back</h1>
           <p className="text-muted-foreground">Sign in to your account</p>
         </div>

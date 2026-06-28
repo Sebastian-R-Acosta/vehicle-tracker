@@ -225,7 +225,9 @@ export default function PricingPage() {
       <nav className="bg-gray-900 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center">
           <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.jpg" alt="Vehicle Tracker" className="h-8 w-auto" />
+            <div className="bg-white rounded p-1.5">
+              <img src="/logo.jpg" alt="Vehicle Tracker" className="h-7 w-auto block" />
+            </div>
             <span className="text-lg font-bold text-white">Vehicle Tracker</span>
           </Link>
         </div>

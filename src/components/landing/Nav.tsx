@@ -62,7 +62,9 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
             <a href="/" className="flex items-center gap-2.5">
-              <img src="/logo.jpg" alt="Vehicle Tracker" className="h-8 w-auto" />
+              <div className="bg-white rounded p-1">
+                <img src="/logo.jpg" alt="Vehicle Tracker" className="h-7 w-auto block" />
+              </div>
               <span className="text-lg font-bold text-white">Vehicle Tracker</span>
             </a>
 
