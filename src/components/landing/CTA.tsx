@@ -1,8 +1,11 @@
 "use client";
 
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function CTA({ onBookDemo }: { onBookDemo: () => void }) {
+  const { t } = useLanguage();
+
   return (
     <section className="py-16 lg:py-24 bg-gradient-to-br from-gray-900 to-gray-800 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(59,130,246,0.15),transparent_50%)]" />
@@ -11,24 +14,23 @@ export default function CTA({ onBookDemo }: { onBookDemo: () => void }) {
       <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/20 rounded-full text-sm text-blue-300 mb-6">
           <Sparkles className="w-3.5 h-3.5" />
-          Get started today
+          {t("landing.ctaTitle")}
         </div>
 
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
-          Ready to Transform Your Vehicle Management?
+          {t("landing.ctaTitle")}
         </h2>
         <p className="text-lg text-gray-300 mb-8 max-w-xl mx-auto">
-          Join hundreds of dealerships and insurance companies already using Vehicle Tracker to
-          streamline operations, delight customers, and close more deals.
+          {t("landing.ctaSubtitle")}
         </p>
         <button
           onClick={onBookDemo}
           className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-500 transition-all shadow-lg hover:shadow-xl"
         >
-          Book Your Demo
+          {t("landing.ctaButton")}
           <ArrowRight className="w-4 h-4" />
         </button>
-        <p className="mt-4 text-sm text-gray-400">No commitment required. Free 14-day trial included.</p>
+        <p className="mt-4 text-sm text-gray-400">{t("landing.footerRights")}</p>
       </div>
     </section>
   );

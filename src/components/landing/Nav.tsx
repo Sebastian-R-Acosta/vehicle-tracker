@@ -4,41 +4,36 @@ import { useState, useRef, useEffect } from "react";
 import { Menu, X, LogIn, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const solutions = [
   {
     href: "/solutions/individuals",
-    label: "For Car Owners",
-    desc: "Track your personal vehicles for free",
+    labelKey: "landing.forIndividuals",
+    descKey: "landing.forIndividuals",
   },
   {
     href: "/solutions/dealers",
-    label: "For Dealerships",
-    desc: "Boost service revenue & retention",
+    labelKey: "landing.forDealers",
+    descKey: "landing.forDealers",
   },
   {
     href: "/solutions/insurers",
-    label: "For Insurers",
-    desc: "Risk scoring & claims verification",
+    labelKey: "landing.forInsurers",
+    descKey: "landing.forInsurers",
   },
   {
     href: "/solutions/construction",
-    label: "For Construction",
-    desc: "Heavy equipment fleet management",
+    labelKey: "landing.forConstruction",
+    descKey: "landing.forConstruction",
   },
-];
-
-const links = [
-  { href: "#features", label: "Features" },
-  { href: "#for-individuals", label: "For Individuals" },
-  { href: "#for-dealers", label: "For Dealers" },
-  { href: "#for-insurers", label: "For Insurers" },
 ];
 
 export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
   const [open, setOpen] = useState(false);
   const [solutionsOpen, setSolutionsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -73,7 +68,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
                 onClick={() => setSolutionsOpen(!solutionsOpen)}
                 className="flex items-center gap-1 text-sm text-gray-300 hover:text-white transition-colors px-3 py-2.5"
               >
-                Solutions
+                {t("nav.solutions")}
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform ${solutionsOpen ? "rotate-180" : ""}`}
                 />
@@ -88,8 +83,8 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
                       onClick={() => setSolutionsOpen(false)}
                       className="block px-5 py-3 hover:bg-white/5 transition-colors"
                     >
-                      <div className="text-sm font-medium text-white">{s.label}</div>
-                      <div className="text-xs text-gray-400">{s.desc}</div>
+                      <div className="text-sm font-medium text-white">{t(s.labelKey)}</div>
+                      <div className="text-xs text-gray-400">{t(s.descKey)}</div>
                     </Link>
                   ))}
                 </div>
@@ -101,13 +96,13 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
                 onClick={() => handleClick("#features")}
                 className="text-sm text-gray-300 hover:text-white transition-colors"
               >
-                Features
+                {t("nav.features")}
               </button>
               <Link
                 href="/pricing"
                 className="text-sm text-gray-300 hover:text-white transition-colors"
               >
-                Pricing
+                {t("nav.pricing")}
               </Link>
             </div>
           </div>
@@ -119,13 +114,13 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
               className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white border border-white/30 rounded-lg hover:bg-white/10 transition-all"
             >
               <LogIn className="w-3.5 h-3.5" />
-              Log In
+              {t("nav.login")}
             </Link>
             <Link
               href="/register"
               className="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-all"
             >
-              Get Started Free
+              {t("nav.getStarted")}
             </Link>
           </div>
 
@@ -141,7 +136,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
       {open && (
         <div className="md:hidden bg-gray-900 border-t border-white/10 px-4 py-4 space-y-3 max-h-[80vh] overflow-y-auto">
           <div className="text-sm font-medium text-gray-400 px-2 pt-1 pb-2 border-b border-white/10">
-            Solutions
+            {t("nav.solutions")}
           </div>
           {solutions.map((s) => (
             <Link
@@ -150,27 +145,28 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
               onClick={() => setOpen(false)}
               className="block text-sm text-gray-300 hover:text-white py-3"
             >
-              {s.label}
+              {t(s.labelKey)}
             </Link>
           ))}
           <div className="border-t border-white/10 pt-3 mt-2">
-            {["Features", "Pricing"].map((label) => (
+            {["nav.features", "nav.pricing"].map((key) => (
               <button
-                key={label}
+                key={key}
                 onClick={() => {
                   setOpen(false);
-                  const el = document.querySelector(`#${label.toLowerCase()}`);
+                  const id = key.split(".")[1];
+                  const el = document.querySelector(`#${id}`);
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
                 className="block w-full text-left text-sm text-gray-300 hover:text-white py-3"
               >
-                {label}
+                {t(key)}
               </button>
             ))}
           </div>
           <div className="flex items-center gap-2 px-2 py-2 border-t border-white/10 mt-2 pt-3">
             <LanguageToggle className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg" />
-            <span className="text-sm text-gray-400">Idioma</span>
+            <span className="text-sm text-gray-400">{t("nav.language")}</span>
           </div>
           <Link
             href="/login"
@@ -178,14 +174,14 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
             onClick={() => setOpen(false)}
           >
             <LogIn className="w-3.5 h-3.5" />
-            Log In
+            {t("nav.login")}
           </Link>
           <Link
             href="/register"
             className="block w-full px-5 py-2.5 text-sm font-semibold text-center text-white bg-blue-600 rounded-lg hover:bg-blue-500"
             onClick={() => setOpen(false)}
           >
-            Get Started Free
+            {t("nav.getStarted")}
           </Link>
         </div>
       )}

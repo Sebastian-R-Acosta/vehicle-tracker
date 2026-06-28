@@ -1,19 +1,21 @@
-import { Car } from "lucide-react";
+"use client";
+
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const columns = [
   {
-    title: "Product",
+    titleKey: "nav.features",
     links: [
-      { label: "Features", href: "/#features" },
-      { label: "Pricing", href: "/pricing" },
-      { label: "For Car Owners", href: "/solutions/individuals" },
-      { label: "For Dealerships", href: "/solutions/dealers" },
-      { label: "For Insurers", href: "/solutions/insurers" },
+      { labelKey: "nav.features", href: "/#features" },
+      { labelKey: "nav.pricing", href: "/pricing" },
+      { labelKey: "landing.forIndividuals", href: "/solutions/individuals" },
+      { labelKey: "landing.forDealers", href: "/solutions/dealers" },
+      { labelKey: "landing.forInsurers", href: "/solutions/insurers" },
     ],
   },
   {
-    title: "Company",
+    titleKey: "nav.settings",
     links: [
       { label: "About", href: "#" },
       { label: "Blog", href: "#" },
@@ -23,7 +25,7 @@ const columns = [
     ],
   },
   {
-    title: "Resources",
+    titleKey: "nav.solutions",
     links: [
       { label: "Documentation", href: "#" },
       { label: "API Reference", href: "#" },
@@ -33,7 +35,7 @@ const columns = [
     ],
   },
   {
-    title: "Legal",
+    titleKey: "landing.ctaTitle",
     links: [
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Terms of Service", href: "/terms" },
@@ -42,33 +44,35 @@ const columns = [
 ];
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-gray-900 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="p-1.5 bg-blue-600 rounded-lg">
-                <Car className="w-5 h-5 text-white" />
+              <div className="bg-white rounded p-1">
+                <img src="/logo.jpg" alt="Vehicle Tracker" className="h-7 w-auto block" />
               </div>
               <span className="text-lg font-bold text-white">Vehicle Tracker</span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
-              The all-in-one vehicle history and maintenance platform for dealerships and insurance companies.
+              {t("landing.heroSubtitle")}
             </p>
           </div>
 
           {columns.map((col) => (
-            <div key={col.title}>
-              <h4 className="text-sm font-semibold text-white mb-4">{col.title}</h4>
+            <div key={col.titleKey}>
+              <h4 className="text-sm font-semibold text-white mb-4">{t(col.titleKey)}</h4>
               <ul className="space-y-3">
-                  {col.links.map((link) => (
-                  <li key={link.label}>
+                  {col.links.map((link: any) => (
+                  <li key={link.label || link.labelKey}>
                     <Link
                       href={link.href}
                       className="inline-block py-1.5 text-sm text-gray-400 hover:text-white transition-colors"
                     >
-                      {link.label}
+                      {link.labelKey ? t(link.labelKey) : link.label}
                     </Link>
                   </li>
                 ))}
@@ -79,7 +83,7 @@ export default function Footer() {
 
         <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} Vehicle Tracker. All rights reserved.
+            &copy; {new Date().getFullYear()} Vehicle Tracker. {t("landing.footerRights")}
           </p>
           <div className="flex items-center gap-6">
             <span className="text-sm text-gray-500 hover:text-gray-300 cursor-pointer">Twitter</span>

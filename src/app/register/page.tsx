@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,7 +29,7 @@ export default function RegisterPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to register");
+        throw new Error(data.error || t("errors.generic"));
       }
 
       router.push("/login?registered=true");
@@ -45,8 +47,8 @@ export default function RegisterPage() {
           <div className="bg-white rounded-lg p-3 shadow-sm">
             <img src="/logo.jpg" alt="Vehicle Tracker" className="h-12 w-auto block" />
           </div>
-          <h1 className="mt-4 text-2xl font-bold text-foreground">Create account</h1>
-          <p className="text-muted-foreground">Start tracking your vehicles</p>
+          <h1 className="mt-4 text-2xl font-bold text-foreground">{t("auth.register")}</h1>
+          <p className="text-muted-foreground">{t("auth.signUp")}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -57,61 +59,57 @@ export default function RegisterPage() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              Name (optional)
-            </label>
+            <label className="block text-sm font-medium text-foreground mb-1">{t("auth.name")}</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+              className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
               placeholder="John Doe"
+              required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              Email
-            </label>
+            <label className="block text-sm font-medium text-foreground mb-1">{t("auth.email")}</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+              className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
               placeholder="you@example.com"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-foreground mb-1">{t("auth.password")}</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+              className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
               placeholder="••••••••"
               required
               minLength={8}
             />
+            <p className="text-xs text-muted-foreground mt-1">{t("errors.passwordLength")}</p>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 p-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            Create account
+            {t("auth.register")}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link href="/login" className="text-primary hover:underline">
-            Sign in
+          {t("auth.hasAccount")}{" "}
+          <Link href="/login" className="text-primary hover:underline font-medium">
+            {t("auth.signIn")}
           </Link>
         </p>
       </div>

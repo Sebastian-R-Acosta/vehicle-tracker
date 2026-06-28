@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const stats = [
   { label: "Vehicles Tracked", target: 50000, suffix: "+" },
@@ -53,6 +54,8 @@ function AnimatedCounter({ target, suffix }: { target: number; suffix: string })
 }
 
 export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
+  const { t } = useLanguage();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 overflow-hidden pt-16">
       <div className="absolute inset-0">
@@ -63,20 +66,15 @@ export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full text-sm text-blue-100 mb-8">
           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          Enterprise-grade vehicle management platform
+          {t("landing.heroTitle")}
         </div>
 
         <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
-          Track Everything.
-          <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-cyan-200">
-            Never Miss a Service. Sell with Confidence.
-          </span>
+          {t("landing.heroTitle")}
         </h1>
 
         <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-10 leading-relaxed">
-          The all-in-one vehicle history platform for car owners, dealerships, and insurance
-          companies. Track maintenance, automate reminders, and generate reports — all from one place.
+          {t("landing.heroSubtitle")}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
@@ -84,7 +82,7 @@ export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
             href="/register"
             className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all shadow-xl hover:shadow-2xl"
           >
-            Get Started Free
+            {t("landing.heroCta")}
             <ArrowRight className="w-4 h-4" />
           </Link>
           <button
@@ -92,7 +90,7 @@ export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
             className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-medium text-gray-900 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
           >
             <Play className="w-4 h-4" />
-            Book a Demo
+            {t("landing.heroDemo")}
           </button>
         </div>
 

@@ -2,12 +2,14 @@
 
 import { Bell, Building2, Package, Wrench, Users, Scan, LogOut, User } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { signOut } from "next-auth/react";
 import OrgSwitcher from "@/components/OrgSwitcher";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export function DashboardNav() {
+  const { t } = useLanguage();
+
   return (
     <header className="bg-card border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,42 +26,42 @@ export function DashboardNav() {
               <Link
                 href="/dashboard/construction-sites"
                 className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg shrink-0"
-                title="Construction Sites"
+                title={t("nav.constructionSites")}
               >
                 <Building2 className="w-5 h-5" />
               </Link>
               <Link
                 href="/dashboard/parts"
                 className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg shrink-0"
-                title="Parts Inventory"
+                title={t("nav.parts")}
               >
                 <Package className="w-5 h-5" />
               </Link>
               <Link
                 href="/dashboard/service-providers"
                 className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg shrink-0"
-                title="Service Providers"
+                title={t("nav.serviceProviders")}
               >
                 <Wrench className="w-5 h-5" />
               </Link>
               <Link
                 href="/dashboard/drivers"
                 className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg shrink-0"
-                title="Drivers"
+                title={t("nav.drivers")}
               >
                 <Users className="w-5 h-5" />
               </Link>
             <Link
               href="/dashboard/scan"
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg shrink-0"
-              title="Scan VIN"
+              title={t("nav.scan")}
             >
               <Scan className="w-5 h-5" />
             </Link>
             <Link
               href="/dashboard/profile"
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg shrink-0"
-              title="Profile"
+              title={t("nav.settings")}
             >
               <User className="w-5 h-5" />
             </Link>
@@ -69,7 +71,7 @@ export function DashboardNav() {
             <Link
               href="/dashboard/notifications"
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
-              title="Notifications"
+              title={t("nav.reminders")}
             >
               <Bell className="w-5 h-5" />
             </Link>
@@ -77,7 +79,7 @@ export function DashboardNav() {
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
-              title="Log Out"
+              title={t("nav.logout")}
             >
               <LogOut className="w-5 h-5" />
             </button>
