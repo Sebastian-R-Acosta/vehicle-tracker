@@ -3,17 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Smartphone, Bell, FileText, Car, Gauge, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-const perks = [
-  { icon: Smartphone, title: "Mobile-Friendly Dashboard", description: "Track all your vehicles from any device. No app download needed." },
-  { icon: Bell, title: "Smart Service Reminders", description: "Get notified when it's time for an oil change, tire rotation, or inspection." },
-  { icon: FileText, title: "Free PDF Reports", description: "Generate a complete vehicle history report to share with buyers or mechanics." },
-  { icon: Car, title: "1 Vehicle Free", description: "Track one vehicle at no cost. Upgrade to Pro for unlimited." },
-  { icon: Gauge, title: "Mileage Tracking", description: "Log odometer readings automatically when you add a service record." },
-  { icon: RefreshCw, title: "Transfer Ready", description: "When you sell your car, generate a transfer code so the next owner gets the full history." },
-];
+const perkIcons = [Smartphone, Bell, FileText, Car, Gauge, RefreshCw];
 
 export default function ForIndividuals() {
+  const { t } = useLanguage();
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -33,14 +28,13 @@ export default function ForIndividuals() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full mb-4">
-            For Car Owners
+            {t("landing.forIndividuals")}
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Your Cars, Your History, Always in Your Pocket
+            {t("landing.forIndividualsSection.heading")}
           </h2>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-            Never wonder when your last oil change was again. Vehicle Tracker keeps every service,
-            receipt, and reminder in one place — completely free to start.
+            {t("landing.forIndividualsSection.description")}
           </p>
         </div>
 
@@ -48,8 +42,8 @@ export default function ForIndividuals() {
           ref={ref}
           className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
         >
-          {perks.map((perk, i) => {
-            const Icon = perk.icon;
+          {(t("landing.forIndividualsSection.perks") as { title: string; description: string }[]).map((perk, i) => {
+            const Icon = perkIcons[i];
             return (
               <div
                 key={perk.title}
@@ -71,17 +65,17 @@ export default function ForIndividuals() {
             href="/register"
             className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-green-600 rounded-xl hover:bg-green-500 transition-all shadow-lg hover:shadow-xl"
           >
-            Get Started Free
+            {t("landing.forIndividualsSection.cta")}
           </Link>
           <div className="mt-4">
             <Link
               href="/solutions/individuals"
               className="inline-block py-3 text-sm text-green-600 hover:text-green-500 font-medium"
             >
-              Learn more for car owners &rarr;
+              {t("landing.forIndividualsSection.learnMore")}
             </Link>
           </div>
-          <p className="mt-3 text-sm text-gray-400">No credit card required. Free forever — 1 vehicle included.</p>
+          <p className="mt-3 text-sm text-gray-400">{t("landing.forIndividualsSection.noCard")}</p>
         </div>
       </div>
     </section>

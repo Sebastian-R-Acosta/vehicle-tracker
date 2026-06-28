@@ -44,9 +44,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md p-8 bg-card rounded-lg shadow-md border border-border">
         <div className="flex flex-col items-center mb-8">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
-            <img src="/logo.jpg" alt="Vehicle Tracker" className="h-12 w-auto block" />
-          </div>
+          <img src="/logo.jpg" alt="Vehicle Tracker" className="h-14 w-auto" />
           <h1 className="mt-4 text-2xl font-bold text-foreground">{t("auth.register")}</h1>
           <p className="text-muted-foreground">{t("auth.signUp")}</p>
         </div>

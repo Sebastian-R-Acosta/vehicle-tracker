@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { AlertTriangle, Package, Plus, Search, Filter, Loader2, PackageOpen } from "lucide-react";
 import Link from "next/link";
 import { useFetch } from "@/lib/queries";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface VehicleRef {
   id: string;
@@ -27,6 +28,7 @@ interface Part {
 }
 
 export default function PartsPage() {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -86,9 +88,9 @@ export default function PartsPage() {
           <div className="w-14 h-14 bg-destructive/10 rounded-xl flex items-center justify-center mx-auto mb-6">
             <AlertTriangle className="w-7 h-7 text-destructive" aria-hidden="true" />
           </div>
-          <h1 className="text-xl font-bold text-foreground mb-2">Failed to load parts</h1>
+          <h1 className="text-xl font-bold text-foreground mb-2">{t("errors.generic")}</h1>
           <p className="text-muted-foreground mb-6">{error.message}</p>
-          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">Try again</button>
+          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">{t("errors.tryAgain")}</button>
         </div>
       </div>
     );
@@ -100,15 +102,15 @@ export default function PartsPage() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <Package className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-lg font-medium mb-2 text-foreground">Create an organization first</h2>
+            <h2 className="text-lg font-medium mb-2 text-foreground">{t("common.noOrgHeading")}</h2>
             <p className="text-muted-foreground mb-4">
-              You need to be part of an organization to manage parts inventory.
+              {t("dashboard.parts.noOrgDesc")}
             </p>
             <Link
               href="/dashboard/settings"
               className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
             >
-              Go to Settings
+              {t("common.goToSettings")}
             </Link>
           </div>
         </main>
@@ -121,29 +123,29 @@ export default function PartsPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Parts Inventory</h1>
-            <p className="text-muted-foreground">Manage your parts and supplies</p>
+            <h1 className="text-2xl font-bold text-foreground">{t("dashboard.parts.heading")}</h1>
+            <p className="text-muted-foreground">{t("dashboard.parts.subtitle")}</p>
           </div>
           <Link
             href="/dashboard/parts/new"
             className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
           >
             <Plus className="w-4 h-4" />
-            Add Part
+            {t("dashboard.parts.addPart")}
           </Link>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3 mb-8">
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Total Parts</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.parts.totalParts")}</p>
             <p className="text-3xl font-bold text-foreground">{parts.length}</p>
           </div>
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Low Stock</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.parts.lowStock")}</p>
             <p className="text-3xl font-bold text-red-600">{lowStockCount}</p>
           </div>
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Categories</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.parts.categories")}</p>
             <p className="text-3xl font-bold text-foreground">{categories.length}</p>
           </div>
         </div>
@@ -153,8 +155,8 @@ export default function PartsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search by name or part number..."
-              aria-label="Search by name or part number"
+              placeholder={t("dashboard.parts.searchPlaceholder")}
+              aria-label={t("dashboard.parts.searchLabel")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
@@ -168,7 +170,7 @@ export default function PartsPage() {
               aria-label="Filter by category"
               className="pl-10 pr-8 py-2.5 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent appearance-none"
             >
-              <option value="">All Categories</option>
+              <option value="">{t("dashboard.parts.allCategories")}</option>
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -182,12 +184,12 @@ export default function PartsPage() {
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <PackageOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
             <h2 className="text-lg font-medium mb-2 text-foreground">
-              {parts.length === 0 ? "No parts yet" : "No parts match your search"}
+              {parts.length === 0 ? t("dashboard.parts.noParts") : t("dashboard.parts.noPartsSearch")}
             </h2>
             <p className="text-muted-foreground mb-4">
               {parts.length === 0
-                ? "Add your first part to start tracking inventory"
-                : "Try adjusting your search or filter"}
+                ? t("dashboard.parts.addFirstPart")
+                : t("dashboard.parts.adjustSearch")}
             </p>
             {parts.length === 0 && (
               <Link
@@ -195,7 +197,7 @@ export default function PartsPage() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
               >
                 <Plus className="w-4 h-4" />
-                Add Part
+                {t("dashboard.parts.addPartCta")}
               </Link>
             )}
           </div>
@@ -205,12 +207,12 @@ export default function PartsPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border text-left text-sm text-muted-foreground">
-                    <th className="px-6 py-4 font-medium">Name</th>
-                    <th className="px-6 py-4 font-medium">Part Number</th>
-                    <th className="px-6 py-4 font-medium">Category</th>
-                    <th className="px-6 py-4 font-medium">Quantity</th>
-                    <th className="px-6 py-4 font-medium">Min Stock</th>
-                    <th className="px-6 py-4 font-medium">Supplier</th>
+                    <th className="px-6 py-4 font-medium">{t("dashboard.parts.name")}</th>
+                    <th className="px-6 py-4 font-medium">{t("dashboard.parts.partNumber")}</th>
+                    <th className="px-6 py-4 font-medium">{t("dashboard.parts.category")}</th>
+                    <th className="px-6 py-4 font-medium">{t("dashboard.parts.quantity")}</th>
+                    <th className="px-6 py-4 font-medium">{t("dashboard.parts.minStock")}</th>
+                    <th className="px-6 py-4 font-medium">{t("dashboard.parts.supplier")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -250,7 +252,7 @@ export default function PartsPage() {
                             {isLowStock && (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
                                 <AlertTriangle className="w-3 h-3" />
-                                Low Stock
+                                {t("dashboard.parts.lowStockBadge")}
                               </span>
                             )}
                           </div>

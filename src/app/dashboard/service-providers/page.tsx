@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useFetch } from "@/lib/queries";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface Review {
   id: string;
@@ -30,14 +31,9 @@ interface ServiceProvider {
   reviews: Review[];
 }
 
-const categoryLabels: Record<string, string> = {
-  general: "General", dealership: "Dealership", independent: "Independent",
-  tire: "Tire", body: "Body", transmission: "Transmission", oil: "Oil",
-  brake: "Brake", electrical: "Electrical", ac: "A/C", towing: "Towing",
-  detail: "Detail",
-};
 
-const VALID_CATEGORIES = Object.keys(categoryLabels);
+
+
 
 function avgRating(reviews: Review[]): number {
   if (reviews.length === 0) return 0;
@@ -45,6 +41,7 @@ function avgRating(reviews: Review[]): number {
 }
 
 export default function ServiceProvidersPage() {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -82,9 +79,9 @@ export default function ServiceProvidersPage() {
           <div className="w-14 h-14 bg-destructive/10 rounded-xl flex items-center justify-center mx-auto mb-6">
             <AlertTriangle className="w-7 h-7 text-destructive" aria-hidden="true" />
           </div>
-          <h1 className="text-xl font-bold text-foreground mb-2">Failed to load service providers</h1>
+          <h1 className="text-xl font-bold text-foreground mb-2">{t("errors.generic")}</h1>
           <p className="text-muted-foreground mb-6">{error.message}</p>
-          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">Try again</button>
+          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">{t("errors.tryAgain")}</button>
         </div>
       </div>
     );
@@ -96,15 +93,15 @@ export default function ServiceProvidersPage() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <Building2 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-lg font-medium mb-2 text-foreground">Create an organization first</h2>
+            <h2 className="text-lg font-medium mb-2 text-foreground">{t("common.noOrgHeading")}</h2>
             <p className="text-muted-foreground mb-4">
-              You need to be part of an organization to manage service providers.
+              {t("dashboard.serviceProviders.noOrgDesc")}
             </p>
             <Link
               href="/dashboard/settings"
               className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
             >
-              Go to Settings
+              {t("common.goToSettings")}
             </Link>
           </div>
         </main>
@@ -117,15 +114,15 @@ export default function ServiceProvidersPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Service Providers</h1>
-            <p className="text-muted-foreground">Manage your repair shops and service contacts</p>
+            <h1 className="text-2xl font-bold text-foreground">{t("dashboard.serviceProviders.heading")}</h1>
+            <p className="text-muted-foreground">{t("dashboard.serviceProviders.subtitle")}</p>
           </div>
           <Link
             href="/dashboard/service-providers/new"
             className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
           >
             <Plus className="w-4 h-4" />
-            Add Provider
+            {t("dashboard.serviceProviders.addProvider")}
           </Link>
         </div>
 
@@ -134,8 +131,8 @@ export default function ServiceProvidersPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search by name..."
-              aria-label="Search by name"
+              placeholder={t("dashboard.serviceProviders.searchPlaceholder")}
+              aria-label={t("dashboard.serviceProviders.searchLabel")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
@@ -149,9 +146,9 @@ export default function ServiceProvidersPage() {
               aria-label="Filter by category"
               className="pl-10 p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground min-w-[180px]"
             >
-              <option value="">All Categories</option>
-              {VALID_CATEGORIES.map((c) => (
-                <option key={c} value={c}>{categoryLabels[c]}</option>
+              <option value="">{t("dashboard.serviceProviders.allCategories")}</option>
+              {Object.entries(t("dashboard.serviceProviders.categories") as Record<string, string>).map(([c, lbl]) => (
+                <option key={c} value={c}>{lbl}</option>
               ))}
             </select>
           </div>
@@ -160,23 +157,23 @@ export default function ServiceProvidersPage() {
         {providers.length === 0 && !search && !categoryFilter ? (
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <Building2 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-lg font-medium mb-2 text-foreground">No service providers yet</h2>
+            <h2 className="text-lg font-medium mb-2 text-foreground">{t("dashboard.serviceProviders.noProviders")}</h2>
             <p className="text-muted-foreground mb-4">
-              Add your first provider to keep track of your service contacts
+              {t("dashboard.serviceProviders.addFirstProvider")}
             </p>
             <Link
               href="/dashboard/service-providers/new"
               className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
             >
               <Plus className="w-4 h-4" />
-              Add Provider
+              {t("dashboard.serviceProviders.addProviderCta")}
             </Link>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.length === 0 ? (
               <div className="col-span-full text-center py-16 text-muted-foreground">
-                No providers match your search.
+                {t("dashboard.serviceProviders.noMatch")}
               </div>
             ) : (
               filtered.map((provider) => {
@@ -195,11 +192,11 @@ export default function ServiceProvidersPage() {
                         {provider.isPreferred && (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700">
                             <Star className="w-3 h-3" />
-                            Preferred
+                            {t("dashboard.serviceProviders.preferred")}
                           </span>
                         )}
                         <span className="text-xs px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
-                          {categoryLabels[provider.category] || provider.category}
+                          {(t("dashboard.serviceProviders.categories") as Record<string, string>)[provider.category] || provider.category}
                         </span>
                       </div>
                     </div>

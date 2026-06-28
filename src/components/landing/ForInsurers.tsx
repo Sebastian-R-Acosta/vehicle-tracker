@@ -3,26 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Shield, BarChart3, FileSearch, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-const benefits = [
-  {
-    icon: FileSearch,
-    title: "Claims Verification",
-    description: "Tamper-proof service records give you the data you need to validate claims quickly.",
-  },
-  {
-    icon: BarChart3,
-    title: "Risk Scoring",
-    description: "Score policyholders on maintenance history. Reward well-maintained vehicles with better rates.",
-  },
-  {
-    icon: Shield,
-    title: "Fleet Management",
-    description: "Monitor entire commercial fleets from one dashboard. Automated alerts for compliance gaps.",
-  },
-];
+const benefitIcons = [FileSearch, BarChart3, Shield];
 
 export default function ForInsurers() {
+  const { t } = useLanguage();
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -46,24 +32,23 @@ export default function ForInsurers() {
         >
           <div className="order-2 lg:order-1">
             <div className="bg-gray-200 rounded-2xl aspect-[4/3] flex items-center justify-center">
-              <span className="text-gray-400 font-medium">Analytics Preview</span>
+              <span className="text-gray-400 font-medium">{t("landing.forInsurersSection.preview")}</span>
             </div>
           </div>
 
           <div className="order-1 lg:order-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full mb-6">
-              For Insurance
+              {t("landing.forInsurers")}
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Know What You&apos;re Insuring. Every Mile, Every Service.
+              {t("landing.forInsurersSection.heading")}
             </h2>
             <p className="text-lg text-gray-500 mb-8 leading-relaxed">
-              Make underwriting decisions with confidence. Vehicle Tracker gives insurers a complete
-              view of every vehicle&apos;s maintenance history, service gaps, and ownership changes.
+              {t("landing.forInsurersSection.description")}
             </p>
             <div className="space-y-6">
-              {benefits.map((b) => {
-                const Icon = b.icon;
+              {(t("landing.forInsurersSection.benefits") as { title: string; description: string }[]).map((b, i) => {
+                const Icon = benefitIcons[i];
                 return (
                   <div key={b.title} className="flex gap-4">
                     <div className="flex-shrink-0 w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
@@ -79,13 +64,13 @@ export default function ForInsurers() {
             </div>
             <div className="mt-8 flex items-center gap-4 text-sm text-gray-500">
               <CheckCircle className="w-4 h-4 text-green-500" />
-              <span>API-ready for integration with your existing systems</span>
+              <span>{t("landing.forInsurersSection.integration")}</span>
             </div>
             <Link
               href="/solutions/insurers"
               className="inline-flex items-center gap-1 mt-6 py-3 text-sm text-indigo-600 hover:text-indigo-500 font-medium"
             >
-              Learn more for insurers &rarr;
+              {t("landing.forInsurersSection.learnMore")}
             </Link>
           </div>
         </div>

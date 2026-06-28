@@ -9,20 +9,20 @@ type Locale = "es" | "en";
 interface LanguageContextValue {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (path: string) => string;
+  t: (path: string) => any;
 }
 
 const translations: Record<Locale, Translations> = { es, en };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-function resolveNested(obj: any, path: string): string {
+function resolveNested(obj: any, path: string): any {
   const keys = path.split(".");
   let val = obj;
   for (const key of keys) {
     val = val?.[key];
   }
-  return typeof val === "string" ? val : path;
+  return val ?? path;
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {

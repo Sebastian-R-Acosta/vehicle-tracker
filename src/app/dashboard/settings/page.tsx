@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Building2, Users, Car, Bell, ArrowLeft, Save, Loader2, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface Org {
   id: string;
@@ -17,6 +18,7 @@ interface Org {
 }
 
 export default function SettingsPage() {
+  const { t } = useLanguage();
   const { data: session, status, update } = useSession();
   const router = useRouter();
   const [org, setOrg] = useState<Org | null>(null);
@@ -86,7 +88,7 @@ export default function SettingsPage() {
   };
 
   const handleDelete = async () => {
-    if (!currentOrgId || !confirm("Are you sure you want to delete this organization? This cannot be undone.")) return;
+    if (!currentOrgId || !confirm(t("dashboard.settings.deleteConfirm"))) return;
 
     try {
       const res = await fetch(`/api/organizations/${currentOrgId}`, {
@@ -117,14 +119,14 @@ export default function SettingsPage() {
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-16">
             <Link href="/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
               <ArrowLeft className="w-4 h-4" />
-              Back
+              {t("dashboard.settings.back")}
             </Link>
           </div>
         </header>
         <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <Building2 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-          <h2 className="text-lg font-medium mb-2 text-foreground">No organization selected</h2>
-          <p className="text-muted-foreground">Switch to an organization in the account menu to manage its settings.</p>
+          <h2 className="text-lg font-medium mb-2 text-foreground">{t("dashboard.settings.noOrgHeading")}</h2>
+          <p className="text-muted-foreground">{t("dashboard.settings.noOrgDesc")}</p>
         </main>
       </div>
     );
@@ -138,15 +140,15 @@ export default function SettingsPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-16">
           <Link href="/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-4 h-4" />
-            Back
+            {t("dashboard.settings.back")}
           </Link>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Organization Settings</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-2">{t("dashboard.settings.heading")}</h1>
         <p className="text-muted-foreground mb-8">
-          Manage your organization&apos;s branding and preferences
+          {t("dashboard.settings.subtitle")}
         </p>
 
         {error && (
@@ -154,11 +156,11 @@ export default function SettingsPage() {
         )}
 
         <div className="bg-card rounded-lg border border-border p-6 mb-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">General</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">{t("dashboard.settings.general")}</h2>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Organization Name</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.settings.orgName")}</label>
               <input
                 type="text"
                 value={name}
@@ -168,18 +170,18 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Slug</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.settings.slug")}</label>
               <input
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
               />
-              <p className="mt-1 text-xs text-muted-foreground">Used in URLs: vehicle-tracker.app/{slug}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.settings.slugHelper").replace("{slug}", slug)}</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Brand Color</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.settings.brandColor")}</label>
               <div className="flex items-center gap-3">
                 <input
                   type="color"
@@ -200,7 +202,7 @@ export default function SettingsPage() {
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
               <Save className="w-4 h-4" />
-              Save Changes
+              {t("dashboard.settings.saveChanges")}
             </button>
           </div>
         </div>
@@ -211,9 +213,9 @@ export default function SettingsPage() {
             className="p-6 bg-card rounded-lg border border-border hover:border-primary transition-colors"
           >
             <Users className="w-8 h-8 text-primary mb-3" />
-            <h3 className="font-semibold mb-1 text-foreground">Members</h3>
+            <h3 className="font-semibold mb-1 text-foreground">{t("dashboard.settings.membersCard")}</h3>
             <p className="text-sm text-muted-foreground">
-              {org._count?.members || 0} members &bull; Invite new members
+              {t("dashboard.settings.membersDesc").replace("{n}", String(org._count?.members || 0))}
             </p>
           </Link>
           <Link
@@ -221,9 +223,9 @@ export default function SettingsPage() {
             className="p-6 bg-card rounded-lg border border-border hover:border-primary transition-colors"
           >
             <Car className="w-8 h-8 text-primary mb-3" />
-            <h3 className="font-semibold mb-1 text-foreground">Vehicles</h3>
+            <h3 className="font-semibold mb-1 text-foreground">{t("vehicle.title")}</h3>
             <p className="text-sm text-muted-foreground">
-              {org._count?.vehicles || 0} vehicles in organization
+              {t("dashboard.settings.vehiclesDesc").replace("{n}", String(org._count?.vehicles || 0))}
             </p>
           </Link>
           <Link
@@ -231,25 +233,25 @@ export default function SettingsPage() {
             className="p-6 bg-card rounded-lg border border-border hover:border-primary transition-colors"
           >
             <Bell className="w-8 h-8 text-primary mb-3" />
-            <h3 className="font-semibold mb-1 text-foreground">Notifications</h3>
+            <h3 className="font-semibold mb-1 text-foreground">{t("notifications.title")}</h3>
             <p className="text-sm text-muted-foreground">
-              Configure SMS and push notification preferences
+              {t("dashboard.settings.notificationsDesc")}
             </p>
           </Link>
         </div>
 
         {isOwner && (
           <div className="bg-card rounded-lg border border-destructive/30 p-6">
-            <h2 className="text-lg font-semibold text-destructive mb-2">Danger Zone</h2>
+            <h2 className="text-lg font-semibold text-destructive mb-2">{t("dashboard.settings.dangerZone")}</h2>
             <p className="text-sm text-muted-foreground mb-4">
-              Deleting the organization will remove all associated data. This cannot be undone.
+              {t("dashboard.settings.dangerZoneDesc")}
             </p>
             <button
               onClick={handleDelete}
                className="flex items-center gap-2 px-4 py-3 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90 transition-opacity"
             >
               <Trash2 className="w-4 h-4" />
-              Delete Organization
+              {t("dashboard.settings.deleteOrg")}
             </button>
           </div>
         )}

@@ -16,9 +16,7 @@ export function DashboardNav() {
         <div className="flex justify-between h-16">
           <div className="flex items-center gap-4 min-w-0">
             <Link href="/dashboard" className="flex items-center gap-2 shrink-0">
-              <div className="bg-white rounded p-1">
-                <img src="/logo.jpg" alt="Vehicle Tracker" className="h-7 w-auto block" />
-              </div>
+              <img src="/logo.jpg" alt="Vehicle Tracker" className="h-8 w-auto" />
               <span className="text-xl font-bold text-foreground hidden sm:inline">Vehicle Tracker</span>
             </Link>
             <nav className="flex items-center gap-1 overflow-x-auto scrollbar-none">

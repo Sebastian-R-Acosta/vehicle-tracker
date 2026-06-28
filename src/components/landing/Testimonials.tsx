@@ -1,29 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-const testimonials = [
-  {
-    quote:
-      "Vehicle Tracker transformed our service department. We've seen a 30% increase in repeat visits and our customers love the transparency.",
-    name: "Michael Torres",
-    role: "Service Director, AutoNation",
-  },
-  {
-    quote:
-      "The claims verification alone paid for itself in the first month. We can now validate maintenance history in seconds instead of days.",
-    name: "Sarah Chen",
-    role: "VP Claims, Progressive Insurance",
-  },
-  {
-    quote:
-      "We rolled this out across all 12 of our dealerships. The multi-tenant setup and white-labeling made it a no-brainer.",
-    name: "David Park",
-    role: "COO, Park Automotive Group",
-  },
-];
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Testimonials() {
+  const { t } = useLanguage();
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -43,10 +24,10 @@ export default function Testimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Trusted by Industry Leaders
+            {t("landing.testimonialsSection.heading")}
           </h2>
           <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            See what dealerships and insurance companies are saying about Vehicle Tracker.
+            {t("landing.testimonialsSection.subtitle")}
           </p>
         </div>
 
@@ -54,9 +35,9 @@ export default function Testimonials() {
           ref={ref}
           className="grid md:grid-cols-3 gap-8"
         >
-          {testimonials.map((t, i) => (
+          {(t("landing.testimonialsSection.items") as { quote: string; name: string; role: string }[]).map((item, i) => (
             <div
-              key={t.name}
+              key={item.name}
               className={`p-8 bg-gray-50 rounded-2xl border border-gray-100 transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
               style={{ transitionDelay: `${i * 200}ms` }}
             >
@@ -68,17 +49,17 @@ export default function Testimonials() {
                 ))}
               </div>
               <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                &ldquo;{t.quote}&rdquo;
+                &ldquo;{item.quote}&rdquo;
               </p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
                   <span className="text-xs text-gray-500 font-medium">
-                    {t.name.split(" ").map((n) => n[0]).join("")}
+                    {item.name.split(" ").map((n) => n[0]).join("")}
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{t.name}</p>
-                  <p className="text-xs text-gray-500">{t.role}</p>
+                  <p className="text-sm font-semibold text-gray-900">{item.name}</p>
+                  <p className="text-xs text-gray-500">{item.role}</p>
                 </div>
               </div>
             </div>

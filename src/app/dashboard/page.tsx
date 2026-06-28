@@ -8,6 +8,7 @@ import Link from "next/link";
 import jsPDF from "jspdf";
 import { useFetch } from "@/lib/queries";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 type VehicleType = "car" | "truck" | "motorcycle" | "excavator" | "bulldozer" | "dump_truck" | "crane" | "loader" | "grader" | "other";
 type VehicleStatus = "active" | "maintenance" | "sold" | "inactive";
@@ -31,19 +32,15 @@ const vehicleTypeIcons: Record<string, React.ElementType> = {
   bulldozer: Tractor, dump_truck: Truck, crane: Building2, loader: Hammer, grader: Tractor, other: Zap,
 };
 
-const vehicleTypeLabels: Record<string, string> = {
-  car: "Car", truck: "Truck", motorcycle: "Motorcycle", excavator: "Excavator",
-  bulldozer: "Bulldozer", dump_truck: "Dump Truck", crane: "Crane", loader: "Loader", grader: "Grader", other: "Other",
-};
-
-const statusColors: Record<VehicleStatus, { bg: string; text: string; label: string }> = {
-  active: { bg: "bg-green-500/10", text: "text-green-600 dark:text-green-400", label: "Active" },
-  maintenance: { bg: "bg-amber-500/10", text: "text-amber-600 dark:text-amber-400", label: "In Maintenance" },
-  sold: { bg: "bg-slate-500/10", text: "text-slate-600 dark:text-slate-400", label: "Sold" },
-  inactive: { bg: "bg-slate-500/10", text: "text-slate-600 dark:text-slate-400", label: "Inactive" },
+const statusColors: Record<VehicleStatus, { bg: string; text: string }> = {
+  active: { bg: "bg-green-500/10", text: "text-green-600 dark:text-green-400" },
+  maintenance: { bg: "bg-amber-500/10", text: "text-amber-600 dark:text-amber-400" },
+  sold: { bg: "bg-slate-500/10", text: "text-slate-600 dark:text-slate-400" },
+  inactive: { bg: "bg-slate-500/10", text: "text-slate-600 dark:text-slate-400" },
 };
 
 export default function DashboardPage() {
+  const { t } = useLanguage();
   const { data: session, status: authStatus } = useSession();
   const router = useRouter();
   const [filterType, setFilterType] = useState<VehicleType | "all">("all");
@@ -71,7 +68,7 @@ export default function DashboardPage() {
       if (message) toast.success(message);
       window.location.href = url;
     } else {
-      toast.error("No active subscription to manage");
+      toast.error(t("dashboard.home.noSubscription"));
     }
   };
 
@@ -126,9 +123,9 @@ export default function DashboardPage() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       setExportOpen(false);
-      toast.success("CSV exported");
+      toast.success(t("dashboard.home.csvExported"));
     } catch {
-      toast.error("Failed to export CSV");
+      toast.error(t("dashboard.home.failedExport"));
     }
   };
 
@@ -137,17 +134,18 @@ export default function DashboardPage() {
     const selected = vehicles.filter((v) => selectedIds.includes(v.id));
     const doc = new jsPDF();
     doc.setFontSize(18);
-    doc.text("Vehicle Export Report", 14, 20);
+    doc.text(t("dashboard.home.vehicleExportReport"), 14, 20);
     doc.setFontSize(10);
-    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 28);
+    doc.text(`${t("dashboard.home.generated")} ${new Date().toLocaleDateString()}`, 14, 28);
     doc.setFontSize(12);
-    doc.text(`Total Vehicles: ${selected.length}`, 14, 36);
+    doc.text(`${t("dashboard.home.totalVehiclesLabel")} ${selected.length}`, 14, 36);
 
-    const headers = ["Year", "Make", "Model", "VIN", "Mileage", "Status"];
+    const headers = t("dashboard.home.pdfHeaders") as string[];
+    const statusT = t("dashboard.home.statusLabels") as Record<string, string>;
     const rows = selected.map((v) => [
       String(v.year), v.make, v.model,
       (v.vin || "-"), v.currentMileage.toLocaleString(),
-      statusColors[v.status as VehicleStatus]?.label || v.status,
+      statusT[v.status] || v.status,
     ]);
 
     const colWidths = [20, 35, 35, 50, 25, 25];
@@ -198,7 +196,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <p className="text-red-500 mb-2">Failed to load vehicles</p>
+          <p className="text-red-500 mb-2">{t("errors.generic")}</p>
           <p className="text-sm text-muted-foreground">{error.message}</p>
         </div>
       </div>
@@ -210,9 +208,9 @@ export default function DashboardPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">My Vehicles</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t("dashboard.home.title")}</h1>
             <p className="text-muted-foreground">
-              Welcome back, {session?.user?.name || "User"}
+              {t("dashboard.home.welcomeBack")} {session?.user?.name || "User"}
             </p>
           </div>
           <Link
@@ -220,7 +218,7 @@ export default function DashboardPage() {
             className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
           >
             <Plus className="w-4 h-4" />
-            Add Vehicle
+            {t("dashboard.home.addVehicle")}
           </Link>
         </div>
 
@@ -229,12 +227,12 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3">
               <Sparkles className="w-5 h-5 text-primary" />
               <div>
-                <p className="text-sm font-medium text-foreground">{plan.name} Plan</p>
-                <p className="text-xs text-muted-foreground">{plan.maxVehicles === 99999 ? "Unlimited" : `${plan.maxVehicles}`} vehicles &middot; {plan.status}</p>
+                <p className="text-sm font-medium text-foreground">{plan.name} {t("dashboard.home.plan")}</p>
+                <p className="text-xs text-muted-foreground">{plan.maxVehicles === 99999 ? t("dashboard.home.unlimitedVehicles") : `${plan.maxVehicles}`} vehicles &middot; {plan.status}</p>
               </div>
             </div>
             <button onClick={handleManageSubscription} className="text-sm text-primary hover:underline font-medium">
-              Manage
+              {t("dashboard.home.manage")}
             </button>
           </div>
         )}
@@ -244,27 +242,27 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3">
               <Sparkles className="w-5 h-5 text-amber-500" />
               <div>
-                <p className="text-sm font-medium text-foreground">Free Plan</p>
-                <p className="text-xs text-muted-foreground">{vehicles.length} of {plan.maxVehicles} vehicle{plan.maxVehicles !== 1 ? "s" : ""} used</p>
+                <p className="text-sm font-medium text-foreground">{t("dashboard.home.freePlan")}</p>
+                <p className="text-xs text-muted-foreground">{vehicles.length} of {plan.maxVehicles} {t("dashboard.home.used")}</p>
               </div>
             </div>
             <Link href="/pricing" className="text-sm font-medium text-blue-600 hover:text-blue-500">
-              Upgrade to Pro &rarr;
+              {t("dashboard.home.upgradePro")}
             </Link>
           </div>
         )}
 
         <div className="grid gap-4 sm:grid-cols-3 mb-8">
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Total Vehicles</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.home.totalVehicles")}</p>
             <p className="text-3xl font-bold text-foreground">{vehicles.length}</p>
           </div>
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Total Miles</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.home.totalMiles")}</p>
             <p className="text-3xl font-bold text-foreground">{totalMiles.toLocaleString()}</p>
           </div>
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Active Vehicles</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.home.activeVehicles")}</p>
             <p className="text-3xl font-bold text-foreground">{activeVehicles}</p>
           </div>
         </div>
@@ -276,19 +274,16 @@ export default function DashboardPage() {
               onChange={(e) => setFilterType(e.target.value as VehicleType | "all")}
               className="px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:ring-2 focus:ring-ring"
             >
-              <option value="all">All Types</option>
-              {vehicleTypes.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+              <option value="all">{t("dashboard.home.allTypes")}</option>
+              {Object.entries(t("dashboard.home.vehicleTypes") as Record<string, string>).map(([v, lbl]) => <option key={v} value={v}>{lbl}</option>)}
             </select>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as VehicleStatus | "all")}
               className="px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:ring-2 focus:ring-ring"
             >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="maintenance">In Maintenance</option>
-              <option value="inactive">Inactive</option>
-              <option value="sold">Sold</option>
+              <option value="all">{t("dashboard.home.allStatus")}</option>
+              {Object.entries(t("dashboard.home.statusLabels") as Record<string, string>).map(([val, lbl]) => <option key={val} value={val}>{lbl}</option>)}
             </select>
           </div>
         )}
@@ -302,7 +297,7 @@ export default function DashboardPage() {
                 onChange={toggleSelectAll}
                 className="rounded border-border"
               />
-              <span className="text-foreground">{selectedIds.length} selected</span>
+              <span className="text-foreground">{selectedIds.length} {t("dashboard.home.selected")}</span>
             </label>
             <div className="ml-auto relative" ref={exportRef}>
               <button
@@ -310,12 +305,12 @@ export default function DashboardPage() {
                 className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 text-sm"
               >
                 <Download className="w-4 h-4" />
-                Export Selected ({selectedIds.length})
+                {t("dashboard.home.exportSelected").replace("{n}", String(selectedIds.length))}
               </button>
               {exportOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg z-10">
-                  <button onClick={handleExportPdf} className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-accent rounded-t-lg">PDF Report</button>
-                  <button onClick={handleExportCsv} className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-accent rounded-b-lg">CSV</button>
+                  <button onClick={handleExportPdf} className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-accent rounded-t-lg">{t("dashboard.home.pdfReport")}</button>
+                  <button onClick={handleExportCsv} className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-accent rounded-b-lg">{t("dashboard.home.csv")}</button>
                 </div>
               )}
             </div>
@@ -325,25 +320,26 @@ export default function DashboardPage() {
         {vehicles.length === 0 ? (
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <Car className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-lg font-medium mb-2 text-foreground">No vehicles yet</h2>
-            <p className="text-muted-foreground mb-4">Add your first vehicle to start tracking maintenance</p>
+            <h2 className="text-lg font-medium mb-2 text-foreground">{t("dashboard.home.noVehicles")}</h2>
+            <p className="text-muted-foreground mb-4">{t("dashboard.home.addFirstVehicle")}</p>
             <Link href="/dashboard/vehicles/new" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90">
-              <Plus className="w-4 h-4" />Add Vehicle
+              <Plus className="w-4 h-4" />{t("dashboard.home.addVehicleCta")}
             </Link>
           </div>
         ) : filteredVehicles.length === 0 ? (
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <Car className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-lg font-medium mb-2 text-foreground">No vehicles match filters</h2>
-            <p className="text-muted-foreground mb-4">Try adjusting your filter criteria</p>
-            <button onClick={() => { setFilterType("all"); setFilterStatus("all"); }} className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90">Clear Filters</button>
+            <h2 className="text-lg font-medium mb-2 text-foreground">{t("dashboard.home.noMatch")}</h2>
+            <p className="text-muted-foreground mb-4">{t("dashboard.home.adjustFilters")}</p>
+            <button onClick={() => { setFilterType("all"); setFilterStatus("all"); }} className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90">{t("dashboard.home.clearFilters")}</button>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredVehicles.map((vehicle) => {
               const Icon = vehicleTypeIcons[vehicle.vehicleType] || Car;
               const statusStyle = statusColors[vehicle.status as VehicleStatus] || statusColors.active;
-              const typeLabel = vehicleTypeLabels[vehicle.vehicleType] || "Other";
+              const typeLabels = t("dashboard.home.vehicleTypes") as Record<string, string>;
+              const statusLbls = t("dashboard.home.statusLabels") as Record<string, string>;
               return (
                 <div key={vehicle.id} className="relative">
                   <div className="absolute top-3 left-3 z-10" onClick={(e) => e.stopPropagation()}>
@@ -352,22 +348,22 @@ export default function DashboardPage() {
                   <Link href={`/dashboard/vehicles/${vehicle.id}`} className="block p-6 bg-card rounded-xl border border-border hover:border-primary hover:shadow-lg transition-all group">
                     <div className="flex items-start justify-between mb-4">
                       <div className="p-3 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors"><Icon className="w-6 h-6 text-primary" /></div>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusStyle.bg} ${statusStyle.text}`}>{statusStyle.label}</span>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusStyle.bg} ${statusStyle.text}`}>{statusLbls[vehicle.status] || vehicle.status}</span>
                     </div>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs text-muted-foreground">{vehicle.year}</span>
                       <span className="text-xs text-muted-foreground">&bull;</span>
-                      <span className="text-xs text-muted-foreground">{typeLabel}</span>
+                      <span className="text-xs text-muted-foreground">{typeLabels[vehicle.vehicleType] || vehicle.vehicleType}</span>
                     </div>
                     <h3 className="text-lg font-semibold mb-1 text-foreground">{vehicle.make} {vehicle.model}</h3>
                     {vehicle.nickname && <p className="text-sm text-muted-foreground mb-3">{vehicle.nickname}</p>}
                     <div className="flex items-center justify-between pt-4 border-t border-border">
                       <div>
-                        <p className="text-xs text-muted-foreground">Mileage</p>
+                        <p className="text-xs text-muted-foreground">{t("vehicle.mileage")}</p>
                         <p className="font-semibold text-foreground">{vehicle.currentMileage.toLocaleString()} mi</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Reminders</p>
+                        <p className="text-xs text-muted-foreground">{t("vehicle.reminders")}</p>
                         <p className="font-semibold text-foreground">{vehicle.reminders.length}</p>
                       </div>
                     </div>
@@ -381,13 +377,13 @@ export default function DashboardPage() {
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
           <Link href="/dashboard/reminders" className="p-6 bg-card rounded-lg border border-border hover:border-primary transition-colors">
             <BellIcon className="w-8 h-8 text-primary mb-3" />
-            <h3 className="font-semibold mb-1 text-foreground">Reminders</h3>
-            <p className="text-sm text-muted-foreground">{upcomingReminders > 0 ? `${upcomingReminders} active reminders` : "No upcoming maintenance"}</p>
+            <h3 className="font-semibold mb-1 text-foreground">{t("reminders.title")}</h3>
+            <p className="text-sm text-muted-foreground">{upcomingReminders > 0 ? `${upcomingReminders} ${t("dashboard.home.activeReminders")}` : t("dashboard.home.noUpcoming")}</p>
           </Link>
           <Link href="/dashboard/transfer" className="p-6 bg-card rounded-lg border border-border hover:border-primary transition-colors">
             <Settings className="w-8 h-8 text-primary mb-3" />
-            <h3 className="font-semibold mb-1 text-foreground">Transfer Vehicle</h3>
-            <p className="text-sm text-muted-foreground">Transfer ownership or claim a vehicle</p>
+            <h3 className="font-semibold mb-1 text-foreground">{t("dashboard.home.transferTitle")}</h3>
+            <p className="text-sm text-muted-foreground">{t("dashboard.home.transferDesc")}</p>
           </Link>
         </div>
       </main>
@@ -395,8 +391,4 @@ export default function DashboardPage() {
   );
 }
 
-const vehicleTypes = [
-  { value: "car", label: "Car" }, { value: "truck", label: "Truck" }, { value: "motorcycle", label: "Motorcycle" },
-  { value: "excavator", label: "Excavator" }, { value: "bulldozer", label: "Bulldozer" }, { value: "dump_truck", label: "Dump Truck" },
-  { value: "crane", label: "Crane" }, { value: "loader", label: "Loader" }, { value: "grader", label: "Grader" }, { value: "other", label: "Other" },
-];
+
