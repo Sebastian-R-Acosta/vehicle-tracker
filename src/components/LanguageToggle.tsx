@@ -1,18 +1,17 @@
 "use client";
 
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { Languages } from "lucide-react";
 
-export function LanguageToggle() {
+export function LanguageToggle({ className }: { className?: string }) {
   const { locale, setLocale } = useLanguage();
 
   return (
     <button
       onClick={() => setLocale(locale === "es" ? "en" : "es")}
-      className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+      className={`text-lg leading-none ${className || "p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"}`}
       title={locale === "es" ? "English" : "Español"}
     >
-      <Languages className="w-5 h-5" />
+      {locale === "es" ? "🇬🇧" : "🇪🇸"}
       <span className="sr-only">{locale === "es" ? "English" : "Español"}</span>
     </button>
   );
