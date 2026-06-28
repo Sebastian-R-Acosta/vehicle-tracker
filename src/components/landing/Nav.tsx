@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Menu, X, Car, LogIn, ChevronDown } from "lucide-react";
+import { Menu, X, LogIn, ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 const solutions = [
@@ -61,9 +61,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
             <a href="/" className="flex items-center gap-2.5">
-              <div className="p-1.5 bg-blue-600 rounded-lg">
-                <Car className="w-5 h-5 text-white" />
-              </div>
+              <img src="/logo.jpg" alt="Vehicle Tracker" className="h-8 w-auto" />
               <span className="text-lg font-bold text-white">Vehicle Tracker</span>
             </a>
 

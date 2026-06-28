@@ -1,7 +1,8 @@
 "use client";
 
-import { Car, Bell, Building2, Package, Wrench, Users, Scan, LogOut, User } from "lucide-react";
+import { Bell, Building2, Package, Wrench, Users, Scan, LogOut, User } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { signOut } from "next-auth/react";
 import OrgSwitcher from "@/components/OrgSwitcher";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -13,9 +14,7 @@ export function DashboardNav() {
         <div className="flex justify-between h-16">
           <div className="flex items-center gap-4 min-w-0">
             <Link href="/dashboard" className="flex items-center gap-2 shrink-0">
-              <div className="p-2 bg-primary rounded-lg">
-                <Car className="w-5 h-5 text-primary-foreground" />
-              </div>
+              <img src="/logo.jpg" alt="Vehicle Tracker" className="h-8 w-auto" />
               <span className="text-xl font-bold text-foreground hidden sm:inline">Vehicle Tracker</span>
             </Link>
             <nav className="flex items-center gap-1 overflow-x-auto scrollbar-none">

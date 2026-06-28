@@ -298,7 +298,7 @@ export default function VehicleDetailPage() {
         const margin = 20;
         const contentWidth = pageWidth - margin * 2;
 
-        const logoUrl = "/logo.svg";
+        const logoUrl = "/logo.jpg";
         try {
           doc.addImage(logoUrl, "SVG", margin, 10, 50, 15);
         } catch (e) {}

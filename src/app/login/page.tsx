@@ -4,7 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Car, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -45,9 +45,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md p-8 bg-card rounded-lg shadow-md border border-border">
         <div className="flex flex-col items-center mb-8">
-          <div className="p-3 bg-primary rounded-full">
-            <Car className="w-8 h-8 text-primary-foreground" />
-          </div>
+          <img src="/logo.jpg" alt="Vehicle Tracker" className="h-12 w-auto" />
           <h1 className="mt-4 text-2xl font-bold text-foreground">Welcome back</h1>
           <p className="text-muted-foreground">Sign in to your account</p>
         </div>
