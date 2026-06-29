@@ -9,7 +9,12 @@ export async function GET() {
     return NextResponse.json({ tier: "free", maxVehicles: FREE_TIER_MAX_VEHICLES });
   }
 
-  if (session.user.role === "admin") {
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true },
+  });
+
+  if (user?.role === "admin") {
     return NextResponse.json({
       tier: "business",
       maxVehicles: 99999,

@@ -2,15 +2,22 @@
 
 import { Bell, Building2, Package, Wrench, Users, Scan, LogOut, User, Shield } from "lucide-react";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
 import OrgSwitcher from "@/components/OrgSwitcher";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export function DashboardNav() {
   const { t } = useLanguage();
-  const { data: session } = useSession();
-  const isAdmin = session?.user?.role === "admin";
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/user/role")
+      .then((r) => r.json())
+      .then((d) => setIsAdmin(d.role === "admin"))
+      .catch(() => {});
+  }, []);
 
   return (
     <header className="bg-card border-b border-border">
