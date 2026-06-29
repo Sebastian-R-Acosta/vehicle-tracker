@@ -70,7 +70,7 @@ export default function LoginPage() {
             <div className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">{t("common.save")}</span>
+            <span className="bg-card px-2 text-muted-foreground">{t("common.or")}</span>
           </div>
         </div>
 

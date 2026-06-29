@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 declare module "next-auth" {
   interface User {
     currentOrganizationId?: string | null;
+    role?: string;
   }
   interface Session {
     user: {
@@ -16,6 +17,7 @@ declare module "next-auth" {
       name?: string | null;
       image?: string | null;
       currentOrganizationId?: string | null;
+      role?: string;
     };
   }
 }
@@ -60,6 +62,7 @@ export const authConfig: NextAuthConfig = {
           name: user.name,
           image: user.avatarUrl,
           currentOrganizationId: user.currentOrganizationId,
+          role: user.role ?? "user",
         };
       },
     }),
@@ -69,6 +72,7 @@ export const authConfig: NextAuthConfig = {
       if (user) {
         token.id = user.id;
         token.currentOrganizationId = user.currentOrganizationId;
+        token.role = user.role;
       }
       if (trigger === "update" && session) {
         token.currentOrganizationId = session.currentOrganizationId;
@@ -79,6 +83,7 @@ export const authConfig: NextAuthConfig = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.currentOrganizationId = token.currentOrganizationId as string | undefined;
+        session.user.role = token.role as string | undefined;
       }
       return session;
     },

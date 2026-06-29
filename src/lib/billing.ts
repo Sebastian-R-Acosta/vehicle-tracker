@@ -1,6 +1,14 @@
 import { prisma } from "@/lib/db";
 import { FREE_TIER_MAX_VEHICLES, PRO_TIER } from "@/lib/stripe";
 
+async function isAdmin(userId: string): Promise<boolean> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  return user?.role === "admin";
+}
+
 export async function getUserPlan(userId: string) {
   const sub = await prisma.subscription.findUnique({
     where: { userId },
@@ -16,6 +24,7 @@ export async function getVehicleCount(userId: string): Promise<number> {
 }
 
 export async function canAddVehicle(userId: string): Promise<{ allowed: boolean; limit: number; current: number }> {
+  if (await isAdmin(userId)) return { allowed: true, limit: Infinity, current: 0 };
   const plan = await getUserPlan(userId);
   const limit = plan?.maxVehicles ?? FREE_TIER_MAX_VEHICLES;
   const current = await getVehicleCount(userId);
@@ -23,6 +32,7 @@ export async function canAddVehicle(userId: string): Promise<{ allowed: boolean;
 }
 
 export async function isPro(userId: string): Promise<boolean> {
+  if (await isAdmin(userId)) return true;
   const plan = await getUserPlan(userId);
   return plan?.tier === PRO_TIER || plan?.tier === "business";
 }

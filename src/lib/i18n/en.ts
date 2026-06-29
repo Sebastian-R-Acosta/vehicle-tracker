@@ -67,6 +67,7 @@ export const en: Translations = {
     noOrgHeading: "Create an organization first",
     goToSettings: "Go to Settings",
     goToDashboard: "Go to Dashboard",
+    or: "or",
   },
   nav: {
     dashboard: "Dashboard",
@@ -883,6 +884,8 @@ export const en: Translations = {
       uploadFailed: "Upload failed. Try a smaller file.",
       documentDeleted: "Document deleted",
       failedDeleteDocument: "Failed to delete document",
+      maintenanceHistory: "Maintenance History",
+      addRecord: "Add Record",
     },
     vehicleNew: {
       heading: "Add New Vehicle",

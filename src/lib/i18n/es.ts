@@ -65,6 +65,7 @@ export const es = {
     noOrgHeading: "Crea una organización primero",
     goToSettings: "Ir a Configuración",
     goToDashboard: "Ir al Panel",
+    or: "o",
   },
   nav: {
     dashboard: "Panel",
@@ -881,6 +882,8 @@ export const es = {
       uploadFailed: "Error al subir. Intenta con un archivo más pequeño.",
       documentDeleted: "Documento eliminado",
       failedDeleteDocument: "Error al eliminar documento",
+      maintenanceHistory: "Historial de Mantenimiento",
+      addRecord: "Agregar Registro",
     },
     vehicleNew: {
       heading: "Agregar Vehículo Nuevo",

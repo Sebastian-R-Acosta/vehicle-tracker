@@ -49,6 +49,7 @@ model User {
   email         String   @unique
   passwordHash  String?
   name         String?
+  role         String   @default("user")
   googleId     String?  @unique
   avatarUrl     String?
   resetToken    String?

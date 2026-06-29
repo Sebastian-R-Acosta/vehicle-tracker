@@ -1,14 +1,16 @@
 "use client";
 
-import { Bell, Building2, Package, Wrench, Users, Scan, LogOut, User } from "lucide-react";
+import { Bell, Building2, Package, Wrench, Users, Scan, LogOut, User, Shield } from "lucide-react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import OrgSwitcher from "@/components/OrgSwitcher";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export function DashboardNav() {
   const { t } = useLanguage();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "admin";
 
   return (
     <header className="bg-card border-b border-border">
@@ -66,6 +68,12 @@ export function DashboardNav() {
             </nav>
           </div>
           <div className="flex items-center gap-2 shrink-0">
+            {isAdmin && (
+              <span className="flex items-center gap-1 text-xs font-medium text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/40 px-2 py-1 rounded-md">
+                <Shield className="w-3 h-3" />
+                admin
+              </span>
+            )}
             <Link
               href="/dashboard/notifications"
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
