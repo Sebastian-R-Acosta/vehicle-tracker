@@ -9,6 +9,16 @@ export async function GET() {
     return NextResponse.json({ tier: "free", maxVehicles: FREE_TIER_MAX_VEHICLES });
   }
 
+  if (session.user.role === "admin") {
+    return NextResponse.json({
+      tier: "business",
+      maxVehicles: 99999,
+      name: "Admin",
+      status: "active",
+      paymentProcessor: "free",
+    });
+  }
+
   const sub = await prisma.subscription.findUnique({
     where: { userId: session.user.id },
     include: { plan: true },
