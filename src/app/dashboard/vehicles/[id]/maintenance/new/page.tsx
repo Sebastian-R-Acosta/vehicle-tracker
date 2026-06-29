@@ -8,35 +8,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, Loader2, Wrench, Upload, X, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
-
-const maintenanceSchema = z.object({
-  date: z.string().min(1, "Date is required"),
-  serviceType: z.string().min(1, "Service type is required"),
-  mileage: z.number().min(0, "Mileage must be positive"),
-  notes: z.string().optional(),
-  cost: z.number().optional(),
-  imageUrl: z.string().optional(),
-  setReminder: z.boolean().optional(),
-});
-
-type MaintenanceFormData = z.infer<typeof maintenanceSchema>;
-
-const serviceTypes = [
-  "Oil Change",
-  "Tire Rotation",
-  "Brake Service",
-  "Air Filter",
-  "Transmission Service",
-  "Battery Replacement",
-  "Inspection",
-  "Repair",
-  "Other",
-];
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function NewMaintenancePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -45,7 +23,23 @@ export default function NewMaintenancePage() {
   const [currentMileage, setCurrentMileage] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-useEffect(() => {
+  const serviceTypes = t("dashboard.maintenanceNew.serviceTypes") as string[];
+  const otherServiceType = serviceTypes[serviceTypes.length - 1];
+  const repairServiceType = serviceTypes[serviceTypes.length - 2];
+
+  const maintenanceSchema = z.object({
+    date: z.string().min(1, t("dashboard.maintenanceNew.dateRequired")),
+    serviceType: z.string().min(1, t("dashboard.maintenanceNew.serviceTypeRequired")),
+    mileage: z.number().min(0, t("dashboard.maintenanceNew.mileagePositive")),
+    notes: z.string().optional(),
+    cost: z.number().optional(),
+    imageUrl: z.string().optional(),
+    setReminder: z.boolean().optional(),
+  });
+
+  type MaintenanceFormData = z.infer<typeof maintenanceSchema>;
+
+  useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
     }
@@ -86,12 +80,12 @@ useEffect(() => {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      setError("Please select an image file");
+      setError(t("dashboard.maintenanceNew.selectImage"));
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError("Image must be less than 5MB");
+      setError(t("dashboard.maintenanceNew.imageTooLarge"));
       return;
     }
 
@@ -125,7 +119,7 @@ useEffect(() => {
           setImageKey(data.key);
           setFormValue("imageUrl", data.imageUrl);
         } catch (err) {
-          setError(err instanceof Error ? err.message : "Failed to upload image");
+          setError(err instanceof Error ? err.message : t("dashboard.maintenanceNew.failedToUpload"));
           console.error("Upload error:", err);
         } finally {
           setUploading(false);
@@ -133,13 +127,13 @@ useEffect(() => {
       };
 
       reader.onerror = () => {
-        setError("Failed to read file");
+        setError(t("dashboard.maintenanceNew.failedToRead"));
         setUploading(false);
       };
 
       reader.readAsDataURL(file);
     } catch (err) {
-      setError("Failed to upload image");
+      setError(t("dashboard.maintenanceNew.failedToUpload"));
       console.error(err);
       setUploading(false);
     }
@@ -171,7 +165,7 @@ useEffect(() => {
 
       router.push(`/dashboard/vehicles/${params.id}`);
     } catch (err) {
-      setError("Something went wrong");
+      setError(t("dashboard.maintenanceNew.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -196,7 +190,7 @@ useEffect(() => {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("dashboard.maintenanceNew.back")}
               </Link>
             </div>
           </div>
@@ -209,7 +203,7 @@ useEffect(() => {
             <div className="p-2 bg-primary rounded-lg">
               <Wrench className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold text-foreground">Add Maintenance Record</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t("dashboard.maintenanceNew.heading")}</h1>
           </div>
 
           {error && (
@@ -222,7 +216,7 @@ useEffect(() => {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Date <span className="text-destructive">*</span>
+                  {t("dashboard.maintenanceNew.date")} <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="date"
@@ -238,13 +232,13 @@ useEffect(() => {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Mileage <span className="text-destructive">*</span>
+                  {t("dashboard.maintenanceNew.mileage")} <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="number"
                   {...register("mileage", { valueAsNumber: true })}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder="0"
+                  placeholder={t("dashboard.maintenanceNew.mileagePlaceholder")}
                 />
                 {errors.mileage && (
                   <p className="mt-1 text-sm text-destructive">
@@ -256,14 +250,14 @@ useEffect(() => {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Service Type <span className="text-destructive">*</span>
+                {t("dashboard.maintenanceNew.serviceType")} <span className="text-destructive">*</span>
               </label>
               <select
                 {...register("serviceType")}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
               >
-                <option value="">Select service type</option>
-                {serviceTypes.map((type) => (
+                <option value="">{t("dashboard.maintenanceNew.selectServiceType")}</option>
+                {serviceTypes.map((type: string) => (
                   <option key={type} value={type}>
                     {type}
                   </option>
@@ -278,7 +272,7 @@ useEffect(() => {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Invoice Image (optional)
+                {t("dashboard.maintenanceNew.invoiceImage")}
               </label>
               <input
                 ref={fileInputRef}
@@ -292,7 +286,7 @@ useEffect(() => {
                 <div className="relative mt-2">
                   <img
                     src={imagePreview}
-                    alt="Invoice preview"
+                    alt={t("dashboard.maintenanceNew.invoicePreview")}
                     className="w-full max-h-64 object-contain rounded-lg border border-border bg-background"
                   />
                   <button
@@ -316,43 +310,43 @@ useEffect(() => {
                     <>
                       <Upload className="w-5 h-5 text-muted-foreground" />
                       <span className="text-muted-foreground">
-                        Click to upload invoice image
+                        {t("dashboard.maintenanceNew.uploadInvoice")}
                       </span>
                     </>
                   )}
                 </button>
               )}
               <p className="mt-1 text-xs text-muted-foreground">
-                PNG, JPG, or WEBP up to 5MB
+                {t("dashboard.maintenanceNew.fileFormats")}
               </p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Notes (optional)
+                {t("dashboard.maintenanceNew.notes")}
               </label>
               <textarea
                 {...register("notes")}
                 rows={3}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                placeholder="Any additional details..."
+                placeholder={t("dashboard.maintenanceNew.notesPlaceholder")}
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Cost (optional)
+                {t("dashboard.maintenanceNew.cost")}
               </label>
               <input
                 type="number"
                 step="0.01"
                 {...register("cost", { valueAsNumber: true })}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                placeholder="0.00"
+                placeholder={t("dashboard.maintenanceNew.costPlaceholder")}
               />
             </div>
 
-            {selectedServiceType && selectedServiceType !== "Other" && selectedServiceType !== "Repair" && (
+            {selectedServiceType && selectedServiceType !== otherServiceType && selectedServiceType !== repairServiceType && (
               <div className="p-4 bg-accent rounded-lg border border-border">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
@@ -362,9 +356,9 @@ useEffect(() => {
                     className="w-5 h-5 rounded border-input text-primary focus:ring-ring"
                   />
                   <div>
-                    <span className="font-medium text-foreground">Set automatic reminder</span>
+                    <span className="font-medium text-foreground">{t("dashboard.maintenanceNew.setReminder")}</span>
                     <p className="text-sm text-muted-foreground">
-                      A reminder for the next {selectedServiceType} will be created based on expert recommendations.
+                      {t("dashboard.maintenanceNew.reminderDescription", { type: selectedServiceType })}
                     </p>
                   </div>
                 </label>
@@ -377,7 +371,7 @@ useEffect(() => {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              Add Record
+              {t("dashboard.maintenanceNew.addRecord")}
             </button>
           </form>
         </div>

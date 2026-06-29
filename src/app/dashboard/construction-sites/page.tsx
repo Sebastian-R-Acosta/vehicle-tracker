@@ -6,6 +6,7 @@ import { useState } from "react";
 import { AlertTriangle, Plus, Loader2, Building2, MapPin, Wrench, Search } from "lucide-react";
 import Link from "next/link";
 import { useFetch } from "@/lib/queries";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface ConstructionSite {
   id: string;
@@ -19,6 +20,7 @@ interface ConstructionSite {
 export default function ConstructionSitesPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { t } = useLanguage();
   const [search, setSearch] = useState("");
 
   const orgId = session?.user?.currentOrganizationId || "";
@@ -52,9 +54,9 @@ export default function ConstructionSitesPage() {
           <div className="w-14 h-14 bg-destructive/10 rounded-xl flex items-center justify-center mx-auto mb-6">
             <AlertTriangle className="w-7 h-7 text-destructive" aria-hidden="true" />
           </div>
-          <h1 className="text-xl font-bold text-foreground mb-2">Failed to load sites</h1>
+          <h1 className="text-xl font-bold text-foreground mb-2">{t("dashboard.constructionSites.failedToLoad")}</h1>
           <p className="text-muted-foreground mb-6">{error.message}</p>
-          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">Try again</button>
+          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">{t("dashboard.constructionSites.tryAgain")}</button>
         </div>
       </div>
     );
@@ -66,12 +68,12 @@ export default function ConstructionSitesPage() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <Building2 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-lg font-medium mb-2 text-foreground">Create an organization first</h2>
+            <h2 className="text-lg font-medium mb-2 text-foreground">{t("common.noOrgHeading")}</h2>
             <p className="text-muted-foreground mb-4">
-              You need to be part of an organization to manage construction sites.
+              {t("dashboard.constructionSites.subtitle")}
             </p>
             <Link href="/dashboard/settings" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90">
-              Go to Settings
+              {t("common.goToSettings")}
             </Link>
           </div>
         </main>
@@ -84,12 +86,12 @@ export default function ConstructionSitesPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Construction Sites</h1>
-            <p className="text-muted-foreground">Manage your job sites and equipment</p>
+            <h1 className="text-2xl font-bold text-foreground">{t("dashboard.constructionSites.heading")}</h1>
+            <p className="text-muted-foreground">{t("dashboard.constructionSites.subtitle")}</p>
           </div>
           <Link href="/dashboard/construction-sites/new" className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
             <Plus className="w-4 h-4" />
-            New Site
+            {t("dashboard.constructionSites.newSite")}
           </Link>
         </div>
 
@@ -98,8 +100,8 @@ export default function ConstructionSitesPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <input
               type="text"
-              placeholder="Search sites by name..."
-              aria-label="Search sites by name"
+              placeholder={t("dashboard.constructionSites.searchPlaceholder")}
+              aria-label={t("dashboard.constructionSites.searchPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
@@ -111,15 +113,15 @@ export default function ConstructionSitesPage() {
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <Building2 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
             <h2 className="text-lg font-medium mb-2 text-foreground">
-              {search ? "No sites match your search" : "No construction sites yet"}
+              {search ? t("dashboard.constructionSites.noSearchResults") : t("dashboard.constructionSites.noSites")}
             </h2>
             <p className="text-muted-foreground mb-4">
-              {search ? "Try a different name" : "Create your first site to start tracking equipment"}
+              {search ? t("dashboard.constructionSites.tryDifferentName") : t("dashboard.constructionSites.addFirstSite")}
             </p>
             {!search && (
               <Link href="/dashboard/construction-sites/new" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90">
                 <Plus className="w-4 h-4" />
-                New Site
+                {t("dashboard.constructionSites.newSite")}
               </Link>
             )}
           </div>

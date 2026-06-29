@@ -52,7 +52,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <img src="/logo.jpg" alt="Vehicle Tracker" className="h-8 w-auto" />
+              <img src="/logo-icon.svg" alt="Vehicle Tracker" className="h-8 w-auto" />
               <span className="text-lg font-bold text-white">Vehicle Tracker</span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">

@@ -13,8 +13,10 @@ import {
   Key,
   AlertCircle,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function TransferPage() {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const [vehicles, setVehicles] = useState<any[]>([]);
@@ -66,10 +68,10 @@ export default function TransferPage() {
         const data = await res.json();
         setTransferCode(data);
       } else {
-        setError("Failed to generate transfer code");
+        setError(t("dashboard.transfer.failedGenerate"));
       }
     } catch (err) {
-      setError("Something went wrong");
+      setError(t("dashboard.transfer.somethingWentWrong"));
     } finally {
       setGenerating(false);
     }
@@ -100,7 +102,7 @@ export default function TransferPage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("common.back")}
               </Link>
             </div>
           </div>
@@ -108,7 +110,7 @@ export default function TransferPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold mb-8 text-foreground">Transfer Vehicle</h1>
+        <h1 className="text-2xl font-bold mb-8 text-foreground">{t("dashboard.transfer.heading")}</h1>
 
         <div className="grid gap-8">
           <div className="bg-card rounded-lg border border-border p-6">
@@ -117,9 +119,9 @@ export default function TransferPage() {
                 <Key className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-foreground">Generate Transfer Code</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t("dashboard.transfer.generateCode")}</h2>
                 <p className="text-sm text-muted-foreground">
-                  Create a code to transfer ownership
+                  {t("dashboard.transfer.generateDesc")}
                 </p>
               </div>
             </div>
@@ -133,7 +135,7 @@ export default function TransferPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Select Vehicle
+                  {t("dashboard.transfer.selectVehicle")}
                 </label>
                 <select
                   value={selectedVehicle}
@@ -144,7 +146,7 @@ export default function TransferPage() {
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                   disabled={!!transferCode}
                 >
-                  <option value="">Choose a vehicle</option>
+                  <option value="">{t("dashboard.transfer.chooseVehicle")}</option>
                   {vehicles.map((v) => (
                     <option key={v.id} value={v.id}>
                       {v.year} {v.make} {v.model}
@@ -156,7 +158,7 @@ export default function TransferPage() {
               {transferCode ? (
                 <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
                   <p className="text-sm text-green-600 dark:text-green-400 mb-2">
-                    Transfer code generated (valid for 24 hours):
+                    {t("dashboard.transfer.codeGenerated")}
                   </p>
                   <div className="flex items-center gap-2">
                     <code className="text-2xl font-mono font-bold tracking-wider text-foreground">
@@ -181,7 +183,7 @@ export default function TransferPage() {
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   {generating && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Generate Code
+                  {generating ? t("dashboard.transfer.generating") : t("dashboard.transfer.generateCodeButton")}
                 </button>
               )}
             </div>
@@ -193,9 +195,9 @@ export default function TransferPage() {
                 <Car className="w-5 h-5 text-secondary-foreground" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-foreground">Claim Vehicle</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t("dashboard.transfer.claimVehicle")}</h2>
                 <p className="text-sm text-muted-foreground">
-                  Enter a code to claim a vehicle
+                  {t("dashboard.transfer.claimDesc")}
                 </p>
               </div>
             </div>
@@ -209,6 +211,7 @@ export default function TransferPage() {
 }
 
 function ClaimForm() {
+  const { t } = useLanguage();
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -232,10 +235,10 @@ function ClaimForm() {
         setCode("");
       } else {
         const data = await res.json();
-        setError(data.message || "Invalid code");
+        setError(data.message || t("dashboard.transfer.invalidCode"));
       }
     } catch (err) {
-      setError("Something went wrong");
+      setError(t("dashboard.transfer.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -245,16 +248,16 @@ function ClaimForm() {
     return (
       <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
         <p className="text-green-600 dark:text-green-400 font-medium">
-          Vehicle claimed successfully!
+          {t("dashboard.transfer.claimedSuccess")}
         </p>
         <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-          The vehicle is now in your garage.
+          {t("dashboard.transfer.inYourGarage")}
         </p>
         <button
           onClick={() => setSuccess(false)}
           className="mt-3 text-sm text-green-700 dark:text-green-300 underline"
         >
-          Claim another
+          {t("dashboard.transfer.claimAnother")}
         </button>
       </div>
     );
@@ -271,7 +274,7 @@ function ClaimForm() {
 
       <div>
         <label className="block text-sm font-medium text-foreground mb-1">
-          Transfer Code
+          {t("dashboard.transfer.transferCode")}
         </label>
         <input
           type="text"
@@ -289,7 +292,7 @@ function ClaimForm() {
         className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-secondary text-secondary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
       >
         {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-        Claim Vehicle
+        {t("dashboard.transfer.claimButton")}
       </button>
     </div>
   );

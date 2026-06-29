@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useFetch } from "@/lib/queries";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface Reminder {
   id: string;
@@ -40,6 +41,7 @@ export default function RemindersPage() {
   const [search, setSearch] = useState("");
 
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
 
   const { data: reminders = [], isLoading, error } = useFetch<Reminder[]>(
     ["reminders"],
@@ -67,9 +69,9 @@ export default function RemindersPage() {
           <div className="w-14 h-14 bg-destructive/10 rounded-xl flex items-center justify-center mx-auto mb-6">
             <AlertTriangle className="w-7 h-7 text-destructive" aria-hidden="true" />
           </div>
-          <h1 className="text-xl font-bold text-foreground mb-2">Failed to load reminders</h1>
+          <h1 className="text-xl font-bold text-foreground mb-2">{t("dashboard.reminders.failedToLoad")}</h1>
           <p className="text-muted-foreground mb-6">{error.message}</p>
-          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">Try again</button>
+          <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90">{t("dashboard.reminders.tryAgain")}</button>
         </div>
       </div>
     );
@@ -126,7 +128,7 @@ export default function RemindersPage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("dashboard.reminders.back")}
               </Link>
             </div>
             <div className="flex items-center gap-2">
@@ -135,7 +137,7 @@ export default function RemindersPage() {
                 className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
               >
                 <Plus className="w-4 h-4" />
-                New Reminder
+                {t("dashboard.reminders.newReminder")}
               </Link>
             </div>
           </div>
@@ -143,14 +145,14 @@ export default function RemindersPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold mb-8 text-foreground">Reminders</h1>
+        <h1 className="text-2xl font-bold mb-8 text-foreground">{t("dashboard.reminders.heading")}</h1>
 
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <input
               type="text"
-              placeholder="Search reminders by title..."
-              aria-label="Search reminders by title"
+              placeholder={t("dashboard.reminders.searchPlaceholder")}
+              aria-label={t("dashboard.reminders.searchLabel")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
@@ -161,10 +163,10 @@ export default function RemindersPage() {
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <Bell className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
             <h2 className="text-lg font-medium mb-2 text-foreground">
-              {search ? "No reminders match your search" : "No reminders yet"}
+              {search ? t("dashboard.reminders.noSearchResults") : t("dashboard.reminders.noReminders")}
             </h2>
             <p className="text-muted-foreground mb-4">
-              {search ? "Try a different title" : "Set reminders for maintenance and services"}
+              {search ? t("dashboard.reminders.tryDifferentTitle") : t("dashboard.reminders.setRemindersDesc")}
             </p>
             {!search && (
               <Link
@@ -172,7 +174,7 @@ export default function RemindersPage() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
               >
                 <Plus className="w-4 h-4" />
-                New Reminder
+                {t("dashboard.reminders.newReminder")}
               </Link>
             )}
           </div>
@@ -182,7 +184,7 @@ export default function RemindersPage() {
               <div>
                 <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-foreground">
                   <Clock className="w-5 h-5" />
-                  Active
+                  {t("dashboard.reminders.active")}
                 </h2>
                 <div className="space-y-3">
                   {activeReminders.map((reminder) => (
@@ -198,7 +200,7 @@ export default function RemindersPage() {
                         <div className="flex items-start gap-3">
                           <button
                             onClick={() => toggleComplete(reminder.id)}
-                            aria-label={reminder.isCompleted ? "Mark as incomplete" : "Mark as complete"}
+                            aria-label={reminder.isCompleted ? t("dashboard.reminders.markAsIncomplete") : t("dashboard.reminders.markAsComplete")}
                             className={`mt-1 p-1 rounded-full border-2 ${
                               isOverdue(reminder)
                                 ? "border-destructive text-destructive"
@@ -225,12 +227,12 @@ export default function RemindersPage() {
                               )}
                               {reminder.dueMileage && (
                                 <span>
-                                  {reminder.dueMileage.toLocaleString()} miles
+                                  {reminder.dueMileage.toLocaleString()} {t("dashboard.reminders.miles")}
                                 </span>
                               )}
                               {reminder.dueHours && (
                                 <span>
-                                  {reminder.dueHours.toLocaleString()} hrs
+                                  {reminder.dueHours.toLocaleString()} {t("dashboard.reminders.hrs")}
                                 </span>
                               )}
                             </div>
@@ -253,7 +255,7 @@ export default function RemindersPage() {
               <div>
                 <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-foreground">
                   <CheckCircle className="w-5 h-5" />
-                  Completed
+                  {t("dashboard.reminders.completed")}
                 </h2>
                 <div className="space-y-3">
                   {completedReminders.map((reminder) => (
@@ -281,7 +283,7 @@ export default function RemindersPage() {
                         </div>
                         <button
                           onClick={() => deleteReminder(reminder.id)}
-                          aria-label={`Delete reminder: ${reminder.title}`}
+                          aria-label={t("dashboard.reminders.deleteReminder", { title: reminder.title })}
                           className="p-2 text-muted-foreground hover:text-destructive"
                         >
                           <Trash2 className="w-4 h-4" />

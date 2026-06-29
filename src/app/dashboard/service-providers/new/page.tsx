@@ -4,16 +4,13 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Loader2, Building2 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import Link from "next/link";
 
-const categoryLabels: Record<string, string> = {
-  general: "General", dealership: "Dealership", independent: "Independent",
-  tire: "Tire", body: "Body", transmission: "Transmission", oil: "Oil",
-  brake: "Brake", electrical: "Electrical", ac: "A/C", towing: "Towing",
-  detail: "Detail",
-};
+
 
 export default function NewServiceProviderPage() {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -50,7 +47,7 @@ export default function NewServiceProviderPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError("Provider name is required");
+      setError(t("dashboard.serviceProviders.new.nameRequired"));
       return;
     }
     setError("");
@@ -74,12 +71,12 @@ export default function NewServiceProviderPage() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || "Failed to create provider");
+        throw new Error(result.error || t("dashboard.serviceProviders.new.failedCreate"));
       }
 
       router.push(`/dashboard/service-providers/${result.id}`);
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      setError(err.message || t("errors.generic"));
     } finally {
       setLoading(false);
     }
@@ -96,7 +93,7 @@ export default function NewServiceProviderPage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("common.back")}
               </Link>
             </div>
           </div>
@@ -109,7 +106,7 @@ export default function NewServiceProviderPage() {
             <div className="p-2 bg-primary rounded-lg">
               <Building2 className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold text-foreground">New Service Provider</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t("dashboard.serviceProviders.new.heading")}</h1>
           </div>
 
           {error && (
@@ -121,7 +118,7 @@ export default function NewServiceProviderPage() {
           <form onSubmit={onSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Provider Name <span className="text-destructive">*</span>
+                {t("dashboard.serviceProviders.new.providerName")} <span className="text-destructive">*</span>
               </label>
               <input
                 value={name}
@@ -132,20 +129,20 @@ export default function NewServiceProviderPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Category</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.serviceProviders.new.category")}</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
               >
-                {categories.map((c) => (
-                  <option key={c} value={c}>{categoryLabels[c] || c}</option>
+                  {categories.map((c) => (
+                  <option key={c} value={c}>{t(`dashboard.serviceProviders.categories.${c}`) || c}</option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Address</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.serviceProviders.new.address")}</label>
               <input
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
@@ -156,7 +153,7 @@ export default function NewServiceProviderPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Phone</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.serviceProviders.new.phone")}</label>
                 <input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -165,7 +162,7 @@ export default function NewServiceProviderPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Email</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.serviceProviders.new.email")}</label>
                 <input
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -177,7 +174,7 @@ export default function NewServiceProviderPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Website</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.serviceProviders.new.website")}</label>
               <input
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
@@ -187,7 +184,7 @@ export default function NewServiceProviderPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Notes</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.serviceProviders.new.notes")}</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -202,7 +199,7 @@ export default function NewServiceProviderPage() {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              Create Provider
+              {t("dashboard.serviceProviders.new.createProvider")}
             </button>
           </form>
         </div>

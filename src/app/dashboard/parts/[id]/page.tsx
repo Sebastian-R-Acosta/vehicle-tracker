@@ -10,6 +10,7 @@ import Link from "next/link";
 import {
   ArrowLeft, Loader2, Package, AlertTriangle, Trash2, Minus, Plus,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface VehicleRef {
   id: string;
@@ -40,7 +41,7 @@ const CATEGORIES = [
 ];
 
 const partSchema = z.object({
-  name: z.string().min(1, "Name is required").max(200),
+  name: z.string().min(1).max(200),
   partNumber: z.string().max(100).optional(),
   category: z.string().min(1),
   quantity: z.coerce.number().int().min(0),
@@ -53,6 +54,7 @@ const partSchema = z.object({
 type PartFormData = z.infer<typeof partSchema>;
 
 export default function PartDetailPage() {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
@@ -134,13 +136,13 @@ export default function PartDetailPage() {
       });
       if (!res.ok) {
         const result = await res.json();
-        throw new Error(result.error || "Failed to update part");
+        throw new Error(result.error || t("dashboard.parts.detail.failedUpdate"));
       }
       const updated = await res.json();
       setPart(updated);
       setEditMode(false);
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      setError(err.message || t("errors.generic"));
     } finally {
       setSaving(false);
     }
@@ -165,7 +167,7 @@ export default function PartDetailPage() {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this part?")) return;
+    if (!window.confirm(t("dashboard.parts.detail.deleteConfirm"))) return;
     setDeleting(true);
     try {
       await fetch(`/api/parts/${params.id}`, { method: "DELETE" });
@@ -198,7 +200,7 @@ export default function PartDetailPage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("common.back")}
               </Link>
             </div>
             <div className="flex items-center gap-2">
@@ -225,35 +227,35 @@ export default function PartDetailPage() {
               {isLowStock && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
                   <AlertTriangle className="w-3 h-3" />
-                  Low Stock
+                  {t("dashboard.parts.detail.lowStock")}
                 </span>
               )}
             </div>
             {part.partNumber && (
-              <p className="text-muted-foreground">Part #: {part.partNumber}</p>
+              <p className="text-muted-foreground">{t("dashboard.parts.detail.partNumberLabel")}: {part.partNumber}</p>
             )}
           </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-4 mb-8">
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Current Stock</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.parts.detail.currentStock")}</p>
             <p className={`text-3xl font-bold ${isLowStock ? "text-red-600" : "text-foreground"}`}>
               {part.quantity}
             </p>
           </div>
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Min Stock</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.parts.detail.minStock")}</p>
             <p className="text-3xl font-bold text-foreground">{part.minStock}</p>
           </div>
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Category</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.parts.detail.category")}</p>
             <p className="text-lg font-bold text-foreground">
               {part.category.charAt(0).toUpperCase() + part.category.slice(1)}
             </p>
           </div>
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Unit Cost</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.parts.detail.unitCost")}</p>
             <p className="text-lg font-bold text-foreground">
               {part.unitCost != null ? `$${part.unitCost.toFixed(2)}` : "—"}
             </p>
@@ -261,7 +263,7 @@ export default function PartDetailPage() {
         </div>
 
         <div className="flex items-center gap-3 mb-8 p-4 bg-card rounded-lg border border-border">
-          <span className="text-sm font-medium text-foreground">Quick Adjust:</span>
+          <span className="text-sm font-medium text-foreground">{t("dashboard.parts.detail.quickAdjust")}:</span>
           <button
             onClick={() => handleStockAdjust(-1)}
             disabled={part.quantity <= 0}
@@ -279,7 +281,7 @@ export default function PartDetailPage() {
 
         {part.vehicle && (
           <div className="mb-8 p-4 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Installed on Vehicle</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.parts.detail.installedOnVehicle")}</p>
             <Link
               href={`/dashboard/vehicles/${part.vehicle.id}`}
               className="text-primary hover:underline font-medium"
@@ -292,13 +294,13 @@ export default function PartDetailPage() {
 
         <div className="bg-card rounded-lg border border-border p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-foreground">Details</h2>
+            <h2 className="text-lg font-semibold text-foreground">{t("dashboard.parts.detail.details")}</h2>
             {!editMode && (
               <button
                 onClick={() => setEditMode(true)}
                 className="text-sm text-primary hover:underline"
               >
-                Edit
+                {t("dashboard.parts.detail.edit")}
               </button>
             )}
           </div>
@@ -312,22 +314,22 @@ export default function PartDetailPage() {
               )}
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">
-                    Name <span className="text-destructive">*</span>
-                  </label>
+                    <label className="block text-sm font-medium text-foreground mb-1">
+                      {t("dashboard.parts.detail.name")} <span className="text-destructive">*</span>
+                    </label>
                   <input
                     {...register("name")}
                     className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                   />
                   {errors.name && (
-                    <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>
+                    <p className="mt-1 text-sm text-destructive">{t("dashboard.parts.new.nameRequired")}</p>
                   )}
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Part Number
+                      {t("dashboard.parts.detail.partNumber")}
                     </label>
                     <input
                       {...register("partNumber")}
@@ -336,7 +338,7 @@ export default function PartDetailPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Category
+                      {t("dashboard.parts.detail.category")}
                     </label>
                     <select
                       {...register("category")}
@@ -354,7 +356,7 @@ export default function PartDetailPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Quantity
+                      {t("dashboard.parts.detail.quantity")}
                     </label>
                     <input
                       type="number"
@@ -364,7 +366,7 @@ export default function PartDetailPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Min Stock
+                      {t("dashboard.parts.detail.minStock")}
                     </label>
                     <input
                       type="number"
@@ -377,7 +379,7 @@ export default function PartDetailPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Unit Cost
+                      {t("dashboard.parts.detail.unitCost")}
                     </label>
                     <input
                       type="number"
@@ -388,7 +390,7 @@ export default function PartDetailPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Supplier
+                      {t("dashboard.parts.detail.supplier")}
                     </label>
                     <input
                       {...register("supplier")}
@@ -398,9 +400,9 @@ export default function PartDetailPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">
-                    Notes
-                  </label>
+                    <label className="block text-sm font-medium text-foreground mb-1">
+                      {t("dashboard.parts.detail.notes")}
+                    </label>
                   <textarea
                     {...register("notes")}
                     rows={3}
@@ -415,7 +417,7 @@ export default function PartDetailPage() {
                     className="flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                   >
                     {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                    Save Changes
+                    {t("dashboard.parts.detail.saveChanges")}
                   </button>
                   <button
                     type="button"
@@ -435,7 +437,7 @@ export default function PartDetailPage() {
                     }}
                     className="px-4 py-3 border border-input text-foreground rounded-lg hover:bg-accent"
                   >
-                    Cancel
+                    {t("dashboard.parts.detail.cancel")}
                   </button>
                 </div>
               </form>
@@ -445,20 +447,20 @@ export default function PartDetailPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 {part.supplier && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Supplier</p>
+                    <p className="text-sm text-muted-foreground">{t("dashboard.parts.detail.supplier")}</p>
                     <p className="text-foreground">{part.supplier}</p>
                   </div>
                 )}
                 {part.unitCost != null && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Unit Cost</p>
+                    <p className="text-sm text-muted-foreground">{t("dashboard.parts.detail.unitCost")}</p>
                     <p className="text-foreground">${part.unitCost.toFixed(2)}</p>
                   </div>
                 )}
               </div>
               {part.notes && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Notes</p>
+                  <p className="text-sm text-muted-foreground">{t("dashboard.parts.detail.notes")}</p>
                   <p className="text-foreground whitespace-pre-wrap">{part.notes}</p>
                 </div>
               )}

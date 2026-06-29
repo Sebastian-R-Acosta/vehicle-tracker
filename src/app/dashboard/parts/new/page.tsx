@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, Loader2, Package, Search } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import Link from "next/link";
 
 interface VehicleRef {
@@ -17,9 +18,9 @@ interface VehicleRef {
 }
 
 const partSchema = z.object({
-  name: z.string().min(1, "Name is required").max(200),
+  name: z.string().min(1).max(200),
   partNumber: z.string().max(100).optional(),
-  category: z.string().min(1, "Category is required"),
+  category: z.string().min(1),
   quantity: z.coerce.number().int().min(0).default(0),
   minStock: z.coerce.number().int().min(0).default(0),
   unitCost: z.coerce.number().min(0).optional(),
@@ -30,6 +31,7 @@ const partSchema = z.object({
 type PartFormData = z.infer<typeof partSchema>;
 
 export default function NewPartPage() {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -108,12 +110,12 @@ export default function NewPartPage() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || "Failed to create part");
+        throw new Error(result.error || t("dashboard.parts.new.failedCreate"));
       }
 
       router.push(`/dashboard/parts/${result.id}`);
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      setError(err.message || t("errors.generic"));
     } finally {
       setLoading(false);
     }
@@ -138,7 +140,7 @@ export default function NewPartPage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("common.back")}
               </Link>
             </div>
           </div>
@@ -151,7 +153,7 @@ export default function NewPartPage() {
             <div className="p-2 bg-primary rounded-lg">
               <Package className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold text-foreground">New Part</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t("dashboard.parts.new.heading")}</h1>
           </div>
 
           {error && (
@@ -163,22 +165,22 @@ export default function NewPartPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Name <span className="text-destructive">*</span>
+                {t("dashboard.parts.new.name")} <span className="text-destructive">*</span>
               </label>
               <input
                 {...register("name")}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                 placeholder="Oil filter"
               />
-              {errors.name && (
-                <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>
+                {errors.name && (
+                <p className="mt-1 text-sm text-destructive">{t("dashboard.parts.new.nameRequired")}</p>
               )}
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Part Number
+                  {t("dashboard.parts.new.partNumber")}
                 </label>
                 <input
                   {...register("partNumber")}
@@ -188,13 +190,13 @@ export default function NewPartPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Category <span className="text-destructive">*</span>
+                  {t("dashboard.parts.new.category")} <span className="text-destructive">*</span>
                 </label>
                 <select
                   {...register("category")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                 >
-                  <option value="">Select category</option>
+                  <option value="">{t("dashboard.parts.new.selectCategory")}</option>
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -202,7 +204,7 @@ export default function NewPartPage() {
                   ))}
                 </select>
                 {errors.category && (
-                  <p className="mt-1 text-sm text-destructive">{errors.category.message}</p>
+                  <p className="mt-1 text-sm text-destructive">{t("dashboard.parts.new.categoryRequired")}</p>
                 )}
               </div>
             </div>
@@ -210,7 +212,7 @@ export default function NewPartPage() {
             <div className="grid gap-4 sm:grid-cols-3">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Quantity
+                  {t("dashboard.parts.new.quantity")}
                 </label>
                 <input
                   type="number"
@@ -220,7 +222,7 @@ export default function NewPartPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Min Stock
+                  {t("dashboard.parts.new.minStock")}
                 </label>
                 <input
                   type="number"
@@ -230,7 +232,7 @@ export default function NewPartPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Unit Cost
+                  {t("dashboard.parts.new.unitCost")}
                 </label>
                 <input
                   type="number"
@@ -243,9 +245,9 @@ export default function NewPartPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                Supplier
-              </label>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  {t("dashboard.parts.new.supplier")}
+                </label>
               <input
                 {...register("supplier")}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
@@ -254,9 +256,9 @@ export default function NewPartPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                Notes
-              </label>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  {t("dashboard.parts.new.notes")}
+                </label>
               <textarea
                 {...register("notes")}
                 rows={3}
@@ -267,7 +269,7 @@ export default function NewPartPage() {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Associated Vehicle (optional)
+                {t("dashboard.parts.new.associatedVehicle")}
               </label>
               {selectedVehicleId ? (
                 <div className="flex items-center gap-2 p-3 bg-secondary rounded-lg">
@@ -285,7 +287,7 @@ export default function NewPartPage() {
                     }}
                     className="ml-auto text-sm text-muted-foreground hover:text-foreground"
                   >
-                    Remove
+                    {t("dashboard.parts.new.remove")}
                   </button>
                 </div>
               ) : (
@@ -294,7 +296,7 @@ export default function NewPartPage() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
                       type="text"
-                      placeholder="Search vehicles..."
+                      placeholder={t("dashboard.parts.new.searchVehicles")}
                       value={vehicleSearch}
                       onChange={(e) => searchVehicles(e.target.value)}
                       className="w-full pl-10 pr-4 py-2.5 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
@@ -328,7 +330,7 @@ export default function NewPartPage() {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              Create Part
+              {t("dashboard.parts.new.createPart")}
             </button>
           </form>
         </div>

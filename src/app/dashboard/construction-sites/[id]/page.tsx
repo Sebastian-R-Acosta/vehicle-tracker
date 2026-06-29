@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Loader2, Building2, MapPin, Car, Truck, Plus, Pencil, Trash2, Drill, Tractor, Hammer } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface Vehicle {
   id: string;
@@ -33,22 +34,18 @@ const vehicleIcons: Record<string, React.ElementType> = {
   crane: Building2, loader: Hammer, grader: Tractor, other: Car,
 };
 
-const vehicleLabels: Record<string, string> = {
-  car: "Car", truck: "Truck", excavator: "Excavator", bulldozer: "Bulldozer",
-  dump_truck: "Dump Truck", crane: "Crane", loader: "Loader", grader: "Grader", other: "Other",
-};
-
-const equipmentStatusStyles: Record<string, { bg: string; text: string; label: string }> = {
-  operational: { bg: "bg-green-500/10", text: "text-green-600", label: "Operational" },
-  idle: { bg: "bg-amber-500/10", text: "text-amber-600", label: "Idle" },
-  down: { bg: "bg-red-500/10", text: "text-red-600", label: "Down" },
-  maintenance: { bg: "bg-blue-500/10", text: "text-blue-600", label: "In Maintenance" },
+const equipmentStatusStyles: Record<string, { bg: string; text: string; key: string }> = {
+  operational: { bg: "bg-green-500/10", text: "text-green-600", key: "operational" },
+  idle: { bg: "bg-amber-500/10", text: "text-amber-600", key: "idle" },
+  down: { bg: "bg-red-500/10", text: "text-red-600", key: "down" },
+  maintenance: { bg: "bg-blue-500/10", text: "text-blue-600", key: "inMaintenance" },
 };
 
 export default function SiteDetailPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
+  const { t } = useLanguage();
   const [site, setSite] = useState<ConstructionSite | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
@@ -107,6 +104,19 @@ export default function SiteDetailPage() {
     down: site.vehicles.filter((v) => v.equipmentStatus === "down" || v.status === "maintenance").length,
   };
 
+  const typeToTransKey: Record<string, string> = {
+    car: "dashboard.home.vehicleTypes.car",
+    truck: "dashboard.home.vehicleTypes.truck",
+    motorcycle: "dashboard.home.vehicleTypes.motorcycle",
+    excavator: "dashboard.home.vehicleTypes.excavator",
+    bulldozer: "dashboard.home.vehicleTypes.bulldozer",
+    dump_truck: "dashboard.home.vehicleTypes.dumpTruck",
+    crane: "dashboard.home.vehicleTypes.crane",
+    loader: "dashboard.home.vehicleTypes.loader",
+    grader: "dashboard.home.vehicleTypes.grader",
+    other: "dashboard.home.vehicleTypes.other",
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-card border-b border-border">
@@ -118,7 +128,7 @@ export default function SiteDetailPage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("common.back")}
               </Link>
             </div>
             <div className="flex items-center gap-2">
@@ -152,39 +162,39 @@ export default function SiteDetailPage() {
 
         <div className="grid gap-4 sm:grid-cols-4 mb-8">
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Total Equipment</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.constructionSiteDetail.totalEquipment")}</p>
             <p className="text-3xl font-bold text-foreground">{equipmentSummary.total}</p>
           </div>
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Operational</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.constructionSiteDetail.operational")}</p>
             <p className="text-3xl font-bold text-green-600">{equipmentSummary.operational}</p>
           </div>
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Idle</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.constructionSiteDetail.idle")}</p>
             <p className="text-3xl font-bold text-amber-600">{equipmentSummary.idle}</p>
           </div>
           <div className="p-6 bg-card rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground mb-1">Down / Maintenance</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("dashboard.constructionSiteDetail.downMaintenance")}</p>
             <p className="text-3xl font-bold text-red-600">{equipmentSummary.down}</p>
           </div>
         </div>
 
         <div className="bg-card rounded-lg border border-border">
           <div className="flex items-center justify-between p-6 border-b border-border">
-            <h2 className="text-lg font-semibold text-foreground">Equipment on Site</h2>
+            <h2 className="text-lg font-semibold text-foreground">{t("dashboard.constructionSiteDetail.equipmentOnSite")}</h2>
             <Link
               href={`/dashboard/vehicles/new?siteId=${site.id}`}
               className="flex items-center gap-2 px-3 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
             >
               <Plus className="w-4 h-4" />
-              Add Equipment
+              {t("dashboard.constructionSiteDetail.addEquipment")}
             </Link>
           </div>
 
           {site.vehicles.length === 0 ? (
             <div className="p-12 text-center">
               <Drill className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No equipment assigned to this site</p>
+              <p className="text-muted-foreground">{t("dashboard.constructionSiteDetail.noEquipment")}</p>
             </div>
           ) : (
             <div className="divide-y divide-border">
@@ -207,13 +217,13 @@ export default function SiteDetailPage() {
                           {vehicle.year} {vehicle.make} {vehicle.model}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {vehicleLabels[vehicle.vehicleType] || vehicle.vehicleType}
-                          {vehicle.hoursMeter != null && ` • ${vehicle.hoursMeter.toLocaleString()} hours`}
+                          {t(typeToTransKey[vehicle.vehicleType] || "dashboard.home.vehicleTypes.other")}
+                          {vehicle.hoursMeter != null && ` • ${vehicle.hoursMeter.toLocaleString()} ${t("dashboard.reminders.hrs")}`}
                         </p>
                       </div>
                     </div>
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusStyle.bg} ${statusStyle.text}`}>
-                      {statusStyle.label}
+                      {t(`dashboard.constructionSiteDetail.${statusStyle.key}`)}
                     </span>
                   </Link>
                 );

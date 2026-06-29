@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Loader2, Car, Truck, Bike, Zap } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import Link from "next/link";
 
 interface Vehicle {
@@ -25,6 +26,7 @@ const typeIcons: Record<string, React.ElementType> = {
 };
 
 export default function OrgVehiclesPage() {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -58,19 +60,19 @@ export default function OrgVehiclesPage() {
       <header className="bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-16">
           <Link href="/dashboard/settings" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="w-4 h-4" /> Back to Settings
+            <ArrowLeft className="w-4 h-4" /> {t("dashboard.settings.orgVehicles.backToSettings")}
           </Link>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold text-foreground mb-6">Organization Vehicles</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6">{t("dashboard.settings.orgVehicles.heading")}</h1>
 
         {vehicles.length === 0 ? (
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <Car className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-lg font-medium mb-2 text-foreground">No vehicles in this organization</h2>
-            <p className="text-muted-foreground">Vehicles added by members will appear here.</p>
+            <h2 className="text-lg font-medium mb-2 text-foreground">{t("dashboard.settings.orgVehicles.noVehicles")}</h2>
+            <p className="text-muted-foreground">{t("dashboard.settings.orgVehicles.description")}</p>
           </div>
         ) : (
           <div className="bg-card rounded-lg border border-border divide-y divide-border">

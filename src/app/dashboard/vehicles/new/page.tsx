@@ -9,6 +9,7 @@ import { z } from "zod";
 import { ArrowLeft, Loader2, Car, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const vehicleSchema = z.object({
   make: z.string().min(1, "Make is required").max(100),
@@ -27,31 +28,21 @@ const vehicleSchema = z.object({
 
 type VehicleFormData = z.infer<typeof vehicleSchema>;
 
-const vehicleTypes = [
-  { value: "car", label: "Car", icon: Car },
-  { value: "truck", label: "Truck", icon: Truck },
-  { value: "motorcycle", label: "Motorcycle", icon: Bike },
-  { value: "excavator", label: "Excavator", icon: Drill },
-  { value: "bulldozer", label: "Bulldozer", icon: Tractor },
-  { value: "dump_truck", label: "Dump Truck", icon: Truck },
-  { value: "crane", label: "Crane", icon: Building2 },
-  { value: "loader", label: "Loader", icon: Hammer },
-  { value: "grader", label: "Grader", icon: Tractor },
-  { value: "other", label: "Other", icon: Zap },
-];
-
-const statuses = [
-  { value: "active", label: "Active" },
-  { value: "maintenance", label: "In Maintenance" },
-  { value: "inactive", label: "Inactive" },
-  { value: "sold", label: "Sold" },
-];
+const iconMap = {
+  car: Car, truck: Truck, motorcycle: Bike, excavator: Drill,
+  bulldozer: Tractor, dump_truck: Truck, crane: Building2,
+  loader: Hammer, grader: Tractor, other: Zap,
+};
 
 const constructionTypes = new Set(["excavator", "bulldozer", "dump_truck", "crane", "loader", "grader"]);
+
+const vehicleTypeValues = ["car", "truck", "motorcycle", "excavator", "bulldozer", "dump_truck", "crane", "loader", "grader", "other"] as const;
+const statusValues = ["active", "maintenance", "inactive", "sold"] as const;
 
 export default function NewVehiclePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [constructionSites, setConstructionSites] = useState<{ id: string; name: string }[]>([]);
@@ -123,19 +114,19 @@ export default function NewVehiclePage() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || "Failed to create vehicle");
+        throw new Error(result.error || t("dashboard.vehicleNew.failedCreate"));
       }
 
       const vehicle = result;
       router.push(`/dashboard/vehicles/${vehicle.id}`);
     } catch (err: any) {
-      const msg = err.message || "Something went wrong";
+      const msg = err.message || t("dashboard.vehicleNew.somethingWentWrong");
       setError(msg);
       if (msg.toLowerCase().includes("free tier") || msg.toLowerCase().includes("upgrade")) {
         toast.error(
           <div className="flex items-center gap-2">
             <span>{msg}</span>
-            <Link href="/pricing" className="font-semibold underline">Upgrade to Pro</Link>
+            <Link href="/pricing" className="font-semibold underline">{t("dashboard.vehicleNew.upgradeToPro")}</Link>
           </div>,
           { duration: 6000 }
         );
@@ -153,6 +144,13 @@ export default function NewVehiclePage() {
     );
   }
 
+  const statusLabels: Record<string, string> = {
+    active: t("dashboard.home.statusLabels.active"),
+    maintenance: t("dashboard.home.statusLabels.inMaintenance"),
+    inactive: t("dashboard.home.statusLabels.inactive"),
+    sold: t("dashboard.home.statusLabels.sold"),
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-card border-b border-border">
@@ -164,7 +162,7 @@ export default function NewVehiclePage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("common.back")}
               </Link>
             </div>
           </div>
@@ -177,13 +175,13 @@ export default function NewVehiclePage() {
             <div className="p-2 bg-primary rounded-lg">
               <Car className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold text-foreground">Add New Vehicle</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t("dashboard.vehicleNew.heading")}</h1>
           </div>
 
           {error && (
             <div className="mb-6 p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
               {error.toLowerCase().includes("free tier") || error.toLowerCase().includes("upgrade") ? (
-                <span>{error} — <Link href="/pricing" className="font-semibold underline">Upgrade to Pro</Link></span>
+                <span>{error} — <Link href="/pricing" className="font-semibold underline">{t("dashboard.vehicleNew.upgradeToPro")}</Link></span>
               ) : (
                 error
               )}
@@ -194,12 +192,12 @@ export default function NewVehiclePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Make <span className="text-destructive">*</span>
+                  {t("vehicle.make")} <span className="text-destructive">*</span>
                 </label>
                 <input
                   {...register("make")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder="Toyota"
+                  placeholder={t("dashboard.vehicleNew.placeholderMake")}
                 />
                 {errors.make && (
                   <p className="mt-1 text-sm text-destructive">
@@ -210,12 +208,12 @@ export default function NewVehiclePage() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Model <span className="text-destructive">*</span>
+                  {t("vehicle.model")} <span className="text-destructive">*</span>
                 </label>
                 <input
                   {...register("model")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder="Camry"
+                  placeholder={t("dashboard.vehicleNew.placeholderModel")}
                 />
                 {errors.model && (
                   <p className="mt-1 text-sm text-destructive">
@@ -227,15 +225,15 @@ export default function NewVehiclePage() {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Vehicle Type <span className="text-destructive">*</span>
+                {t("dashboard.vehicleNew.vehicleType")} <span className="text-destructive">*</span>
               </label>
               <div className="grid grid-cols-5 gap-3">
-                {vehicleTypes.map((type) => {
-                  const Icon = type.icon;
-                  const isSelected = selectedType === type.value;
+                {vehicleTypeValues.map((typeValue) => {
+                  const Icon = iconMap[typeValue];
+                  const isSelected = selectedType === typeValue;
                   return (
                     <label
-                      key={type.value}
+                      key={typeValue}
                       className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${
                         isSelected
                           ? "border-primary bg-primary/10"
@@ -244,13 +242,13 @@ export default function NewVehiclePage() {
                     >
                       <input
                         type="radio"
-                        value={type.value}
+                        value={typeValue}
                         {...register("vehicleType")}
                         className="sr-only"
                       />
                       <Icon className={`w-6 h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
                       <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
-                        {type.label}
+                        {t(`dashboard.home.vehicleTypes.${typeValue}`)}
                       </span>
                     </label>
                   );
@@ -261,13 +259,13 @@ export default function NewVehiclePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Year <span className="text-destructive">*</span>
+                  {t("vehicle.year")} <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="number"
                   {...register("year", { valueAsNumber: true })}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder="2023"
+                  placeholder={t("dashboard.vehicleNew.placeholderYear")}
                 />
                 {errors.year && (
                   <p className="mt-1 text-sm text-destructive">
@@ -278,15 +276,15 @@ export default function NewVehiclePage() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Status
+                  {t("vehicle.status")}
                 </label>
                 <select
                   {...register("status")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                 >
-                  {statuses.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
+                  {statusValues.map((s) => (
+                    <option key={s} value={s}>
+                      {statusLabels[s]}
                     </option>
                   ))}
                 </select>
@@ -296,37 +294,37 @@ export default function NewVehiclePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Nickname (optional)
+                  {t("dashboard.vehicleNew.nicknameOptional")}
                 </label>
                 <input
                   {...register("nickname")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder="My Car"
+                  placeholder={t("dashboard.vehicleNew.placeholderNickname")}
                 />
               </div>
 
               {isConstruction ? (
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1">
-                    Hours Meter
+                    {t("dashboard.vehicleNew.hoursMeter")}
                   </label>
                   <input
                     type="number"
                     {...register("hoursMeter", { valueAsNumber: true })}
                     className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                    placeholder="0"
+                    placeholder={t("dashboard.vehicleNew.placeholderMileage")}
                   />
                 </div>
               ) : (
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1">
-                    Current Mileage
+                    {t("dashboard.vehicleNew.currentMileage")}
                   </label>
                   <input
                     type="number"
                     {...register("currentMileage", { valueAsNumber: true })}
                     className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                    placeholder="0"
+                    placeholder={t("dashboard.vehicleNew.placeholderMileage")}
                   />
                 </div>
               )}
@@ -337,36 +335,36 @@ export default function NewVehiclePage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Serial Number
+                      {t("dashboard.vehicleNew.serialNumber")}
                     </label>
                     <input
                       {...register("serialNumber")}
                       className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                      placeholder="Equipment serial #"
+                      placeholder={t("dashboard.vehicleNew.placeholderSerial")}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Weight Capacity (tons)
+                      {t("dashboard.vehicleNew.weightCapacity")}
                     </label>
                     <input
                       type="number"
                       {...register("weightCapacity", { valueAsNumber: true })}
                       className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                      placeholder="0"
+                      placeholder={t("dashboard.vehicleNew.placeholderWeight")}
                     />
                   </div>
                 </div>
                 {constructionSites.length > 0 && (
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Construction Site
+                      {t("dashboard.vehicleNew.constructionSite")}
                     </label>
                     <select
                       {...register("constructionSiteId")}
                       className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                     >
-                      <option value="">No site assignment</option>
+                      <option value="">{t("dashboard.vehicleNew.noSiteAssignment")}</option>
                       {constructionSites.map((site) => (
                         <option key={site.id} value={site.id}>
                           {site.name}
@@ -381,12 +379,12 @@ export default function NewVehiclePage() {
             {!isConstruction && (
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  VIN (optional)
+                  {t("dashboard.vehicleNew.vinOptional")}
                 </label>
                 <input
                   {...register("vin")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono"
-                  placeholder="17 characters"
+                  placeholder={t("dashboard.vehicleNew.placeholderVin")}
                   maxLength={17}
                 />
                 {errors.vin && (
@@ -403,7 +401,7 @@ export default function NewVehiclePage() {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              Add Vehicle
+              {t("dashboard.vehicleNew.addVehicle")}
             </button>
           </form>
         </div>

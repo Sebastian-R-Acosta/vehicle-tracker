@@ -8,6 +8,7 @@ import {
   ArrowLeft, Loader2, Building2, Star, Phone, MapPin, Globe, Mail,
   Pencil, Trash2,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface ReviewUser {
   id: string;
@@ -35,12 +36,7 @@ interface ServiceProvider {
   reviews: Review[];
 }
 
-const categoryLabels: Record<string, string> = {
-  general: "General", dealership: "Dealership", independent: "Independent",
-  tire: "Tire", body: "Body", transmission: "Transmission", oil: "Oil",
-  brake: "Brake", electrical: "Electrical", ac: "A/C", towing: "Towing",
-  detail: "Detail",
-};
+const categoryKeys = ["general", "dealership", "independent", "tire", "body", "transmission", "oil", "brake", "electrical", "ac", "towing", "detail"];
 
 function StarRating({ rating, onChange }: { rating: number; onChange?: (v: number) => void }) {
   return (
@@ -63,6 +59,7 @@ function StarRating({ rating, onChange }: { rating: number; onChange?: (v: numbe
 }
 
 export default function ServiceProviderDetailPage() {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
@@ -126,7 +123,7 @@ export default function ServiceProviderDetailPage() {
   };
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this provider? This action cannot be undone.")) return;
+    if (!confirm(t("dashboard.serviceProviders.detail.deleteConfirm"))) return;
     setDeleting(true);
     try {
       await fetch(`/api/service-providers/${params.id}`, { method: "DELETE" });
@@ -166,7 +163,7 @@ export default function ServiceProviderDetailPage() {
 
   const handleAddReview = async () => {
     if (newRating < 1) {
-      setReviewError("Please select a rating");
+      setReviewError(t("dashboard.serviceProviders.detail.selectRating"));
       return;
     }
     setReviewError("");
@@ -187,10 +184,10 @@ export default function ServiceProviderDetailPage() {
         setNewReview("");
       } else {
         const err = await res.json();
-        setReviewError(err.error || "Failed to submit review");
+        setReviewError(err.error || t("dashboard.serviceProviders.detail.failedSubmitReview"));
       }
     } catch (err) {
-      setReviewError("Something went wrong");
+      setReviewError(t("errors.generic"));
     } finally {
       setSubmittingReview(false);
     }
@@ -219,7 +216,7 @@ export default function ServiceProviderDetailPage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("common.back")}
               </Link>
             </div>
             <div className="flex items-center gap-2">
@@ -266,8 +263,8 @@ export default function ServiceProviderDetailPage() {
                     onChange={(e) => setEditCategory(e.target.value)}
                     className="p-2 border border-input rounded-lg bg-background text-foreground"
                   >
-                    {Object.entries(categoryLabels).map(([k, v]) => (
-                      <option key={k} value={k}>{v}</option>
+                    {categoryKeys.map((k) => (
+                      <option key={k} value={k}>{t(`dashboard.serviceProviders.categories.${k}`) || k}</option>
                     ))}
                   </select>
                   <label className="flex items-center gap-2 text-sm text-foreground">
@@ -277,19 +274,19 @@ export default function ServiceProviderDetailPage() {
                       onChange={(e) => setEditIsPreferred(e.target.checked)}
                       className="rounded border-input"
                     />
-                    Preferred
+                          {t("dashboard.serviceProviders.detail.preferred")}
                   </label>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <input value={editAddress} onChange={(e) => setEditAddress(e.target.value)} placeholder="Address" className="p-2 border border-input rounded-lg bg-background text-foreground" />
-                  <input value={editPhone} onChange={(e) => setEditPhone(e.target.value)} placeholder="Phone" className="p-2 border border-input rounded-lg bg-background text-foreground" />
-                  <input value={editWebsite} onChange={(e) => setEditWebsite(e.target.value)} placeholder="Website" className="p-2 border border-input rounded-lg bg-background text-foreground" />
-                  <input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} placeholder="Email" className="p-2 border border-input rounded-lg bg-background text-foreground" />
+                  <input value={editAddress} onChange={(e) => setEditAddress(e.target.value)} placeholder={t("dashboard.serviceProviders.detail.address")} className="p-2 border border-input rounded-lg bg-background text-foreground" />
+                  <input value={editPhone} onChange={(e) => setEditPhone(e.target.value)} placeholder={t("dashboard.serviceProviders.detail.phone")} className="p-2 border border-input rounded-lg bg-background text-foreground" />
+                  <input value={editWebsite} onChange={(e) => setEditWebsite(e.target.value)} placeholder={t("dashboard.serviceProviders.detail.website")} className="p-2 border border-input rounded-lg bg-background text-foreground" />
+                  <input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} placeholder={t("dashboard.serviceProviders.detail.email")} className="p-2 border border-input rounded-lg bg-background text-foreground" />
                 </div>
-                <textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} placeholder="Notes" className="w-full p-2 border border-input rounded-lg bg-background text-foreground min-h-[80px]" />
+                <textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} placeholder={t("dashboard.serviceProviders.detail.notes")} className="w-full p-2 border border-input rounded-lg bg-background text-foreground min-h-[80px]" />
                 <div className="flex gap-2">
-                  <button onClick={handleEdit} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90">Save</button>
-                  <button onClick={() => { setEditing(false); populateEdit(provider); }} className="px-4 py-2 border border-input rounded-lg text-foreground hover:bg-accent">Cancel</button>
+                  <button onClick={handleEdit} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90">{t("dashboard.serviceProviders.detail.save")}</button>
+                  <button onClick={() => { setEditing(false); populateEdit(provider); }} className="px-4 py-2 border border-input rounded-lg text-foreground hover:bg-accent">{t("dashboard.serviceProviders.detail.cancel")}</button>
                 </div>
               </div>
             ) : (
@@ -299,12 +296,12 @@ export default function ServiceProviderDetailPage() {
                     <h1 className="text-2xl font-bold text-foreground">{provider.name}</h1>
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-sm px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
-                        {categoryLabels[provider.category] || provider.category}
+                        {t(`dashboard.serviceProviders.categories.${provider.category}`) || provider.category}
                       </span>
                       {provider.isPreferred && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700">
                           <Star className="w-3 h-3" />
-                          Preferred
+                    {t("dashboard.serviceProviders.detail.preferred")}
                         </span>
                       )}
                     </div>
@@ -317,7 +314,7 @@ export default function ServiceProviderDetailPage() {
                     ).join("")}
                   </span>
                   <span className="text-muted-foreground text-sm">
-                    {avg.toFixed(1)} ({provider.reviews.length} review{provider.reviews.length !== 1 ? "s" : ""})
+                    {avg.toFixed(1)} ({provider.reviews.length} {provider.reviews.length === 1 ? t("dashboard.serviceProviders.detail.reviewSingular") : t("dashboard.serviceProviders.detail.reviews")})
                   </span>
                 </div>
               </>
@@ -329,7 +326,7 @@ export default function ServiceProviderDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {!editing && (
               <div className="bg-card rounded-lg border border-border p-6">
-                <h2 className="text-lg font-semibold text-foreground mb-4">Contact Info</h2>
+                <h2 className="text-lg font-semibold text-foreground mb-4">{t("dashboard.serviceProviders.detail.contactInfo")}</h2>
                 <div className="space-y-3">
                   {provider.phone && (
                     <p className="flex items-center gap-2 text-foreground">
@@ -360,7 +357,7 @@ export default function ServiceProviderDetailPage() {
                 </div>
                 {provider.notes && (
                   <div className="mt-4 pt-4 border-t border-border">
-                    <p className="text-sm font-medium text-foreground mb-1">Notes</p>
+                    <p className="text-sm font-medium text-foreground mb-1">{t("dashboard.serviceProviders.detail.notes")}</p>
                     <p className="text-sm text-muted-foreground whitespace-pre-wrap">{provider.notes}</p>
                   </div>
                 )}
@@ -369,19 +366,19 @@ export default function ServiceProviderDetailPage() {
 
             <div className="bg-card rounded-lg border border-border">
               <div className="px-6 py-4 border-b border-border">
-                <h2 className="text-lg font-semibold text-foreground">Add Review</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t("dashboard.serviceProviders.detail.addReview")}</h2>
               </div>
               <div className="p-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Rating</label>
+                    <label className="block text-sm font-medium text-foreground mb-2">{t("dashboard.serviceProviders.detail.rating")}</label>
                     <StarRating rating={newRating} onChange={setNewRating} />
                   </div>
                   <div>
                     <textarea
                       value={newReview}
                       onChange={(e) => setNewReview(e.target.value)}
-                      placeholder="Share your experience..."
+                      placeholder={t("dashboard.serviceProviders.detail.shareExperience")}
                       className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground min-h-[80px]"
                     />
                   </div>
@@ -394,7 +391,7 @@ export default function ServiceProviderDetailPage() {
                     className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-50"
                   >
                     {submittingReview && <Loader2 className="w-4 h-4 animate-spin" />}
-                    Submit Review
+                    {t("dashboard.serviceProviders.detail.submitReview")}
                   </button>
                 </div>
               </div>
@@ -403,13 +400,13 @@ export default function ServiceProviderDetailPage() {
             <div className="bg-card rounded-lg border border-border">
               <div className="px-6 py-4 border-b border-border">
                 <h2 className="text-lg font-semibold text-foreground">
-                  Reviews ({provider.reviews.length})
+                  {t("dashboard.serviceProviders.detail.reviews")} ({provider.reviews.length})
                 </h2>
               </div>
               {provider.reviews.length === 0 ? (
                 <div className="p-12 text-center">
                   <Star className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">No reviews yet</p>
+                  <p className="text-muted-foreground">{t("dashboard.serviceProviders.detail.noReviewsYet")}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-border">
@@ -417,7 +414,7 @@ export default function ServiceProviderDetailPage() {
                     <div key={review.id} className="p-6">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-foreground">
-                          {review.user.name || "Anonymous"}
+                          {review.user.name || t("dashboard.serviceProviders.detail.anonymous")}
                         </span>
                         <span className="text-sm text-muted-foreground">
                           {new Date(review.createdAt).toLocaleDateString()}

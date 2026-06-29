@@ -4,10 +4,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Camera, CameraOff, FlipHorizontal, Scan, Smartphone } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 type FacingMode = "user" | "environment";
 
 export default function ScanVINPage() {
+  const { t } = useLanguage();
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -106,7 +108,7 @@ export default function ScanVINPage() {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link href="/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-                <ArrowLeft className="w-4 h-4" />Back
+                <ArrowLeft className="w-4 h-4" />{t("common.back")}
               </Link>
             </div>
           </div>
@@ -119,20 +121,20 @@ export default function ScanVINPage() {
             <div className="p-2 bg-primary rounded-lg">
               <Scan className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold text-foreground">Scan VIN</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t("nav.scan")}</h1>
           </div>
 
           <div className="border-t border-border pt-6">
             <div className="flex items-center gap-2 mb-3">
               <Smartphone className="w-4 h-4 text-muted-foreground" />
-              <p className="text-sm font-medium text-foreground">Type VIN</p>
+              <p className="text-sm font-medium text-foreground">{t("dashboard.scan.typeVin")}</p>
             </div>
             <form onSubmit={handleManualSubmit} className="flex gap-2 mb-6">
               <div className="flex-1 relative">
                 <input
                   value={manualVin}
                   onChange={(e) => setManualVin(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
-                  placeholder="e.g. 1HGCM82633A004352"
+                  placeholder={t("dashboard.scan.vinPlaceholder")}
                   maxLength={17}
                   autoFocus
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono tracking-widest text-lg"
@@ -143,14 +145,14 @@ export default function ScanVINPage() {
                 disabled={!isValidVinLength}
                 className="px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-medium"
               >
-                Look Up
+                {t("dashboard.scan.lookUp")}
               </button>
             </form>
           </div>
 
           <div className="border-t border-border pt-6">
             <p className="text-sm text-muted-foreground text-center mb-3">
-              {cameraActive ? "Point camera at VIN barcode" : "Scan with your camera"}
+              {cameraActive ? t("dashboard.scan.pointCamera") : t("dashboard.scan.scanWithCamera")}
             </p>
 
             {cameraActive ? (
@@ -167,10 +169,10 @@ export default function ScanVINPage() {
                 </div>
                 <div className="flex items-center justify-center gap-3">
                   <button onClick={flipCamera} className="inline-flex items-center gap-1.5 px-3 py-2 text-sm border border-border rounded-lg hover:bg-accent transition-colors">
-                    <FlipHorizontal className="w-4 h-4" />Flip
+                    <FlipHorizontal className="w-4 h-4" />{t("dashboard.scan.flip")}
                   </button>
                   <button onClick={stopCamera} className="inline-flex items-center gap-1.5 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    <CameraOff className="w-4 h-4" />Close
+                    <CameraOff className="w-4 h-4" />{t("common.close")}
                   </button>
                 </div>
               </div>
@@ -180,7 +182,7 @@ export default function ScanVINPage() {
                   onClick={() => startCamera()}
                   className="inline-flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
                 >
-                  <Camera className="w-4 h-4" />Open Camera
+                  <Camera className="w-4 h-4" />{t("dashboard.scan.openCamera")}
                 </button>
 
                 <input
@@ -195,12 +197,12 @@ export default function ScanVINPage() {
                   onClick={() => fileInputRef.current?.click()}
                   className="inline-flex items-center gap-2 px-4 py-2 text-sm border border-border rounded-lg hover:bg-accent transition-colors"
                 >
-                  <Camera className="w-4 h-4" />Take Photo
+                  <Camera className="w-4 h-4" />{t("dashboard.scan.takePhoto")}
                 </button>
 
                 {cameraFailed && (
                   <p className="text-sm text-destructive">
-                    Live camera unavailable. Use &quot;Take Photo&quot; or type the VIN manually above.
+                    {t("dashboard.scan.cameraUnavailable")}
                   </p>
                 )}
               </div>

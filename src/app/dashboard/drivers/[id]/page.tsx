@@ -12,6 +12,7 @@ import {
   Car, Truck, Pencil, Trash2, CheckCircle, XCircle,
   Drill, Building2, Tractor, Hammer,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface Vehicle {
   id: string;
@@ -37,7 +38,7 @@ interface Driver {
 }
 
 const driverSchema = z.object({
-  name: z.string().min(1, "Name is required").max(200),
+  name: z.string().min(1).max(200),
   email: z.string().email().optional().or(z.literal("")),
   phone: z.string().max(20).optional().or(z.literal("")),
   licenseNumber: z.string().max(50).optional().or(z.literal("")),
@@ -53,12 +54,8 @@ const vehicleIcons: Record<string, React.ElementType> = {
   crane: Building2, loader: Hammer, other: Car,
 };
 
-const vehicleLabels: Record<string, string> = {
-  car: "Car", truck: "Truck", excavator: "Excavator", bulldozer: "Bulldozer",
-  dump_truck: "Dump Truck", crane: "Crane", loader: "Loader", grader: "Grader", other: "Other",
-};
-
 export default function DriverDetailPage() {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
@@ -129,20 +126,20 @@ export default function DriverDetailPage() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || "Failed to update driver");
+        throw new Error(result.error || t("dashboard.drivers.detail.failedUpdate"));
       }
 
       setDriver(result);
       setIsEditing(false);
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      setError(err.message || t("errors.generic"));
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this driver? This action cannot be undone.")) {
+    if (!window.confirm(t("dashboard.drivers.detail.deleteConfirm"))) {
       return;
     }
 
@@ -206,7 +203,7 @@ export default function DriverDetailPage() {
                   className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-accent transition-colors"
                 >
                   <Pencil className="w-4 h-4" />
-                  Edit
+                  {t("common.edit")}
                 </button>
               )}
               <button
@@ -229,11 +226,11 @@ export default function DriverDetailPage() {
 
       {isEditing ? (
         <div className="bg-card rounded-lg border border-border p-6 mb-8">
-          <h2 className="text-lg font-semibold text-foreground mb-6">Edit Driver</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-6">{t("dashboard.drivers.detail.editDriver")}</h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Name <span className="text-destructive">*</span>
+                {t("dashboard.drivers.detail.name")} <span className="text-destructive">*</span>
               </label>
               <input
                 {...register("name")}
@@ -246,7 +243,7 @@ export default function DriverDetailPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Email</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.drivers.detail.email")}</label>
                 <input
                   type="email"
                   {...register("email")}
@@ -257,7 +254,7 @@ export default function DriverDetailPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Phone</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.drivers.detail.phone")}</label>
                 <input
                   {...register("phone")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
@@ -270,7 +267,7 @@ export default function DriverDetailPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">License Number</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.drivers.detail.licenseNumber")}</label>
                 <input
                   {...register("licenseNumber")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
@@ -280,7 +277,7 @@ export default function DriverDetailPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">License Expiry</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.drivers.detail.licenseExpiry")}</label>
                 <input
                   type="date"
                   {...register("licenseExpiry")}
@@ -293,7 +290,7 @@ export default function DriverDetailPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">License State</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.drivers.detail.licenseState")}</label>
               <input
                 {...register("licenseState")}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
@@ -304,7 +301,7 @@ export default function DriverDetailPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Notes</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.drivers.detail.notes")}</label>
               <textarea
                 {...register("notes")}
                 rows={3}
@@ -322,14 +319,14 @@ export default function DriverDetailPage() {
                 className="flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                Save Changes
+                {t("dashboard.drivers.detail.saveChanges")}
               </button>
               <button
                 type="button"
                 onClick={handleCancelEdit}
                 className="px-4 py-3 border border-border text-foreground rounded-lg hover:bg-accent transition-colors"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
             </div>
           </form>
@@ -337,40 +334,40 @@ export default function DriverDetailPage() {
       ) : (
         <div className="grid gap-6 lg:grid-cols-3 mb-8">
           <div className="bg-card rounded-lg border border-border p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Driver Details</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t("dashboard.drivers.detail.driverDetails")}</h2>
             <div className="space-y-4">
               <div className="flex items-center gap-3 text-sm">
                 <Mail className="w-4 h-4 text-muted-foreground" />
                 <div>
-                  <p className="text-muted-foreground text-xs">Email</p>
+                  <p className="text-muted-foreground text-xs">{t("dashboard.drivers.detail.email")}</p>
                   <p className="text-foreground">{driver.email || "\u2014"}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Phone className="w-4 h-4 text-muted-foreground" />
                 <div>
-                  <p className="text-muted-foreground text-xs">Phone</p>
+                  <p className="text-muted-foreground text-xs">{t("dashboard.drivers.detail.phone")}</p>
                   <p className="text-foreground">{driver.phone || "\u2014"}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <BadgeCheck className="w-4 h-4 text-muted-foreground" />
                 <div>
-                  <p className="text-muted-foreground text-xs">License Number</p>
+                  <p className="text-muted-foreground text-xs">{t("dashboard.drivers.detail.licenseNumber")}</p>
                   <p className="text-foreground">{driver.licenseNumber || "\u2014"}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 <div>
-                  <p className="text-muted-foreground text-xs">License Expiry</p>
+                  <p className="text-muted-foreground text-xs">{t("dashboard.drivers.detail.licenseExpiry")}</p>
                   <p className="text-foreground">{driver.licenseExpiry || "\u2014"}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <MapPin className="w-4 h-4 text-muted-foreground" />
                 <div>
-                  <p className="text-muted-foreground text-xs">License State</p>
+                  <p className="text-muted-foreground text-xs">{t("dashboard.drivers.detail.licenseState")}</p>
                   <p className="text-foreground">{driver.licenseState || "\u2014"}</p>
                 </div>
               </div>
@@ -381,9 +378,9 @@ export default function DriverDetailPage() {
                   <XCircle className="w-4 h-4 text-red-600" />
                 )}
                 <div>
-                  <p className="text-muted-foreground text-xs">Status</p>
+                  <p className="text-muted-foreground text-xs">{t("dashboard.drivers.detail.status")}</p>
                   <p className={`font-medium ${driver.isActive ? "text-green-600" : "text-red-600"}`}>
-                    {driver.isActive ? "Active" : "Inactive"}
+                    {driver.isActive ? t("dashboard.drivers.detail.active") : t("dashboard.drivers.detail.inactive")}
                   </p>
                 </div>
               </div>
@@ -392,7 +389,7 @@ export default function DriverDetailPage() {
 
           {driver.notes && (
             <div className="bg-card rounded-lg border border-border p-6">
-              <h2 className="text-lg font-semibold text-foreground mb-4">Notes</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">{t("dashboard.drivers.detail.notes")}</h2>
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">{driver.notes}</p>
             </div>
           )}
@@ -401,13 +398,13 @@ export default function DriverDetailPage() {
 
       <div className="bg-card rounded-lg border border-border">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-foreground">Assigned Vehicles</h2>
+          <h2 className="text-lg font-semibold text-foreground">{t("dashboard.drivers.detail.assignedVehicles")}</h2>
         </div>
 
         {driver.vehicles.length === 0 ? (
           <div className="p-12 text-center">
             <Car className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">No vehicles assigned to this driver</p>
+            <p className="text-muted-foreground">{t("dashboard.drivers.detail.noVehiclesAssigned")}</p>
           </div>
         ) : (
           <div className="divide-y divide-border">
@@ -429,7 +426,7 @@ export default function DriverDetailPage() {
                         {vehicle.nickname && ` (${vehicle.nickname})`}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {vehicleLabels[vehicle.vehicleType] || vehicle.vehicleType}
+                        {t(`dashboard.home.vehicleTypes.${vehicle.vehicleType === "dump_truck" ? "dumpTruck" : vehicle.vehicleType}`) || vehicle.vehicleType}
                         {vehicle.licensePlate && ` \u2022 ${vehicle.licensePlate}`}
                       </p>
                     </div>

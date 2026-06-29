@@ -8,28 +8,30 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, Loader2, Bell } from "lucide-react";
-
-const reminderSchema = z.object({
-  vehicleId: z.string().min(1, "Vehicle is required"),
-  title: z.string().min(1, "Title is required"),
-  description: z.string().optional(),
-  dueDate: z.string().optional(),
-  dueMileage: z.number().optional(),
-  dueHours: z.number().optional(),
-});
-
-type ReminderFormData = z.infer<typeof reminderSchema>;
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const constructionTypes = new Set(["excavator", "bulldozer", "dump_truck", "crane", "loader", "grader"]);
 
 export default function NewReminderPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { t } = useLanguage();
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState<any>(null);
+
+  const reminderSchema = z.object({
+    vehicleId: z.string().min(1, t("dashboard.remindersNew.vehicleRequired")),
+    title: z.string().min(1, t("dashboard.remindersNew.titleRequired")),
+    description: z.string().optional(),
+    dueDate: z.string().optional(),
+    dueMileage: z.number().optional(),
+    dueHours: z.number().optional(),
+  });
+
+  type ReminderFormData = z.infer<typeof reminderSchema>;
 
   const {
     register,
@@ -90,7 +92,7 @@ export default function NewReminderPage() {
 
   const onSubmit = async (data: ReminderFormData) => {
     if (!data.dueDate && !data.dueMileage && !data.dueHours) {
-      setError("Must have at least one trigger (date, mileage, or hours)");
+      setError(t("dashboard.remindersNew.mustHaveTrigger"));
       return;
     }
 
@@ -110,7 +112,7 @@ export default function NewReminderPage() {
 
       router.push("/dashboard/reminders");
     } catch (err) {
-      setError("Something went wrong");
+      setError(t("dashboard.remindersNew.somethingWentWrong"));
     } finally {
       setSubmitting(false);
     }
@@ -135,7 +137,7 @@ export default function NewReminderPage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("dashboard.remindersNew.back")}
               </Link>
             </div>
           </div>
@@ -148,7 +150,7 @@ export default function NewReminderPage() {
             <div className="p-2 bg-primary rounded-lg">
               <Bell className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold text-foreground">New Reminder</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t("dashboard.remindersNew.heading")}</h1>
           </div>
 
           {error && (
@@ -160,26 +162,26 @@ export default function NewReminderPage() {
           {vehicles.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-muted-foreground mb-4">
-                You need to add a vehicle first
+                {t("dashboard.remindersNew.noVehicleDesc")}
               </p>
               <Link
                 href="/dashboard/vehicles/new"
                 className="text-primary hover:underline"
               >
-                Add Vehicle
+                {t("dashboard.remindersNew.addVehicle")}
               </Link>
             </div>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Vehicle <span className="text-destructive">*</span>
+                  {t("dashboard.remindersNew.vehicle")} <span className="text-destructive">*</span>
                 </label>
                 <select
                   {...register("vehicleId")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                 >
-                  <option value="">Select vehicle</option>
+                  <option value="">{t("dashboard.remindersNew.selectVehicle")}</option>
                   {vehicles.map((v) => (
                     <option key={v.id} value={v.id}>
                       {v.year} {v.make} {v.model}
@@ -195,12 +197,12 @@ export default function NewReminderPage() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Title <span className="text-destructive">*</span>
+                  {t("dashboard.remindersNew.title")} <span className="text-destructive">*</span>
                 </label>
                 <input
                   {...register("title")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder="Oil Change"
+                  placeholder={t("dashboard.remindersNew.titlePlaceholder")}
                 />
                 {errors.title && (
                   <p className="mt-1 text-sm text-destructive">
@@ -211,20 +213,20 @@ export default function NewReminderPage() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Description (optional)
+                  {t("dashboard.remindersNew.description")}
                 </label>
                 <textarea
                   {...register("description")}
                   rows={2}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder="Additional details..."
+                  placeholder={t("dashboard.remindersNew.descriptionPlaceholder")}
                 />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1">
-                    Due Date
+                    {t("dashboard.remindersNew.dueDate")}
                   </label>
                   <input
                     type="date"
@@ -236,32 +238,32 @@ export default function NewReminderPage() {
                 {isConstruction ? (
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Due Hours
+                      {t("dashboard.remindersNew.dueHours")}
                     </label>
                     <input
                       type="number"
                       {...register("dueHours", { valueAsNumber: true })}
                       className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                      placeholder="500"
+                      placeholder={t("dashboard.remindersNew.dueHoursPlaceholder")}
                     />
                   </div>
                 ) : (
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Due Mileage
+                      {t("dashboard.remindersNew.dueMileage")}
                     </label>
                     <input
                       type="number"
                       {...register("dueMileage", { valueAsNumber: true })}
                       className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                      placeholder="5000"
+                      placeholder={t("dashboard.remindersNew.dueMileagePlaceholder")}
                     />
                   </div>
                 )}
               </div>
 
               <p className="text-sm text-muted-foreground">
-                Set at least one trigger (date{isConstruction ? ", or hours" : ", or mileage"})
+                {isConstruction ? t("dashboard.remindersNew.triggerHintHours") : t("dashboard.remindersNew.triggerHintMileage")}
               </p>
 
               <button
@@ -270,7 +272,7 @@ export default function NewReminderPage() {
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                Create Reminder
+                {t("dashboard.remindersNew.createReminder")}
               </button>
             </form>
           )}

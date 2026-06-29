@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, Loader2, Car, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2 } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const vehicleSchema = z.object({
   make: z.string().min(1, "Make is required").max(100),
@@ -26,32 +27,22 @@ const vehicleSchema = z.object({
 
 type VehicleFormData = z.infer<typeof vehicleSchema>;
 
-const vehicleTypes = [
-  { value: "car", label: "Car", icon: Car },
-  { value: "truck", label: "Truck", icon: Truck },
-  { value: "motorcycle", label: "Motorcycle", icon: Bike },
-  { value: "excavator", label: "Excavator", icon: Drill },
-  { value: "bulldozer", label: "Bulldozer", icon: Tractor },
-  { value: "dump_truck", label: "Dump Truck", icon: Truck },
-  { value: "crane", label: "Crane", icon: Building2 },
-  { value: "loader", label: "Loader", icon: Hammer },
-  { value: "grader", label: "Grader", icon: Tractor },
-  { value: "other", label: "Other", icon: Zap },
-];
-
-const statuses = [
-  { value: "active", label: "Active" },
-  { value: "maintenance", label: "In Maintenance" },
-  { value: "inactive", label: "Inactive" },
-  { value: "sold", label: "Sold" },
-];
+const iconMap: Record<string, React.ElementType> = {
+  car: Car, truck: Truck, motorcycle: Bike, excavator: Drill,
+  bulldozer: Tractor, dump_truck: Truck, crane: Building2,
+  loader: Hammer, grader: Tractor, other: Zap,
+};
 
 const constructionTypes = new Set(["excavator", "bulldozer", "dump_truck", "crane", "loader", "grader"]);
+
+const vehicleTypeValues = ["car", "truck", "motorcycle", "excavator", "bulldozer", "dump_truck", "crane", "loader", "grader", "other"] as const;
+const statusValues = ["active", "maintenance", "inactive", "sold"] as const;
 
 export default function EditVehiclePage() {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
   const params = useParams();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
@@ -150,7 +141,7 @@ export default function EditVehiclePage() {
 
       router.push(`/dashboard/vehicles/${params.id}`);
     } catch (err) {
-      setError("Something went wrong");
+      setError(t("dashboard.vehicleEdit.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -164,6 +155,13 @@ export default function EditVehiclePage() {
     );
   }
 
+  const statusLabels: Record<string, string> = {
+    active: t("dashboard.home.statusLabels.active"),
+    maintenance: t("dashboard.home.statusLabels.inMaintenance"),
+    inactive: t("dashboard.home.statusLabels.inactive"),
+    sold: t("dashboard.home.statusLabels.sold"),
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-card border-b border-border">
@@ -175,7 +173,7 @@ export default function EditVehiclePage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("common.back")}
               </Link>
             </div>
           </div>
@@ -188,7 +186,7 @@ export default function EditVehiclePage() {
             <div className="p-2 bg-primary rounded-lg">
               <Car className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold text-foreground">Edit Vehicle</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t("dashboard.vehicleEdit.heading")}</h1>
           </div>
 
           {error && (
@@ -201,7 +199,7 @@ export default function EditVehiclePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Make <span className="text-destructive">*</span>
+                  {t("vehicle.make")} <span className="text-destructive">*</span>
                 </label>
                 <input
                   {...register("make")}
@@ -216,7 +214,7 @@ export default function EditVehiclePage() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Model <span className="text-destructive">*</span>
+                  {t("vehicle.model")} <span className="text-destructive">*</span>
                 </label>
                 <input
                   {...register("model")}
@@ -232,15 +230,15 @@ export default function EditVehiclePage() {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Vehicle Type <span className="text-destructive">*</span>
+                {t("dashboard.vehicleNew.vehicleType")} <span className="text-destructive">*</span>
               </label>
               <div className="grid grid-cols-5 gap-3">
-                {vehicleTypes.map((type) => {
-                  const Icon = type.icon;
-                  const isSelected = selectedType === type.value;
+                {vehicleTypeValues.map((typeValue) => {
+                  const Icon = iconMap[typeValue];
+                  const isSelected = selectedType === typeValue;
                   return (
                     <label
-                      key={type.value}
+                      key={typeValue}
                       className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${
                         isSelected
                           ? "border-primary bg-primary/10"
@@ -249,13 +247,13 @@ export default function EditVehiclePage() {
                     >
                       <input
                         type="radio"
-                        value={type.value}
+                        value={typeValue}
                         {...register("vehicleType")}
                         className="sr-only"
                       />
                       <Icon className={`w-6 h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
                       <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
-                        {type.label}
+                        {t(`dashboard.home.vehicleTypes.${typeValue}`)}
                       </span>
                     </label>
                   );
@@ -266,7 +264,7 @@ export default function EditVehiclePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Year <span className="text-destructive">*</span>
+                  {t("vehicle.year")} <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="number"
@@ -282,15 +280,15 @@ export default function EditVehiclePage() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Status
+                  {t("vehicle.status")}
                 </label>
                 <select
                   {...register("status")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                 >
-                  {statuses.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
+                  {statusValues.map((s) => (
+                    <option key={s} value={s}>
+                      {statusLabels[s]}
                     </option>
                   ))}
                 </select>
@@ -300,7 +298,7 @@ export default function EditVehiclePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  Nickname (optional)
+                  {t("dashboard.vehicleEdit.nicknameOptional")}
                 </label>
                 <input
                   {...register("nickname")}
@@ -311,7 +309,7 @@ export default function EditVehiclePage() {
               {isConstruction ? (
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1">
-                    Hours Meter
+                    {t("dashboard.vehicleEdit.hoursMeter")}
                   </label>
                   <input
                     type="number"
@@ -322,7 +320,7 @@ export default function EditVehiclePage() {
               ) : (
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1">
-                    Current Mileage
+                    {t("dashboard.vehicleEdit.currentMileage")}
                   </label>
                   <input
                     type="number"
@@ -338,7 +336,7 @@ export default function EditVehiclePage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Serial Number
+                      {t("dashboard.vehicleEdit.serialNumber")}
                     </label>
                     <input
                       {...register("serialNumber")}
@@ -347,7 +345,7 @@ export default function EditVehiclePage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Weight Capacity (tons)
+                      {t("dashboard.vehicleEdit.weightCapacity")}
                     </label>
                     <input
                       type="number"
@@ -359,13 +357,13 @@ export default function EditVehiclePage() {
                 {constructionSites.length > 0 && (
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
-                      Construction Site
+                      {t("dashboard.vehicleEdit.constructionSite")}
                     </label>
                     <select
                       {...register("constructionSiteId")}
                       className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                     >
-                      <option value="">No site assignment</option>
+                      <option value="">{t("dashboard.vehicleEdit.noSiteAssignment")}</option>
                       {constructionSites.map((site) => (
                         <option key={site.id} value={site.id}>
                           {site.name}
@@ -380,7 +378,7 @@ export default function EditVehiclePage() {
             {!isConstruction && (
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  VIN (optional)
+                  {t("dashboard.vehicleEdit.vinOptional")}
                 </label>
                 <input
                   {...register("vin")}
@@ -396,7 +394,7 @@ export default function EditVehiclePage() {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              Save Changes
+              {t("dashboard.vehicleEdit.saveChanges")}
             </button>
           </form>
         </div>

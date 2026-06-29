@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Loader2, Save, Bell } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import Link from "next/link";
 
 interface NotifSettings {
@@ -13,6 +14,7 @@ interface NotifSettings {
 }
 
 export default function NotificationsPage() {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const [settings, setSettings] = useState<NotifSettings | null>(null);
@@ -93,15 +95,15 @@ export default function NotificationsPage() {
       <header className="bg-card border-b border-border">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-16">
           <Link href="/dashboard/settings" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="w-4 h-4" /> Back to Settings
+            <ArrowLeft className="w-4 h-4" /> {t("dashboard.settings.notifications.backToSettings")}
           </Link>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Notification Settings</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-2">{t("dashboard.settings.notifications.heading")}</h1>
         <p className="text-muted-foreground mb-8">
-          Manage how you receive alerts and reminders
+          {t("dashboard.settings.notifications.subtitle")}
         </p>
 
         {error && (
@@ -110,16 +112,16 @@ export default function NotificationsPage() {
 
         {success && (
           <div className="mb-6 p-3 text-sm text-green-600 bg-green-500/10 rounded-lg">
-            Notification settings saved successfully.
+            {t("dashboard.settings.notifications.savedSuccess")}
           </div>
         )}
 
         <div className="bg-card rounded-lg border border-border p-6 mb-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Contact Info</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">{t("dashboard.settings.notifications.contactInfo")}</h2>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Phone Number</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.settings.notifications.phoneNumber")}</label>
               <input
                 type="tel"
                 value={phone}
@@ -127,19 +129,19 @@ export default function NotificationsPage() {
                 placeholder="+1234567890"
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
               />
-              <p className="mt-1 text-xs text-muted-foreground">Used for SMS notifications (include country code)</p>
+              <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.settings.notifications.phoneHelper")}</p>
             </div>
           </div>
         </div>
 
         <div className="bg-card rounded-lg border border-border p-6 mb-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Notification Channels</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">{t("dashboard.settings.notifications.channelsHeading")}</h2>
 
           <div className="space-y-4">
             <label className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer">
               <div>
-                <p className="font-medium text-foreground">SMS Notifications</p>
-                <p className="text-sm text-muted-foreground">Receive reminders via text message</p>
+                <p className="font-medium text-foreground">{t("dashboard.settings.notifications.smsNotifications")}</p>
+                <p className="text-sm text-muted-foreground">{t("dashboard.settings.notifications.smsDescription")}</p>
               </div>
               <input
                 type="checkbox"
@@ -151,8 +153,8 @@ export default function NotificationsPage() {
 
             <label className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer">
               <div>
-                <p className="font-medium text-foreground">Push Notifications</p>
-                <p className="text-sm text-muted-foreground">Receive in-app notifications</p>
+                <p className="font-medium text-foreground">{t("dashboard.settings.notifications.pushNotifications")}</p>
+                <p className="text-sm text-muted-foreground">{t("dashboard.settings.notifications.pushDescription")}</p>
               </div>
               <input
                 type="checkbox"
@@ -172,7 +174,7 @@ export default function NotificationsPage() {
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
             <Save className="w-4 h-4" />
-            Save Changes
+            {t("dashboard.settings.notifications.saveChanges")}
           </button>
         </div>
       </main>

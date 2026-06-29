@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, Loader2, Building2 } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const siteSchema = z.object({
   name: z.string().min(1, "Site name is required").max(200),
@@ -21,6 +22,7 @@ type SiteFormData = z.infer<typeof siteSchema>;
 export default function NewConstructionSitePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -62,12 +64,12 @@ export default function NewConstructionSitePage() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || "Failed to create site");
+        throw new Error(result.error || t("dashboard.constructionSitesNew.failedCreate"));
       }
 
       router.push(`/dashboard/construction-sites/${result.id}`);
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      setError(err.message || t("dashboard.constructionSitesNew.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -84,7 +86,7 @@ export default function NewConstructionSitePage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("common.back")}
               </Link>
             </div>
           </div>
@@ -97,7 +99,7 @@ export default function NewConstructionSitePage() {
             <div className="p-2 bg-primary rounded-lg">
               <Building2 className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold text-foreground">New Construction Site</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t("dashboard.constructionSitesNew.heading")}</h1>
           </div>
 
           {error && (
@@ -109,12 +111,12 @@ export default function NewConstructionSitePage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Site Name <span className="text-destructive">*</span>
+                {t("dashboard.constructionSitesNew.siteName")} <span className="text-destructive">*</span>
               </label>
               <input
                 {...register("name")}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                placeholder="Main Street Job Site"
+                placeholder={t("dashboard.constructionSitesNew.siteNamePlaceholder")}
               />
               {errors.name && (
                 <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>
@@ -123,34 +125,34 @@ export default function NewConstructionSitePage() {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Address
+                {t("dashboard.constructionSitesNew.address")}
               </label>
               <input
                 {...register("address")}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                placeholder="123 Main St"
+                placeholder={t("dashboard.constructionSitesNew.addressPlaceholder")}
               />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  City
+                  {t("dashboard.constructionSitesNew.city")}
                 </label>
                 <input
                   {...register("city")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder="Houston"
+                  placeholder={t("dashboard.constructionSitesNew.cityPlaceholder")}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  State
+                  {t("dashboard.constructionSitesNew.state")}
                 </label>
                 <input
                   {...register("state")}
                   className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder="TX"
+                  placeholder={t("dashboard.constructionSitesNew.statePlaceholder")}
                 />
               </div>
             </div>
@@ -161,7 +163,7 @@ export default function NewConstructionSitePage() {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              Create Site
+              {t("dashboard.constructionSitesNew.createSite")}
             </button>
           </form>
         </div>

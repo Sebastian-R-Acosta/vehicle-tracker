@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import {
   Car,
   ArrowLeft,
@@ -117,6 +118,7 @@ export default function VehicleDetailPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
+  const { t } = useLanguage();
   const [generatingReport, setGeneratingReport] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -157,7 +159,7 @@ export default function VehicleDetailPage() {
         setRecallsError(data.error);
       }
     } catch (err) {
-      setRecallsError("Failed to check recalls");
+      setRecallsError(t("errors.generic"));
     } finally {
       setRecallsLoading(false);
     }
@@ -206,13 +208,13 @@ export default function VehicleDetailPage() {
         method: "DELETE",
       });
       if (res.ok) {
-        toast.success("Vehicle deleted");
+        toast.success(t("dashboard.vehicleDetail.vehicleDeleted"));
         router.push("/dashboard");
       } else {
-        toast.error("Failed to delete vehicle");
+        toast.error(t("dashboard.vehicleDetail.failedDeleteVehicle"));
       }
     } catch (err) {
-      toast.error("Failed to delete vehicle");
+      toast.error(t("dashboard.vehicleDetail.failedDeleteVehicle"));
     }
   };
 
@@ -258,7 +260,7 @@ export default function VehicleDetailPage() {
 
       if (!res.ok) {
         const err = await res.json();
-        toast.error(err.error || "Wallet not configured");
+        toast.error(err.error || t("dashboard.vehicleDetail.walletNotConfigured"));
         return;
       }
 
@@ -274,7 +276,7 @@ export default function VehicleDetailPage() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        toast.success("Added to Apple Wallet");
+        toast.success(t("dashboard.vehicleDetail.addedToWallet"));
       } else {
         const data = await res.json();
         if (data.saveUrl) {
@@ -282,7 +284,7 @@ export default function VehicleDetailPage() {
         }
       }
     } catch {
-      toast.error("Could not add to wallet");
+      toast.error(t("dashboard.vehicleDetail.couldNotAddWallet"));
     }
   };
 
@@ -298,7 +300,7 @@ export default function VehicleDetailPage() {
         const margin = 20;
         const contentWidth = pageWidth - margin * 2;
 
-        const logoUrl = "/logo.jpg";
+        const logoUrl = "/logo-icon.svg";
         try {
           doc.addImage(logoUrl, "SVG", margin, 10, 50, 15);
         } catch (e) {}
@@ -306,7 +308,7 @@ export default function VehicleDetailPage() {
         doc.setFontSize(18);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(30, 41, 59);
-        doc.text("Vehicle History Report", pageWidth - margin, 18, { align: "right" });
+        doc.text(t("dashboard.vehicleDetail.vehicleHistoryReport"), pageWidth - margin, 18, { align: "right" });
 
         doc.setFontSize(10);
         doc.setFont("helvetica", "normal");
@@ -320,14 +322,14 @@ export default function VehicleDetailPage() {
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(30, 41, 59);
-        doc.text("Vehicle Information", margin, 48);
+        doc.text(t("dashboard.vehicleDetail.vehicleInformation"), margin, 48);
 
         const startY = 58;
         const rowHeight = 16;
         const rows = [
-          [{ label: "Make", value: data.vehicle.make }, { label: "Model", value: data.vehicle.model }],
-          [{ label: "Year", value: String(data.vehicle.year) }, { label: "Mileage", value: `${data.vehicle.currentMileage.toLocaleString()} miles` }],
-          [{ label: "VIN", value: data.vehicle.vin || "Not provided" }, null],
+          [{ label: t("vehicle.make"), value: data.vehicle.make }, { label: t("vehicle.model"), value: data.vehicle.model }],
+          [{ label: t("vehicle.year"), value: String(data.vehicle.year) }, { label: t("vehicle.mileage"), value: `${data.vehicle.currentMileage.toLocaleString()} ${t("dashboard.reminders.miles")}` }],
+          [{ label: t("vehicle.vin"), value: data.vehicle.vin || t("dashboard.vehicleDetail.notProvided") }, null],
         ];
 
         rows.forEach((row, rowIndex) => {
@@ -349,7 +351,7 @@ export default function VehicleDetailPage() {
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(30, 41, 59);
-        doc.text("Maintenance Summary", margin, 110);
+        doc.text(t("dashboard.vehicleDetail.maintenanceSummary"), margin, 110);
 
         const colWidth = contentWidth / 4;
         const headerY = 115;
@@ -360,10 +362,10 @@ export default function VehicleDetailPage() {
         doc.setFontSize(10);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(71, 85, 105);
-        doc.text("Service Type", margin + 5, headerY + 7);
-        doc.text("Count", margin + colWidth + 5, headerY + 7);
-        doc.text("Last Service", margin + colWidth * 2 + 5, headerY + 7);
-        doc.text("Next Due", margin + colWidth * 3 + 5, headerY + 7);
+        doc.text(t("dashboard.vehicleDetail.pdfServiceType"), margin + 5, headerY + 7);
+        doc.text(t("dashboard.vehicleDetail.pdfCount"), margin + colWidth + 5, headerY + 7);
+        doc.text(t("dashboard.vehicleDetail.pdfLastService"), margin + colWidth * 2 + 5, headerY + 7);
+        doc.text(t("dashboard.vehicleDetail.pdfNextDue"), margin + colWidth * 3 + 5, headerY + 7);
 
         const maintenanceByType: { [key: string]: any[] } = {};
         data.maintenanceHistory.forEach((record: any) => {
@@ -402,12 +404,12 @@ export default function VehicleDetailPage() {
             const { date: nextDate, mileage: nextMileage } = getNextDueDate(lastRecord.date, lastRecord.mileage, serviceType);
             let nextDue = "\u2014";
             if (nextDate) nextDue = new Date(nextDate).toLocaleDateString();
-            else if (serviceType !== "Repair" && serviceType !== "Other") nextDue = `${nextMileage.toLocaleString()} mi`;
+            else if (serviceType !== "Repair" && serviceType !== "Other") nextDue = `${nextMileage.toLocaleString()} ${t("dashboard.reminders.miles")}`;
             doc.setTextColor(22, 163, 74);
             doc.text(nextDue, margin + colWidth * 3 + 5, ySummary + 10);
           } else {
             doc.setTextColor(148, 163, 184);
-            doc.text("Never Logged", margin + colWidth * 2 + 5, ySummary + 10);
+            doc.text(t("dashboard.vehicleDetail.neverLogged"), margin + colWidth * 2 + 5, ySummary + 10);
             doc.setTextColor(239, 68, 68);
             doc.text("\u2014", margin + colWidth * 3 + 5, ySummary + 10);
           }
@@ -422,13 +424,13 @@ export default function VehicleDetailPage() {
         doc.setFontSize(9);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(30, 41, 59);
-        doc.text("Vehicle Tracker | Professional Fleet & Vehicle Management System", pageWidth / 2, footerY, { align: "center" });
+        doc.text(t("dashboard.vehicleDetail.pdfFooter"), pageWidth / 2, footerY, { align: "center" });
 
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8);
         doc.setTextColor(148, 163, 184);
-        doc.text("CONFIDENTIAL: This report is intended solely for the use of the individual or entity to whom it is addressed.", pageWidth / 2, footerY + 6, { align: "center" });
-        doc.text(`Report generated: ${new Date().toLocaleString()}`, pageWidth / 2, footerY + 12, { align: "center" });
+        doc.text(t("dashboard.vehicleDetail.pdfConfidential"), pageWidth / 2, footerY + 6, { align: "center" });
+        doc.text(`${t("dashboard.vehicleDetail.reportGenerated")} ${new Date().toLocaleString()}`, pageWidth / 2, footerY + 12, { align: "center" });
 
         doc.save(`vehicle-report-${data.vehicle.make}-${data.vehicle.model}.pdf`);
       }
@@ -459,7 +461,7 @@ export default function VehicleDetailPage() {
     setDocError("");
 
     if (docFile.size > 10 * 1024 * 1024) {
-      setDocError("File too large. Maximum size is 10MB.");
+      setDocError(t("dashboard.vehicleDetail.fileTooLarge"));
       return;
     }
 
@@ -514,10 +516,10 @@ export default function VehicleDetailPage() {
         setDocCategory("other");
         setDocExpiry("");
         setDocNotes("");
-        toast.success("Document uploaded");
+        toast.success(t("dashboard.vehicleDetail.documentUploaded"));
       }
     } catch (err: any) {
-      setDocError(err.message || "Upload failed. Try a smaller file.");
+      setDocError(err.message || t("dashboard.vehicleDetail.uploadFailed"));
       console.error("Failed to upload document:", err);
     } finally {
       setUploadingDoc(false);
@@ -529,10 +531,10 @@ export default function VehicleDetailPage() {
       const res = await fetch(`/api/vehicles/${vehicleId}/documents/${docId}`, { method: "DELETE" });
       if (res.ok) {
         setDocuments((prev) => prev.filter((d) => d.id !== docId));
-        toast.success("Document deleted");
+        toast.success(t("dashboard.vehicleDetail.documentDeleted"));
       }
     } catch (err) {
-      toast.error("Failed to delete document");
+      toast.error(t("dashboard.vehicleDetail.failedDeleteDocument"));
     }
   };
 
@@ -564,7 +566,7 @@ export default function VehicleDetailPage() {
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                {t("common.back")}
               </Link>
             </div>
             <div className="flex items-center gap-2">
@@ -574,7 +576,7 @@ export default function VehicleDetailPage() {
                 className="flex items-center gap-2 px-3 py-3 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg disabled:opacity-50"
               >
                 {generatingReport ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                {generatingReport ? "Generating..." : "Report"}
+                {generatingReport ? t("dashboard.vehicleDetail.generating") : t("dashboard.vehicleDetail.report")}
               </button>
               <button
                 onClick={() => setShowDeleteModal(true)}
@@ -610,36 +612,36 @@ export default function VehicleDetailPage() {
                 {isConstruction ? (
                   <>
                     <div>
-                      <p className="text-sm text-muted-foreground">Hours Meter</p>
+                      <p className="text-sm text-muted-foreground">{t("dashboard.vehicleDetail.hoursMeter")}</p>
                       <p className="text-lg font-semibold text-foreground">
-                        {vehicle.hoursMeter != null ? `${vehicle.hoursMeter.toLocaleString()} hrs` : "Not set"}
+                        {vehicle.hoursMeter != null ? `${vehicle.hoursMeter.toLocaleString()} ${t("dashboard.reminders.hrs")}` : t("dashboard.vehicleDetail.notSet")}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Serial Number</p>
+                      <p className="text-sm text-muted-foreground">{t("dashboard.vehicleDetail.serialNumber")}</p>
                       <p className="text-lg font-semibold text-foreground">
-                        {vehicle.serialNumber || "Not provided"}
+                        {vehicle.serialNumber || t("dashboard.vehicleDetail.notProvided")}
                       </p>
                     </div>
                   </>
                 ) : (
                   <>
                     <div>
-                      <p className="text-sm text-muted-foreground">Current Mileage</p>
+                      <p className="text-sm text-muted-foreground">{t("dashboard.vehicleDetail.currentMileage")}</p>
                       <p className="text-lg font-semibold text-foreground">
-                        {vehicle.currentMileage.toLocaleString()} mi
+                        {vehicle.currentMileage.toLocaleString()} {t("dashboard.reminders.miles")}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">VIN</p>
+                      <p className="text-sm text-muted-foreground">{t("vehicle.vin")}</p>
                       <p className="text-lg font-semibold text-foreground">
-                        {vehicle.vin || "Not provided"}
+                        {vehicle.vin || t("dashboard.vehicleDetail.notProvided")}
                       </p>
                     </div>
                   </>
                 )}
                 <div>
-                  <p className="text-sm text-muted-foreground">Last Service</p>
+                  <p className="text-sm text-muted-foreground">{t("dashboard.vehicleDetail.lastService")}</p>
                   <p className="text-lg font-semibold text-foreground">
                     {lastMaintenance ? (
                       <>
@@ -650,7 +652,7 @@ export default function VehicleDetailPage() {
                         </span>
                       </>
                     ) : (
-                      "No records"
+                      t("dashboard.vehicleDetail.noRecords")
                     )}
                   </p>
                 </div>
@@ -659,20 +661,20 @@ export default function VehicleDetailPage() {
 
             <div className="bg-card rounded-lg border border-border">
               <div className="flex items-center justify-between p-6 border-b border-border">
-                <h2 className="text-lg font-semibold text-foreground">Maintenance History</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t("dashboard.vehicleDetail.maintenanceHistory")}</h2>
                 <Link
                   href={`/dashboard/vehicles/${vehicle.id}/maintenance/new`}
                   className="flex items-center gap-2 px-3 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Record
+                  {t("dashboard.vehicleDetail.addRecord")}
                 </Link>
               </div>
 
               {vehicle.maintenanceRecords.length === 0 ? (
                 <div className="p-12 text-center">
                   <Wrench className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">No maintenance records yet</p>
+                  <p className="text-muted-foreground">{t("dashboard.vehicleDetail.noMaintenanceRecords")}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-border">
@@ -685,7 +687,7 @@ export default function VehicleDetailPage() {
                         <div>
                           <p className="font-medium text-foreground">{record.serviceType}</p>
                           <p className="text-sm text-muted-foreground">
-                            {new Date(record.date).toLocaleDateString()} at {record.mileage.toLocaleString()} miles
+                            {new Date(record.date).toLocaleDateString()} {t("dashboard.vehicleDetail.at")} {record.mileage.toLocaleString()} {t("dashboard.reminders.miles")}
                           </p>
                           {record.notes && (
                             <p className="text-sm text-muted-foreground mt-1">{record.notes}</p>
@@ -696,7 +698,7 @@ export default function VehicleDetailPage() {
                               className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline"
                             >
                               <Image className="w-4 h-4" />
-                              View Invoice
+                              {t("dashboard.vehicleDetail.viewInvoice")}
                             </button>
                           )}
                         </div>
@@ -718,7 +720,7 @@ export default function VehicleDetailPage() {
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-amber-500" />
-                    Recall Alerts
+                    {t("dashboard.vehicleDetail.recallAlerts")}
                   </h2>
                   {recallsLoading && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                 </div>
@@ -729,7 +731,7 @@ export default function VehicleDetailPage() {
 
                 {!recallsLoading && !recallsError && recalls.length === 0 && (
                   <div className="flex items-center gap-2 p-3 bg-green-500/10 rounded-lg">
-                    <span className="text-sm text-green-600 font-medium">No open recalls found for this VIN</span>
+                    <span className="text-sm text-green-600 font-medium">{t("dashboard.vehicleDetail.noOpenRecalls")}</span>
                   </div>
                 )}
 
@@ -744,16 +746,16 @@ export default function VehicleDetailPage() {
                             <p className="text-sm text-muted-foreground mt-1">{recall.summary}</p>
                             {recall.remedy && (
                               <p className="text-sm text-green-600 mt-2">
-                                Remedy: {recall.remedy}
+                                {t("dashboard.vehicleDetail.remedy")} {recall.remedy}
                               </p>
                             )}
                             {recall.safetyRisk && (
                               <p className="text-sm text-red-600 mt-1">
-                                Risk: {recall.safetyRisk}
+                                {t("dashboard.vehicleDetail.risk")} {recall.safetyRisk}
                               </p>
                             )}
                             <p className="text-xs text-muted-foreground mt-2">
-                              Reported: {new Date(recall.reportReceivedDate).toLocaleDateString()}
+                              {t("dashboard.vehicleDetail.reported")} {new Date(recall.reportReceivedDate).toLocaleDateString()}
                             </p>
                           </div>
                         </div>
@@ -768,14 +770,14 @@ export default function VehicleDetailPage() {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                   <FolderOpen className="w-5 h-5" />
-                  Digital Glovebox
+                  {t("dashboard.vehicleDetail.digitalGlovebox")}
                 </h2>
                 <button
                   onClick={() => setShowDocForm(true)}
                   className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 text-sm"
                 >
                   <Upload className="w-4 h-4" />
-                  Upload
+                  {t("common.upload")}
                 </button>
               </div>
 
@@ -785,22 +787,22 @@ export default function VehicleDetailPage() {
                 </div>
               ) : documents.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-6">
-                  No documents yet. Upload insurance, registration, warranty, or receipts.
+                  {t("dashboard.vehicleDetail.noDocuments")}
                 </p>
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2">
                   {documents.map((doc, idx) => {
                     const isExpired = doc.expiryDate && new Date(doc.expiryDate) < new Date();
                     const expiresSoon = doc.expiryDate && !isExpired && new Date(doc.expiryDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-                    const cardColors: Record<string, { gradient: string; label: string }> = {
-                      registration: { gradient: "from-blue-500 via-blue-600 to-blue-700", label: "Registration" },
-                      insurance: { gradient: "from-emerald-500 via-emerald-600 to-emerald-700", label: "Insurance" },
-                      warranty: { gradient: "from-violet-500 via-violet-600 to-violet-700", label: "Warranty" },
-                      inspection: { gradient: "from-orange-500 via-orange-600 to-orange-700", label: "Inspection" },
-                      receipt: { gradient: "from-rose-500 via-rose-600 to-rose-700", label: "Receipt" },
-                      manual: { gradient: "from-slate-500 via-slate-600 to-slate-700", label: "Manual" },
+                    const cardColors: Record<string, { gradient: string; }> = {
+                      registration: { gradient: "from-blue-500 via-blue-600 to-blue-700" },
+                      insurance: { gradient: "from-emerald-500 via-emerald-600 to-emerald-700" },
+                      warranty: { gradient: "from-violet-500 via-violet-600 to-violet-700" },
+                      inspection: { gradient: "from-orange-500 via-orange-600 to-orange-700" },
+                      receipt: { gradient: "from-rose-500 via-rose-600 to-rose-700" },
+                      manual: { gradient: "from-slate-500 via-slate-600 to-slate-700" },
                     };
-                    const colors = cardColors[doc.type] || { gradient: "from-gray-500 via-gray-600 to-gray-700", label: doc.type.charAt(0).toUpperCase() + doc.type.slice(1) };
+                    const colors = cardColors[doc.type] || { gradient: "from-gray-500 via-gray-600 to-gray-700" };
                     const docUrl = doc.signedUrl || `/api/vehicles/${vehicle.id}/documents/${doc.id}`;
                     return (
                       <div key={doc.id} className="group relative bg-card rounded-2xl border border-border/50 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
@@ -819,7 +821,7 @@ export default function VehicleDetailPage() {
                           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent h-24" />
                           <div className="absolute top-3 right-3">
                             <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white bg-white/20 backdrop-blur-md rounded-full">
-                              {colors.label}
+                              {t(`dashboard.vehicleDetail.docCategories.${doc.type}`)}
                             </span>
                           </div>
                           <div className="absolute bottom-3 left-4 right-4">
@@ -832,7 +834,7 @@ export default function VehicleDetailPage() {
                             {doc.fileSize && <span>• {(doc.fileSize / 1024).toFixed(0)} KB</span>}
                             {doc.expiryDate && (
                               <span className={`${isExpired ? "text-red-500" : expiresSoon ? "text-amber-500" : "text-muted-foreground"}`}>
-                                • {isExpired ? "Expired" : expiresSoon ? "Expiring" : new Date(doc.expiryDate).toLocaleDateString()}
+                                • {isExpired ? t("dashboard.vehicleDetail.expired") : expiresSoon ? t("dashboard.vehicleDetail.expiring") : new Date(doc.expiryDate).toLocaleDateString()}
                               </span>
                             )}
                           </div>
@@ -864,7 +866,7 @@ export default function VehicleDetailPage() {
           <div className="space-y-6">
             <div className="bg-card rounded-lg border border-border p-6 mb-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-foreground">Reminders</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t("vehicle.reminders")}</h2>
                 <Link
                   href={`/dashboard/reminders/new?vehicleId=${vehicle.id}`}
                   className="p-3 hover:bg-accent rounded"
@@ -874,7 +876,7 @@ export default function VehicleDetailPage() {
               </div>
 
               {vehicle.reminders.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No active reminders</p>
+                <p className="text-sm text-muted-foreground">{t("dashboard.vehicleDetail.noActiveReminders")}</p>
               ) : (
                 <div className="space-y-3">
                   {vehicle.reminders.map((reminder) => (
@@ -884,8 +886,8 @@ export default function VehicleDetailPage() {
                         <p className="text-sm font-medium text-foreground">{reminder.title}</p>
                         <p className="text-xs text-muted-foreground">
                           {reminder.dueDate && new Date(reminder.dueDate).toLocaleDateString()}
-                          {reminder.dueMileage && ` at ${reminder.dueMileage.toLocaleString()} mi`}
-                          {reminder.dueHours && ` at ${reminder.dueHours.toLocaleString()} hrs`}
+                          {reminder.dueMileage && ` ${t("dashboard.vehicleDetail.at")} ${reminder.dueMileage.toLocaleString()} ${t("dashboard.reminders.miles")}`}
+                          {reminder.dueHours && ` ${t("dashboard.vehicleDetail.at")} ${reminder.dueHours.toLocaleString()} ${t("dashboard.reminders.hrs")}`}
                         </p>
                       </div>
                     </div>
@@ -897,18 +899,18 @@ export default function VehicleDetailPage() {
             <div className="bg-card rounded-lg border border-border p-6">
               <h2 className="text-lg font-semibold mb-4 text-foreground flex items-center gap-2">
                 <DollarSign className="w-5 h-5" />
-                Value Report
+                {t("dashboard.vehicleDetail.valueReport")}
               </h2>
 
               {valueReport ? (
                 <div className="space-y-4">
                   <div className="text-center p-4 bg-primary/5 rounded-lg">
-                    <p className="text-sm text-muted-foreground">Estimated Value</p>
+                    <p className="text-sm text-muted-foreground">{t("dashboard.vehicleDetail.estimatedValue")}</p>
                     <p className="text-3xl font-bold text-foreground">
                       ${valueReport.estimatedValue.toLocaleString()}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Range: ${valueReport.valueRange.low.toLocaleString()} &ndash; ${valueReport.valueRange.high.toLocaleString()}
+                      {t("dashboard.vehicleDetail.valueRange")} ${valueReport.valueRange.low.toLocaleString()} &ndash; ${valueReport.valueRange.high.toLocaleString()}
                     </p>
                     <span className={`inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full ${
                       valueReport.marketRating === "Above Average" ? "bg-green-500/10 text-green-600" :
@@ -932,7 +934,7 @@ export default function VehicleDetailPage() {
                   </div>
 
                   <div className="pt-3 border-t border-border text-xs text-muted-foreground">
-                    <p>{valueReport.maintenance.totalRecords} service records on file &bull; {valueReport.depreciation.annualRate}% annual depreciation</p>
+                    <p>{t("dashboard.vehicleDetail.serviceRecords", { n: String(valueReport.maintenance.totalRecords), rate: String(valueReport.depreciation.annualRate) })}</p>
                   </div>
                 </div>
               ) : valueReportLoading ? (
@@ -942,13 +944,13 @@ export default function VehicleDetailPage() {
               ) : (
                 <div className="text-center py-4">
                   <p className="text-sm text-muted-foreground mb-3">
-                    Get an estimated market value based on age, mileage, and service history.
+                    {t("dashboard.vehicleDetail.getValueEstimate")}
                   </p>
                   <button
                     onClick={fetchValueReport}
                     className="w-full px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:opacity-90 text-sm font-medium"
                   >
-                    Estimate Value
+                    {t("dashboard.vehicleDetail.estimateValue")}
                   </button>
                 </div>
               )}
@@ -958,18 +960,18 @@ export default function VehicleDetailPage() {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                   <Car className="w-5 h-5" />
-                  Assigned Drivers
+                  {t("dashboard.vehicleDetail.assignedDrivers")}
                 </h2>
                 <Link
                   href="/dashboard/drivers"
                   className="text-sm text-primary hover:underline"
                 >
-                  Manage
+                  {t("dashboard.vehicleDetail.manage")}
                 </Link>
               </div>
 
               {assignments.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No drivers assigned</p>
+                <p className="text-sm text-muted-foreground">{t("dashboard.vehicleDetail.noDriversAssigned")}</p>
               ) : (
                 <div className="space-y-3">
                   {assignments.map((a) => (
@@ -981,7 +983,7 @@ export default function VehicleDetailPage() {
                         <p className="text-sm font-medium text-foreground truncate">
                           {a.driver.name}
                           {a.isPrimary && (
-                            <span className="ml-2 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">Primary</span>
+                            <span className="ml-2 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">{t("dashboard.vehicleDetail.primary")}</span>
                           )}
                         </p>
                         {a.driver.email && (
@@ -1001,7 +1003,7 @@ export default function VehicleDetailPage() {
                   className="flex items-center gap-2 p-3 text-muted-foreground hover:bg-accent rounded-lg"
                 >
                   <Share2 className="w-4 h-4" />
-                  Transfer Ownership
+                  {t("dashboard.vehicleDetail.transferOwnership")}
                 </Link>
                 <button
                   onClick={generateReport}
@@ -1009,7 +1011,7 @@ export default function VehicleDetailPage() {
                   className="flex items-center gap-2 p-3 w-full text-muted-foreground hover:bg-accent rounded-lg disabled:opacity-50"
                 >
                   {generatingReport ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                  {generatingReport ? "Generating..." : "Generate Report"}
+                  {generatingReport ? t("dashboard.vehicleDetail.generating") : t("dashboard.vehicleDetail.generateReport")}
                 </button>
               </div>
             </div>
@@ -1023,10 +1025,10 @@ export default function VehicleDetailPage() {
           <div className="relative bg-card rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/10 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
             <div className={`relative bg-gradient-to-br ${(() => { const c = { registration: "from-blue-500 via-blue-600 to-blue-700", insurance: "from-emerald-500 via-emerald-600 to-emerald-700", warranty: "from-violet-500 via-violet-600 to-violet-700", inspection: "from-orange-500 via-orange-600 to-orange-700", receipt: "from-rose-500 via-rose-600 to-rose-700", manual: "from-slate-500 via-slate-600 to-slate-700" } as Record<string, string>; return c[viewingDoc.type] || "from-gray-500 via-gray-600 to-gray-700"; })()} px-6 py-5 sticky top-0 z-10`}>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)] opacity-20" />
-              <div className="relative flex items-center justify-between">
+                <div className="relative flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <p className="text-[11px] font-bold uppercase tracking-widest text-white/60">
-                    {(() => { const c = { registration: "Registration", insurance: "Insurance", warranty: "Warranty", inspection: "Inspection", receipt: "Receipt", manual: "Manual" } as Record<string, string>; return c[viewingDoc.type] || viewingDoc.type; })()}
+                    {t(`dashboard.vehicleDetail.docCategories.${viewingDoc.type}`)}
                   </p>
                   <h3 className="text-lg font-bold text-white truncate mt-0.5">{viewingDoc.name}</h3>
                 </div>
@@ -1045,18 +1047,18 @@ export default function VehicleDetailPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-muted/10 rounded-xl p-3">
-                  <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Added</p>
+                  <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">{t("dashboard.vehicleDetail.added")}</p>
                   <p className="text-sm font-semibold text-foreground mt-0.5">{new Date(viewingDoc.createdAt).toLocaleDateString()}</p>
                 </div>
                 {viewingDoc.fileSize && (
                   <div className="bg-muted/10 rounded-xl p-3">
-                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Size</p>
+                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">{t("dashboard.vehicleDetail.size")}</p>
                     <p className="text-sm font-semibold text-foreground mt-0.5">{(viewingDoc.fileSize / 1024).toFixed(0)} KB</p>
                   </div>
                 )}
                 {viewingDoc.expiryDate && (
                   <div className="bg-muted/10 rounded-xl p-3">
-                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Expires</p>
+                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">{t("dashboard.vehicleDetail.expires")}</p>
                     <p className={`text-sm font-semibold mt-0.5 ${new Date(viewingDoc.expiryDate) < new Date() ? "text-red-500" : "text-foreground"}`}>
                       {new Date(viewingDoc.expiryDate).toLocaleDateString()}
                     </p>
@@ -1065,7 +1067,7 @@ export default function VehicleDetailPage() {
               </div>
               {viewingDoc.notes && (
                 <div>
-                  <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mb-1.5">Notes</p>
+                  <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mb-1.5">{t("dashboard.vehicleDetail.notes")}</p>
                   <p className="text-sm text-foreground/80 bg-muted/10 rounded-xl p-3 leading-relaxed">{viewingDoc.notes}</p>
                 </div>
               )}
@@ -1073,16 +1075,16 @@ export default function VehicleDetailPage() {
                 <a href={viewingDoc.signedUrl || `/api/vehicles/${vehicle.id}/documents/${viewingDoc.id}`} target="_blank" rel="noopener noreferrer"
                   className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-semibold bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-primary/25">
                   <Download className="w-4 h-4" />
-                  Open Full Document
+                  {t("dashboard.vehicleDetail.openFullDocument")}
                 </a>
                 <button onClick={() => addToWallet(viewingDoc)}
                   className="flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-950/40 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 rounded-xl transition-colors border border-yellow-200 dark:border-yellow-800 whitespace-nowrap">
                   <Wallet className="w-4 h-4" />
-                  Wallet
+                  {t("dashboard.vehicleDetail.wallet")}
                 </button>
                 <button onClick={() => setViewingDoc(null)}
                   className="flex items-center justify-center gap-2 py-3 px-5 text-sm font-medium text-foreground bg-muted/20 hover:bg-muted/40 rounded-xl transition-colors border border-border/50">
-                  Close
+                  {t("common.close")}
                 </button>
               </div>
             </div>
@@ -1093,10 +1095,10 @@ export default function VehicleDetailPage() {
       {showDocForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-card rounded-lg p-6 max-w-md mx-4 border border-border w-full">
-            <h2 className="text-lg font-semibold mb-4 text-foreground">Upload Document</h2>
+            <h2 className="text-lg font-semibold mb-4 text-foreground">{t("dashboard.vehicleDetail.uploadDocument")}</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-1">File</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">{t("dashboard.vehicleDetail.file")}</label>
                 <input
                   type="file"
                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
@@ -1105,33 +1107,33 @@ export default function VehicleDetailPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-1">Document Name</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">{t("dashboard.vehicleDetail.documentName")}</label>
                 <input
                   type="text"
                   value={docName}
                   onChange={(e) => setDocName(e.target.value)}
-                  placeholder="e.g. Insurance Card"
+                  placeholder={t("dashboard.vehicleDetail.docNamePlaceholder")}
                   className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-background"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-1">Type</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">{t("dashboard.vehicleDetail.type")}</label>
                 <select
                   value={docCategory}
                   onChange={(e) => setDocCategory(e.target.value)}
                   className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-background"
                 >
-                  <option value="registration">Registration</option>
-                  <option value="insurance">Insurance</option>
-                  <option value="warranty">Warranty</option>
-                  <option value="inspection">Inspection</option>
-                  <option value="receipt">Receipt</option>
-                  <option value="manual">Manual</option>
-                  <option value="other">Other</option>
+                  <option value="registration">{t("dashboard.vehicleDetail.docCategories.registration")}</option>
+                  <option value="insurance">{t("dashboard.vehicleDetail.docCategories.insurance")}</option>
+                  <option value="warranty">{t("dashboard.vehicleDetail.docCategories.warranty")}</option>
+                  <option value="inspection">{t("dashboard.vehicleDetail.docCategories.inspection")}</option>
+                  <option value="receipt">{t("dashboard.vehicleDetail.docCategories.receipt")}</option>
+                  <option value="manual">{t("dashboard.vehicleDetail.docCategories.manual")}</option>
+                  <option value="other">{t("dashboard.vehicleDetail.docCategories.other")}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-1">Expiry Date</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">{t("dashboard.vehicleDetail.expiryDate")}</label>
                 <input
                   type="date"
                   value={docExpiry}
@@ -1140,12 +1142,12 @@ export default function VehicleDetailPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-1">Notes</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">{t("dashboard.vehicleDetail.notes")}</label>
                 <input
                   type="text"
                   value={docNotes}
                   onChange={(e) => setDocNotes(e.target.value)}
-                  placeholder="Optional notes"
+                  placeholder={t("dashboard.vehicleDetail.optionalNotes")}
                   className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-background"
                 />
               </div>
@@ -1160,14 +1162,14 @@ export default function VehicleDetailPage() {
                 onClick={() => { setShowDocForm(false); setDocFile(null); setDocError(""); }}
                 className="flex-1 px-4 py-2.5 border border-border rounded-lg text-sm hover:bg-accent"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 onClick={handleDocUpload}
                 disabled={uploadingDoc || !docFile}
                 className="flex-1 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg text-sm hover:opacity-90 disabled:opacity-50"
               >
-                {uploadingDoc ? "Uploading..." : "Upload"}
+                {uploadingDoc ? t("dashboard.vehicleDetail.uploading") : t("common.upload")}
               </button>
             </div>
           </div>
@@ -1177,9 +1179,9 @@ export default function VehicleDetailPage() {
       {showDeleteModal && (
         <ConfirmDialog
           open={showDeleteModal}
-          title="Delete Vehicle"
-          message="Are you sure you want to delete this vehicle? This will also delete all maintenance records, reminders, and documents. This action cannot be undone."
-          confirmLabel="Delete"
+          title={t("dashboard.vehicleDetail.deleteVehicle")}
+          message={t("dashboard.vehicleDetail.deleteVehicleConfirm")}
+          confirmLabel={t("common.delete")}
           variant="danger"
           onConfirm={async () => {
             await handleDelete();
@@ -1202,7 +1204,7 @@ export default function VehicleDetailPage() {
           </button>
           <img
             src={selectedImage}
-            alt="Invoice"
+            alt={t("dashboard.vehicleDetail.viewInvoice")}
             className="max-w-full max-h-full object-contain rounded-lg"
             onClick={(e) => e.stopPropagation()}
           />

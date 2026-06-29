@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Loader2, User } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const driverSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
@@ -23,6 +24,7 @@ type DriverFormData = z.infer<typeof driverSchema>;
 export default function NewDriverPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -64,12 +66,12 @@ export default function NewDriverPage() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || "Failed to create driver");
+        throw new Error(result.error || t("dashboard.driversNew.failedCreate"));
       }
 
       router.push("/dashboard/drivers");
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      setError(err.message || t("dashboard.driversNew.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -82,7 +84,7 @@ export default function NewDriverPage() {
           <div className="p-2 bg-primary rounded-lg">
             <User className="w-5 h-5 text-primary-foreground" />
           </div>
-          <h1 className="text-xl font-semibold text-foreground">New Driver</h1>
+          <h1 className="text-xl font-semibold text-foreground">{t("dashboard.driversNew.heading")}</h1>
         </div>
 
         {error && (
@@ -94,12 +96,12 @@ export default function NewDriverPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-foreground mb-1">
-              Name <span className="text-destructive">*</span>
+              {t("driver.name")} <span className="text-destructive">*</span>
             </label>
             <input
               {...register("name")}
               className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-              placeholder="John Doe"
+              placeholder={t("dashboard.driversNew.namePlaceholder")}
             />
             {errors.name && (
               <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>
@@ -108,23 +110,23 @@ export default function NewDriverPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Email</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("driver.email")}</label>
               <input
                 type="email"
                 {...register("email")}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                placeholder="john@example.com"
+                placeholder={t("dashboard.driversNew.emailPlaceholder")}
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Phone</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("driver.phone")}</label>
               <input
                 {...register("phone")}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                placeholder="(555) 123-4567"
+                placeholder={t("dashboard.driversNew.phonePlaceholder")}
               />
               {errors.phone && (
                 <p className="mt-1 text-sm text-destructive">{errors.phone.message}</p>
@@ -134,18 +136,18 @@ export default function NewDriverPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">License Number</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.driversNew.licenseNumber")}</label>
               <input
                 {...register("licenseNumber")}
                 className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                placeholder="DL-123-456-789"
+                placeholder={t("dashboard.driversNew.licensePlaceholder")}
               />
               {errors.licenseNumber && (
                 <p className="mt-1 text-sm text-destructive">{errors.licenseNumber.message}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">License Expiry</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.driversNew.licenseExpiry")}</label>
               <input
                 type="date"
                 {...register("licenseExpiry")}
@@ -158,11 +160,11 @@ export default function NewDriverPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">License State</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.driversNew.licenseState")}</label>
             <input
               {...register("licenseState")}
               className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-              placeholder="TX"
+              placeholder={t("dashboard.driversNew.statePlaceholder")}
             />
             {errors.licenseState && (
               <p className="mt-1 text-sm text-destructive">{errors.licenseState.message}</p>
@@ -170,12 +172,12 @@ export default function NewDriverPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Notes</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.driversNew.notes")}</label>
             <textarea
               {...register("notes")}
               rows={3}
               className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-              placeholder="Additional notes..."
+              placeholder={t("dashboard.driversNew.notesPlaceholder")}
             />
             {errors.notes && (
               <p className="mt-1 text-sm text-destructive">{errors.notes.message}</p>
@@ -188,7 +190,7 @@ export default function NewDriverPage() {
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            Create Driver
+            {t("dashboard.driversNew.createDriver")}
           </button>
         </form>
       </div>

@@ -9,7 +9,7 @@ type Locale = "es" | "en";
 interface LanguageContextValue {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (path: string) => any;
+  t: (path: string, params?: Record<string, string>) => any;
 }
 
 const translations: Record<Locale, Translations> = { es, en };
@@ -41,7 +41,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const t = useCallback(
-    (path: string) => resolveNested(translations[locale], path),
+    (path: string, params?: Record<string, string>) => {
+      let val = resolveNested(translations[locale], path);
+      if (params && typeof val === "string") {
+        Object.entries(params).forEach(([key, value]) => {
+          val = (val as string).replace(`{${key}}`, value);
+        });
+      }
+      return val;
+    },
     [locale]
   );
 

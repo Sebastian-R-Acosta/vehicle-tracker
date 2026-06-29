@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Loader2, Copy, Check, X, Shield, UserCog, Wrench, User } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface Member {
   id: string;
@@ -28,14 +29,8 @@ const roleIcons: Record<string, React.ElementType> = {
   customer: User,
 };
 
-const roleLabels: Record<string, string> = {
-  owner: "Owner",
-  admin: "Admin",
-  technician: "Technician",
-  customer: "Customer",
-};
-
 export default function MembersPage() {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const [members, setMembers] = useState<Member[]>([]);
@@ -46,6 +41,13 @@ export default function MembersPage() {
   const [inviteError, setInviteError] = useState("");
   const [inviteSuccess, setInviteSuccess] = useState("");
   const [copiedToken, setCopiedToken] = useState("");
+
+  const roleLabels: Record<string, string> = {
+    owner: t("dashboard.members.roleLabels.owner"),
+    admin: t("dashboard.members.roleLabels.admin"),
+    technician: t("dashboard.members.roleLabels.technician"),
+    customer: t("dashboard.members.roleLabels.customer"),
+  };
 
   const currentOrgId = session?.user?.currentOrganizationId;
 
@@ -92,7 +94,7 @@ export default function MembersPage() {
       }
 
       const inv = await res.json();
-      setInviteSuccess(`Invitation created! Share this link:`);
+      setInviteSuccess(t("dashboard.members.invitationCreated"));
       setCopiedToken(inv.token);
       setInviteEmail("");
       fetchData();
@@ -102,7 +104,7 @@ export default function MembersPage() {
   };
 
   const handleRemoveMember = async (memberId: string) => {
-    if (!confirm("Remove this member from the organization?")) return;
+    if (!confirm(t("dashboard.members.removeConfirm"))) return;
     try {
       const res = await fetch(`/api/organizations/${currentOrgId}/members/${memberId}`, {
         method: "DELETE",
@@ -158,12 +160,12 @@ export default function MembersPage() {
         <header className="bg-card border-b border-border">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-16">
             <Link href="/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="w-4 h-4" /> Back
+              <ArrowLeft className="w-4 h-4" /> {t("common.back")}
             </Link>
           </div>
         </header>
         <main className="max-w-3xl mx-auto px-4 py-16 text-center text-muted-foreground">
-          No organization selected.
+          {t("dashboard.members.noOrgSelected")}
         </main>
       </div>
     );
@@ -176,23 +178,23 @@ export default function MembersPage() {
       <header className="bg-card border-b border-border">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-16">
           <Link href="/dashboard/settings" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="w-4 h-4" /> Back to Settings
+            <ArrowLeft className="w-4 h-4" /> {t("dashboard.settings.notifications.backToSettings")}
           </Link>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold text-foreground mb-6">Members</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6">{t("dashboard.members.heading")}</h1>
 
         <div className="bg-card rounded-lg border border-border p-6 mb-8">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Invite Member</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">{t("dashboard.members.inviteMember")}</h2>
           <form onSubmit={handleInvite} className="space-y-4">
             <div className="flex gap-3">
               <input
                 type="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
-                placeholder="Email address"
+                placeholder={t("settings.inviteEmail")}
                 required
                 className="flex-1 p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
               />
@@ -201,15 +203,15 @@ export default function MembersPage() {
                 onChange={(e) => setInviteRole(e.target.value)}
                 className="p-3 border border-input rounded-lg bg-background text-foreground"
               >
-                <option value="customer">Customer</option>
-                <option value="technician">Technician</option>
-                <option value="admin">Admin</option>
+                {Object.entries(roleLabels).filter(([key]) => key !== "owner").map(([key, label]) => (
+                  <option key={key} value={key}>{label}</option>
+                ))}
               </select>
               <button
                 type="submit"
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
               >
-                Invite
+                {t("dashboard.members.invite")}
               </button>
             </div>
           </form>
@@ -236,7 +238,7 @@ export default function MembersPage() {
 
         <div className="bg-card rounded-lg border border-border">
           <div className="p-6 border-b border-border">
-            <h2 className="text-lg font-semibold text-foreground">Current Members ({members.length})</h2>
+            <h2 className="text-lg font-semibold text-foreground">{t("dashboard.members.currentMembersLabel")} ({members.length})</h2>
           </div>
 
           <div className="divide-y divide-border">
@@ -288,14 +290,14 @@ export default function MembersPage() {
         {invitations.length > 0 && (
           <div className="bg-card rounded-lg border border-border mt-6">
             <div className="p-6 border-b border-border">
-              <h2 className="text-lg font-semibold text-foreground">Pending Invitations ({invitations.length})</h2>
+              <h2 className="text-lg font-semibold text-foreground">{t("dashboard.members.pendingInvitationsLabel")} ({invitations.length})</h2>
             </div>
             <div className="divide-y divide-border">
               {invitations.map((inv) => (
                 <div key={inv.id} className="flex items-center justify-between p-4">
                   <div>
                     <p className="font-medium text-foreground">{inv.email}</p>
-                    <p className="text-sm text-muted-foreground capitalize">Role: {roleLabels[inv.role] || inv.role}</p>
+                    <p className="text-sm text-muted-foreground capitalize">{t("dashboard.members.role")} {roleLabels[inv.role] || inv.role}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
@@ -307,7 +309,7 @@ export default function MembersPage() {
                       ) : (
                         <Copy className="w-3 h-3" />
                       )}
-                      Copy Link
+                      {t("dashboard.members.copyLink")}
                     </button>
                   </div>
                 </div>
