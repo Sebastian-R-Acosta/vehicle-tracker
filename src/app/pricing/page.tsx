@@ -22,13 +22,7 @@ const tiers = [
     ctaKey: "pricing.free",
     href: "/register",
     color: "gray",
-    features: [
-      "1 vehicle",
-      "Maintenance logging",
-      "Manual reminders",
-      "Basic vehicle info",
-      "Email support",
-    ],
+    featureKey: "pricing.tierFreeFeatures",
   },
   {
     nameKey: "pricing.pro",
@@ -40,15 +34,7 @@ const tiers = [
     href: "/register",
     color: "blue",
     featured: true,
-    features: [
-      "Unlimited vehicles",
-      "PDF vehicle history reports",
-      "Image upload for receipts",
-      "Smart mileage-based reminders",
-      "Email notifications",
-      "Data export",
-      "Priority support",
-    ],
+    featureKey: "pricing.tierProFeatures",
   },
   {
     nameKey: "pricing.enterprise",
@@ -59,34 +45,8 @@ const tiers = [
     ctaKey: "pricing.contactUs",
     href: "#",
     color: "indigo",
-    features: [
-      "Everything in Pro",
-      "Multi-tenant organization",
-      "Team roles (admin, tech, customer)",
-      "White-label branding",
-      "API access",
-      "Customer portal",
-      "Automated service reminders",
-      "Dedicated account manager",
-      "Custom integrations",
-    ],
+    featureKey: "pricing.tierEnterpriseFeatures",
   },
-];
-
-const featureCompare = [
-  { name: "Vehicles", free: "1", pro: "Unlimited", enterprise: "Unlimited" },
-  { name: "Maintenance Logs", free: true, pro: true, enterprise: true },
-  { name: "Service Reminders", free: "Manual", pro: "Smart", enterprise: "Smart" },
-  { name: "PDF Reports", free: false, pro: true, enterprise: true },
-  { name: "Image Uploads", free: false, pro: true, enterprise: true },
-  { name: "Email Notifications", free: false, pro: true, enterprise: true },
-  { name: "Recall Alerts", free: false, pro: true, enterprise: true },
-  { name: "Value Reports", free: false, pro: true, enterprise: true },
-  { name: "Digital Glovebox", free: false, pro: true, enterprise: true },
-  { name: "Multi-User Team", free: false, pro: false, enterprise: true },
-  { name: "White-Label Branding", free: false, pro: false, enterprise: true },
-  { name: "API Access", free: false, pro: false, enterprise: true },
-  { name: "Priority Support", free: false, pro: true, enterprise: true },
 ];
 
 function formatPrice(priceDOP: number, priceUSD: number, locale: string): string {
@@ -147,7 +107,7 @@ function PricingCards({ variant }: { variant: string }) {
             {isFeatured && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-semibold rounded-full flex items-center gap-1">
                 <Zap className="w-3 h-3" />
-                {locale === "es" ? "Mejor Valor" : "Best Value"}
+                {t("pricing.bestValue")}
               </div>
             )}
             <div className={`text-sm font-semibold uppercase tracking-wider mb-2 ${
@@ -165,9 +125,7 @@ function PricingCards({ variant }: { variant: string }) {
             </div>
             {isFeatured && (
               <p className="text-xs text-green-600 font-medium mb-1">
-                {locale === "es"
-                  ? "Ahorra ~17% con facturación anual"
-                  : "Save ~17% with annual billing"}
+                {t("pricing.annualSavings")}
               </p>
             )}
             <p className="text-sm text-gray-500 mb-6">{t(tier.descKey)}</p>
@@ -175,9 +133,7 @@ function PricingCards({ variant }: { variant: string }) {
             {tier.nameKey === "pricing.pro" && (
               <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
                 <p className="text-xs text-blue-700 font-medium">
-                  {locale === "es"
-                    ? "Incluye Alertas de Llamados a Revisión, Informes de Valor y Glovebox Digital"
-                    : "Includes Recall Alerts, Value Reports & Digital Glovebox"}
+                  {t("pricing.includesBadge")}
                 </p>
               </div>
             )}
@@ -204,7 +160,7 @@ function PricingCards({ variant }: { variant: string }) {
               </button>
             )}
             <ul className="mt-6 space-y-3">
-              {tier.features.map((f) => (
+              {(t(tier.featureKey) as string[]).map((f: string) => (
                 <li key={f} className="flex items-start gap-3 text-sm text-gray-600">
                   <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                   {f}
@@ -268,7 +224,7 @@ export default function PricingPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {featureCompare.map((row) => (
+                {(t("pricing.compareRows") as { name: string; free: string | boolean; pro: string | boolean; enterprise: string | boolean }[]).map((row) => (
                   <tr key={row.name} className="hover:bg-gray-50">
                     <td className="px-6 py-4 text-gray-700">{row.name}</td>
                     <td className="text-center px-4 py-4">
