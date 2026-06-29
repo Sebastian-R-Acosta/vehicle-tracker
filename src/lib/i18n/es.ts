@@ -1,3 +1,47 @@
+const solutionsDealersBenefits = [
+  { title: "Aumenta Ingresos de Servicio", description: "Los recordatorios automáticos llenan tu calendario de citas y reducen las inasistencias hasta un 40%." },
+  { title: "Optimiza Operaciones", description: "Desde la recepción hasta la factura, rastrea cada vehículo a través de tu departamento de servicio en tiempo real." },
+  { title: "Retención de Clientes", description: "Dale a los clientes un portal con tu marca para ver el historial de servicio y el mantenimiento próximo." },
+  { title: "Analíticas de Rendimiento", description: "Monitorea utilización de bahías, productividad de técnicos y valor promedio de órdenes de reparación." },
+  { title: "Experiencia Marca Blanca", description: "Tu logo, tu dominio, tu marca. Somos invisibles para tus clientes." },
+  { title: "Multi-Ubicaciones", description: "Gestiona múltiples ubicaciones desde un solo panel con acceso por roles." },
+];
+
+const solutionsInsurersBenefits = [
+  { title: "Verificación de Reclamos", description: "Registros de servicio a prueba de manipulaciones te dan los datos que necesitas para validar reclamos rápidamente." },
+  { title: "Puntuación de Riesgo", description: "Califica a los asegurados según su historial de mantenimiento. Recompensa vehículos bien mantenidos con mejores tarifas." },
+  { title: "Gestión de Flotas", description: "Monitorea flotas comerciales enteras desde un panel. Alertas automáticas por incumplimiento de normativas." },
+  { title: "Transparencia de Propiedad", description: "Rastrea la cadena de propiedad completa con registros de transferencia verificados y continuidad de servicio." },
+  { title: "Integración API", description: "Conecta nuestra API a tus sistemas de suscripción, reclamos y gestión de pólizas." },
+  { title: "Informes de Cumplimiento", description: "Genera informes listos para auditorías de cumplimiento regulatorio y evaluación de riesgos." },
+];
+
+const solutionsConstructionBenefits = [
+  { title: "Rastreo de Equipo Pesado", description: "Rastrea excavadoras, buldóceres, camiones volquete, grúas, cargadoras y motoniveladoras con soporte para números de serie y capacidad de peso." },
+  { title: "Organización por Sitio", description: "Agrupa equipos por sitio de construcción. Ve todas las máquinas asignadas a un proyecto en un panel." },
+  { title: "Intervalos Basados en Horas", description: "Configura recordatorios según lecturas del horómetro — aceite de motor cada 250 horas, fluido hidráulico cada 500 horas y más." },
+  { title: "Tablero de Estado", description: "Estado en tiempo real por máquina: Operativa, Inactiva, Averiada o En Mantenimiento. Conoce la salud de tu flota al instante." },
+  { title: "Historial de Servicio Completo", description: "Registra cada reparación, inspección y reemplazo de pieza. Informes PDF completos para reventa o cumplimiento." },
+  { title: "Informes de Utilización", description: "Mide cuántas horas opera cada máquina. Identifica equipos subutilizados y optimiza tu flota." },
+  { title: "Listo para Transferir", description: "Cuando vendas o muevas equipo entre sitios, genera un código de transferencia para preservar el historial de servicio." },
+  { title: "Gestión Multi-Sitio", description: "Gestiona equipos en múltiples sitios de trabajo desde una cuenta. Acceso basado en roles para supervisores." },
+];
+
+const solutionsIndividualsPerks = [
+  { title: "Panel Móvil", description: "Rastrea todos tus vehículos desde cualquier dispositivo. Sin necesidad de descargar app." },
+  { title: "Recordatorios Inteligentes", description: "Recibe notificaciones cuando sea hora de cambiar aceite, rotar neumáticos o inspeccionar." },
+  { title: "Informes PDF Gratis", description: "Genera un historial completo del vehículo para compartir con compradores o mecánicos." },
+  { title: "1 Vehículo Gratis", description: "Rastrea un vehículo sin costo. Mejora a Pro para ilimitados." },
+  { title: "Registro de Kilometraje", description: "Registra lecturas del odómetro automáticamente al agregar un servicio." },
+  { title: "Listo para Transferir", description: "Cuando vendas tu auto, genera un código de transferencia para que el nuevo dueño obtenga el historial completo." },
+];
+
+const solutionsHowItWorks = [
+  { title: "Regístrate Gratis", desc: "Crea tu cuenta en 30 segundos. Sin tarjeta de crédito." },
+  { title: "Agrega tu Vehículo", desc: "Ingresa marca, modelo y kilometraje. Agrega 1 vehículo gratis." },
+  { title: "Registra y Relájate", desc: "Registra servicios a medida que ocurren. Nosotros manejamos los recordatorios." },
+];
+
 export const es = {
   common: {
     loading: "Cargando...",
@@ -244,6 +288,65 @@ export const es = {
     docExpiring: "Documento por vencer",
     insuranceExpiring: "Seguro por vencer",
     licenseExpiring: "Licencia por vencer",
+  },
+  solutions: {
+    dealers: {
+      badge: "Para Concesionarios",
+      heading: "Convierte tu Departamento de Servicio en un Motor de Ingresos",
+      description: "Deja de perseguir papeles. Vehicle Tracker le da a tu concesionario una ventaja competitiva con registros de servicio digitales, comunicación automatizada con clientes e informes poderosos.",
+      cta: "Comenzar",
+      viewPricing: "Ver Precios",
+      preview: "Vista previa del Panel",
+      sectionHeading: "Todo lo que tu Concesionario Necesita",
+      sectionDesc: "Desde el área de servicio hasta el teléfono del cliente, mantenemos a todos sincronizados.",
+      benefits: solutionsDealersBenefits,
+      ctaHeading: "¿Listo para modernizar tu concesionario?",
+      ctaDesc: "Únete a concesionarios de todo el país que usan Vehicle Tracker.",
+      ctaButton: "Prueba Gratis",
+      ctaFootnote: "Sin compromiso. Cancela cuando quieras.",
+    },
+    individuals: {
+      badge: "Para Dueños de Autos",
+      heading: "Tus Autos, Tu Historia, Siempre en tu Bolsillo",
+      description: "Nunca te preguntes cuándo fue tu último cambio de aceite again. Vehicle Tracker guarda cada servicio, recibo y recordatorio en un solo lugar — completamente gratis para empezar.",
+      cta: "Empieza Gratis",
+      noCard: "Sin tarjeta de crédito. Gratis para siempre — 1 vehículo incluido.",
+      perks: solutionsIndividualsPerks,
+      howItWorksHeading: "Cómo Funciona",
+      howItWorks: solutionsHowItWorks,
+      ctaHeading: "¿Listo para tomar control de la historia de tu auto?",
+      ctaDesc: "Únete a miles de dueños de autos que nunca se pierden un servicio.",
+      ctaButton: "Empieza Gratis",
+    },
+    insurers: {
+      badge: "Para Seguros",
+      heading: "Sabé lo que Asegurás. Cada Kilómetro, Cada Servicio.",
+      description: "Tomá decisiones de suscripción con confianza. Vehicle Tracker le da a las aseguradoras una vista completa del historial de mantenimiento, brechas de servicio y cambios de propietario de cada vehículo.",
+      cta: "Comenzar",
+      talkToSales: "Hablar con Ventas",
+      preview: "Vista previa de Analytics",
+      sectionHeading: "Construido para Profesionales de Seguros",
+      sectionDesc: "Convierte los datos de mantenimiento en una ventaja competitiva para tu cartera.",
+      benefits: solutionsInsurersBenefits,
+      ctaHeading: "Mirá cómo las aseguradoras usan Vehicle Tracker",
+      ctaDesc: "Reducí el fraude de reclamos y recompensá a los conductores seguros.",
+      ctaButton: "Prueba Gratis",
+    },
+    construction: {
+      badge: "Para Construcción",
+      heading: "Gestión de Flota de Equipo Pesado, Simplificada",
+      description: "Deja de rastrear horas en hojas de cálculo. Vehicle Tracker te da una vista completa de tu flota de equipos de construcción — horas, mantenimiento, asignaciones a sitios y estado del equipo, todo en un solo lugar.",
+      cta: "Comenzar",
+      viewPricing: "Ver Precios",
+      preview: "Vista previa del Panel",
+      sectionHeading: "Todo lo que tu Flota Necesita",
+      sectionDesc: "Desde el rastreo de horas hasta la gestión de sitios — construido para empresas de construcción.",
+      benefits: solutionsConstructionBenefits,
+      ctaHeading: "¿Listo para modernizar tu flota?",
+      ctaDesc: "Únete a empresas de construcción que usan Vehicle Tracker para reducir el tiempo de inactividad.",
+      ctaButton: "Prueba Gratis",
+      ctaFootnote: "Sin compromiso. Cancela cuando quieras.",
+    },
   },
   pricing: {
     title: "Precios",

@@ -1,5 +1,49 @@
 import type { Translations } from "./es";
 
+const solutionsDealersBenefits = [
+  { title: "Boost Service Revenue", description: "Automated reminders fill your appointment calendar and reduce no-shows by up to 40%." },
+  { title: "Streamline Operations", description: "From intake to invoice, track every vehicle through your service department in real time." },
+  { title: "Customer Retention", description: "Give customers a branded portal to view service history and upcoming maintenance." },
+  { title: "Performance Analytics", description: "Track bay utilization, technician productivity, and average repair order value." },
+  { title: "White-Label Experience", description: "Your logo, your domain, your brand. We're invisible to your customers." },
+  { title: "Multi-Location Ready", description: "Manage multiple locations from a single dashboard with role-based team access." },
+];
+
+const solutionsInsurersBenefits = [
+  { title: "Claims Verification", description: "Tamper-proof service records give you the data you need to validate claims quickly." },
+  { title: "Risk Scoring", description: "Score policyholders on maintenance history. Reward well-maintained vehicles with better rates." },
+  { title: "Fleet Management", description: "Monitor entire commercial fleets from one dashboard. Automated alerts for compliance gaps." },
+  { title: "Ownership Transparency", description: "Track the full ownership chain with verified transfer records and service continuity." },
+  { title: "API-Ready Integration", description: "Connect our API to your underwriting, claims, and policy management systems." },
+  { title: "Compliance Reporting", description: "Generate audit-ready reports for regulatory compliance and risk assessment." },
+];
+
+const solutionsConstructionBenefits = [
+  { title: "Heavy Equipment Tracking", description: "Track excavators, bulldozers, dump trucks, cranes, loaders, and graders with support for serial numbers and weight capacity." },
+  { title: "Job Site Organization", description: "Group equipment by construction site. See all machines assigned to a project in one dashboard." },
+  { title: "Hour-Based Service Intervals", description: "Set reminders based on hours meter readings — engine oil every 250 hours, hydraulic fluid every 500 hours, and more." },
+  { title: "Equipment Status Board", description: "Real-time status per machine: Operational, Idle, Down, or In Maintenance. Know your fleet health instantly." },
+  { title: "Complete Service History", description: "Log every repair, inspection, and part replacement. Full PDF reports for resale or compliance." },
+  { title: "Hours Utilization Reports", description: "Measure how many hours each machine runs. Identify underutilized equipment and optimize your fleet." },
+  { title: "Transfer Ready", description: "When you sell or move equipment between sites, generate a transfer code to preserve the service history." },
+  { title: "Multi-Site Fleet Management", description: "Manage equipment across multiple job sites from one account. Role-based access for site supervisors." },
+];
+
+const solutionsIndividualsPerks = [
+  { title: "Mobile-Friendly Dashboard", description: "Track all your vehicles from any device. No app download needed." },
+  { title: "Smart Service Reminders", description: "Get notified when it's time for an oil change, tire rotation, or inspection." },
+  { title: "Free PDF Reports", description: "Generate a complete vehicle history report to share with buyers or mechanics." },
+  { title: "1 Vehicle Free", description: "Track one vehicle at no cost. Upgrade to Pro for unlimited." },
+  { title: "Mileage Tracking", description: "Log odometer readings automatically when you add a service record." },
+  { title: "Transfer Ready", description: "When you sell your car, generate a transfer code so the next owner gets the full history." },
+];
+
+const solutionsHowItWorks = [
+  { title: "Sign Up Free", desc: "Create your account in 30 seconds. No credit card needed." },
+  { title: "Add Your Vehicle", desc: "Enter make, model, and mileage. Add 1 vehicle free." },
+  { title: "Log & Relax", desc: "Record services as they happen. We handle the reminders." },
+];
+
 export const en: Translations = {
   common: {
     loading: "Loading...",
@@ -246,6 +290,65 @@ export const en: Translations = {
     docExpiring: "Document expiring soon",
     insuranceExpiring: "Insurance expiring soon",
     licenseExpiring: "License expiring soon",
+  },
+  solutions: {
+    dealers: {
+      badge: "For Dealerships",
+      heading: "Turn Your Service Department Into a Revenue Engine",
+      description: "Stop chasing paper. Vehicle Tracker gives your dealership a competitive edge with digital service records, automated customer communication, and powerful reporting.",
+      cta: "Get Started",
+      viewPricing: "View Pricing",
+      preview: "Dashboard Preview",
+      sectionHeading: "Everything Your Dealership Needs",
+      sectionDesc: "From the service drive to the customer's phone, we keep everyone in sync.",
+      benefits: solutionsDealersBenefits,
+      ctaHeading: "Ready to modernize your dealership?",
+      ctaDesc: "Join dealerships across the country using Vehicle Tracker.",
+      ctaButton: "Start Free Trial",
+      ctaFootnote: "No commitment. Cancel anytime.",
+    },
+    individuals: {
+      badge: "For Car Owners",
+      heading: "Your Cars, Your History, Always in Your Pocket",
+      description: "Never wonder when your last oil change was again. Vehicle Tracker keeps every service, receipt, and reminder in one place — completely free to start.",
+      cta: "Get Started Free",
+      noCard: "No credit card required. Free forever — 1 vehicle included.",
+      perks: solutionsIndividualsPerks,
+      howItWorksHeading: "How It Works",
+      howItWorks: solutionsHowItWorks,
+      ctaHeading: "Ready to take control of your car's history?",
+      ctaDesc: "Join thousands of car owners who never miss a service.",
+      ctaButton: "Get Started Free",
+    },
+    insurers: {
+      badge: "For Insurance",
+      heading: "Know What You're Insuring. Every Mile, Every Service.",
+      description: "Make underwriting decisions with confidence. Vehicle Tracker gives insurers a complete view of every vehicle's maintenance history, service gaps, and ownership changes.",
+      cta: "Get Started",
+      talkToSales: "Talk to Sales",
+      preview: "Analytics Preview",
+      sectionHeading: "Built for Insurance Professionals",
+      sectionDesc: "Turn maintenance data into a competitive advantage for your book of business.",
+      benefits: solutionsInsurersBenefits,
+      ctaHeading: "See how insurers are using Vehicle Tracker",
+      ctaDesc: "Reduce claims fraud and reward safe drivers.",
+      ctaButton: "Start Free Trial",
+    },
+    construction: {
+      badge: "For Construction",
+      heading: "Heavy Equipment Fleet Management, Simplified",
+      description: "Stop tracking hours on spreadsheets. Vehicle Tracker gives you a complete view of your construction equipment fleet — hours, maintenance, site assignments, and equipment status, all in one place.",
+      cta: "Get Started",
+      viewPricing: "View Pricing",
+      preview: "Dashboard Preview",
+      sectionHeading: "Everything Your Fleet Needs",
+      sectionDesc: "From hours tracking to site management — built for construction companies.",
+      benefits: solutionsConstructionBenefits,
+      ctaHeading: "Ready to modernize your fleet?",
+      ctaDesc: "Join construction companies using Vehicle Tracker to reduce downtime.",
+      ctaButton: "Start Free Trial",
+      ctaFootnote: "No commitment. Cancel anytime.",
+    },
   },
   pricing: {
     title: "Pricing",

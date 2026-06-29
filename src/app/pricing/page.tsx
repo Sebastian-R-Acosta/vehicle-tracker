@@ -7,6 +7,8 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useABTest } from "@/lib/ab-test";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import Nav from "@/components/landing/Nav";
+import Footer from "@/components/landing/Footer";
 
 const DOP_RATE = 60;
 
@@ -221,19 +223,11 @@ export default function PricingPage() {
   const { t, locale } = useLanguage();
 
   return (
-    <div className="bg-white">
-      <nav className="bg-gray-900 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="bg-white rounded p-1.5">
-              <img src="/logo.jpg" alt="Vehicle Tracker" className="h-7 w-auto block" />
-            </div>
-            <span className="text-lg font-bold text-white">Vehicle Tracker</span>
-          </Link>
-        </div>
-      </nav>
+    <div className="bg-white min-h-screen flex flex-col">
+      <Nav />
 
-      <section className="py-12 md:py-20 bg-gradient-to-br from-gray-50 to-white">
+      <main className="flex-1">
+      <section className="pt-28 md:pt-36 pb-12 md:pb-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
             {locale === "es" ? "Precios Simples y Transparentes" : "Simple, Transparent Pricing"}
@@ -305,10 +299,9 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
+      </main>
 
-      <footer className="bg-gray-900 text-gray-400 text-center py-8 text-sm">
-        &copy; {new Date().getFullYear()} Vehicle Tracker. {t("landing.footerRights")}
-      </footer>
+      <Footer />
     </div>
   );
 }
