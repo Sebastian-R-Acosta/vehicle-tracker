@@ -12,9 +12,8 @@ model SubscriptionPlan {
   tier      String   @unique
   name      String
   price     Float    @default(0)
-  maxVehicles Int @default(1)
+  maxVehicles Int @default(2)
   features  String[]
-  stripePriceId String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -25,9 +24,7 @@ model Subscription {
   id              String    @id @default(cuid())
   userId          String    @unique
   planId          String
-  paymentProcessor String   @default("free")  // "free" | "stripe" | "paypal"
-  stripeCustomerId String?
-  stripeSubId     String?
+  paymentProcessor String   @default("free")  // "free" | "paypal"
   paypalSubId     String?
   paypalPayerId   String?
   status          String    @default("active")

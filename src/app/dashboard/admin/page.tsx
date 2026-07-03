@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
+import Link from "next/link";
 import { Users, Car, FileText, CreditCard, Activity, TrendingUp } from "lucide-react";
 
 export default async function AdminPage() {
@@ -24,11 +25,11 @@ export default async function AdminPage() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-        <StatCard icon={<Users className="w-5 h-5" />} label="Usuarios" value={userCount} />
-        <StatCard icon={<Car className="w-5 h-5" />} label="Vehículos" value={vehicleCount} />
-        <StatCard icon={<FileText className="w-5 h-5" />} label="Registros de Servicio" value={recordCount} />
-        <StatCard icon={<FileText className="w-5 h-5" />} label="Documentos" value={docCount} />
-        <StatCard icon={<CreditCard className="w-5 h-5" />} label="Organizaciones" value={orgCount} />
+        <StatCard href="/dashboard/admin/users" icon={<Users className="w-5 h-5" />} label="Usuarios" value={userCount} />
+        <StatCard href="/dashboard/admin/vehicles" icon={<Car className="w-5 h-5" />} label="Vehículos" value={vehicleCount} />
+        <StatCard href="/dashboard/admin/records" icon={<FileText className="w-5 h-5" />} label="R. Servicio" value={recordCount} />
+        <StatCard href="/dashboard/admin/documents" icon={<FileText className="w-5 h-5" />} label="Documentos" value={docCount} />
+        <StatCard href="/dashboard/admin/organizations" icon={<CreditCard className="w-5 h-5" />} label="Organizaciones" value={orgCount} />
       </div>
 
       <div className="bg-card border border-border rounded-xl p-6">
@@ -71,14 +72,14 @@ export default async function AdminPage() {
   );
 }
 
-function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
+function StatCard({ href, icon, label, value }: { href: string; icon: React.ReactNode; label: string; value: number }) {
   return (
-    <div className="bg-card border border-border rounded-xl p-4">
+    <Link href={href} className="block bg-card border border-border rounded-xl p-4 hover:border-yellow-500/50 hover:shadow-md transition-all">
       <div className="flex items-center gap-2 text-muted-foreground mb-2">
         {icon}
         <span className="text-xs font-medium uppercase tracking-wider">{label}</span>
       </div>
       <p className="text-2xl font-bold">{value.toLocaleString()}</p>
-    </div>
+    </Link>
   );
 }

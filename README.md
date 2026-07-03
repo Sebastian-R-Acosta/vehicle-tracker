@@ -95,7 +95,7 @@ Built with Next.js 14, Prisma + PostgreSQL, Stripe billing, AWS S3 file storage,
 | **Forms** | React Hook Form 7 + Zod 3.22 |
 | **Auth** | NextAuth.js v5 (Credentials + Google OAuth, JWT sessions) |
 | **ORM** | Prisma 5.10 |
-| **Database** | PostgreSQL |
+| **Database** | PostgreSQL (Neon serverless) |
 | **File Storage** | AWS S3 (presigned URLs, server-side upload) |
 | **PDF** | @react-pdf/renderer 3.4 |
 | **Payments** | Stripe 22.1 |
@@ -183,8 +183,10 @@ src/
 │   │   ├── parts/               # Parts inventory
 │   │   ├── service-providers/   # Provider reviews
 │   │   ├── stripe/              # Billing portal, webhooks
-│   │   └── user/                # Profile, settings
-│   ├── dashboard/               # Dashboard (vehicles, detail, reminders, settings)
+│   │   ├── user/                # Profile, settings
+│   │   └── user/role            # Admin role check endpoint
+│   ├── dashboard/
+│   │   ├── admin/               # Admin panel (users, vehicles, records, docs, orgs)
 │   ├── login/                   # Auth pages
 │   ├── register/
 │   ├── forgot-password/
@@ -275,6 +277,8 @@ src/
 | POST | `/api/contact` | Contact form |
 | GET | `/api/user/profile` | User profile |
 | PUT | `/api/user/profile` | Update profile |
+| GET | `/api/user/role` | Get current user role |
+| GET | `/api/user/plan` | Get user subscription plan |
 | GET | `/api/cron/notifications` | Daily digest (Vercel cron) |
 
 ---
@@ -371,6 +375,44 @@ NEXT_PUBLIC_PLAUSIBLE_DOMAIN=your-domain.com
 # Optional
 VERCEL_OIDC_TOKEN=...   # auto-populated by Vercel
 ```
+
+---
+
+## Admin Panel
+
+The app includes an admin dashboard for super-administrators, accessible at `/dashboard/admin`.
+
+### Access
+
+Users with `role: "admin"` in the database see a yellow shield badge in the navbar linking to the admin panel.
+
+To promote a user to admin:
+
+```sql
+UPDATE "User" SET role = 'admin' WHERE email = 'user@example.com';
+```
+
+Or via Prisma Studio:
+
+```bash
+npx prisma studio
+```
+
+### Admin Pages
+
+| Page | Route | Description |
+|---|---|---|
+| **Dashboard** | `/dashboard/admin` | Stats cards (users, vehicles, records, docs, orgs) + recent users |
+| **Users** | `/dashboard/admin/users` | All users with email, name, role, registration date |
+| **User Detail** | `/dashboard/admin/users/[id]` | User info, plan, vehicle/service/reminder counts, vehicle list |
+| **Vehicles** | `/dashboard/admin/vehicles` | All vehicles with owner, VIN, mileage, services, reminders |
+| **Service Records** | `/dashboard/admin/records` | All maintenance records with vehicle, owner, type, date, cost |
+| **Documents** | `/dashboard/admin/documents` | All uploaded documents with vehicle, owner, type, expiry |
+| **Organizations** | `/dashboard/admin/organizations` | All orgs with name, slug, members, vehicles |
+
+### Admin Bypass
+
+Admins automatically bypass all subscription limits (unlimited vehicles, documents, PDF reports, etc.). The check is in `lib/billing.ts` via `isAdmin(userId)`.
 
 ---
 

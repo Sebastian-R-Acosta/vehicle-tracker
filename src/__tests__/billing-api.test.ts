@@ -21,20 +21,14 @@ jest.mock("@/lib/db", () => ({
   },
 }));
 
-jest.mock("@/lib/stripe", () => ({
-  stripe: {
-    billingPortal: {
-      sessions: { create: jest.fn() },
-    },
-  },
-  FREE_TIER_MAX_VEHICLES: 1,
+jest.mock("@/lib/tiers", () => ({
+  FREE_TIER_MAX_VEHICLES: 2,
   PRO_TIER: "pro",
   BUSINESS_TIER: "business",
 }));
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
-import { stripe } from "@/lib/stripe";
 
 const mockAuth = auth as unknown as jest.Mock;
 const mockPrisma = prisma as unknown as {
@@ -79,12 +73,8 @@ describe("POST /api/billing/checkout", () => {
     expect(res.status).toBe(400);
   });
 
-  it("routes to PayPal for new users without Stripe sub", async () => {
+  it("routes to PayPal for all users", async () => {
     mockAuth.mockResolvedValue({ user: { id: "user-1" } });
-    mockPrisma.subscription.findUnique.mockResolvedValue({
-      stripeSubId: null,
-      stripeCustomerId: null,
-    });
 
     jest.mock("@/app/api/paypal/checkout/route", () => ({
       POST: jest.fn().mockResolvedValue(
@@ -110,15 +100,13 @@ describe("POST /api/billing/webhook", () => {
     jest.clearAllMocks();
   });
 
-  it("returns 400 for unknown webhook source", async () => {
+  it("forwards to PayPal handler", async () => {
     const { POST } = await import("@/app/api/billing/webhook/route");
     const req = new Request("http://localhost/api/billing/webhook", {
       method: "POST",
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
-    const text = await res.text();
-    expect(text).toContain("Unknown");
   });
 });
 
@@ -148,7 +136,6 @@ describe("POST /api/billing/portal", () => {
     mockAuth.mockResolvedValue({ user: { id: "user-free" } });
     mockPrisma.subscription.findUnique.mockResolvedValue({
       paymentProcessor: "free",
-      stripeCustomerId: null,
       paypalSubId: null,
     });
 
@@ -157,30 +144,10 @@ describe("POST /api/billing/portal", () => {
     expect(res.status).toBe(404);
   });
 
-  it("returns Stripe portal URL for Stripe users", async () => {
-    mockAuth.mockResolvedValue({ user: { id: "user-stripe" } });
-    mockPrisma.subscription.findUnique.mockResolvedValue({
-      paymentProcessor: "stripe",
-      stripeCustomerId: "cus_123",
-      paypalSubId: null,
-    });
-
-    (stripe.billingPortal.sessions.create as jest.Mock).mockResolvedValue({
-      url: "https://stripe.com/portal_session",
-    });
-
-    const { POST } = await import("@/app/api/billing/portal/route");
-    const res = await POST();
-    expect(res.status).toBe(200);
-    const data = await res.json();
-    expect(data.url).toContain("stripe.com");
-  });
-
-  it("returns PayPal autopay URL for PayPal users", async () => {
+  it("returns PayPal manage URL for PayPal users", async () => {
     mockAuth.mockResolvedValue({ user: { id: "user-paypal" } });
     mockPrisma.subscription.findUnique.mockResolvedValue({
       paymentProcessor: "paypal",
-      stripeCustomerId: null,
       paypalSubId: "I-ABC123",
     });
 

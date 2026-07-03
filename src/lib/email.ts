@@ -1,6 +1,9 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  if (!process.env.RESEND_API_KEY) return null;
+  return new Resend(process.env.RESEND_API_KEY);
+}
 const fromEmail = "Vehicle Tracker <onboarding@resend.dev>";
 
 function escapeHtml(s: string): string {
@@ -43,7 +46,10 @@ export async function sendReminderEmail(
     return { success: false, message: "No reminders to send" };
   }
 
-  const { data, error } = await resend.emails.send({
+  const r = getResend();
+  if (!r) return { success: false, error: new Error("Resend not configured") };
+
+  const { data, error } = await r.emails.send({
     from: fromEmail,
     to: [to],
     subject: `Vehicle Reminders Update - ${new Date().toLocaleDateString()}`,
@@ -112,7 +118,10 @@ export async function sendMaintenanceConfirmation(
     </html>
   `;
 
-  const { data, error } = await resend.emails.send({
+  const r = getResend();
+  if (!r) return { success: false, error: new Error("Resend not configured") };
+
+  const { data, error } = await r.emails.send({
     from: fromEmail,
     to: [to],
     subject: `Maintenance Logged: ${maintenance.serviceType} - ${vehicle.make} ${vehicle.model}`,
@@ -189,7 +198,10 @@ export async function sendReminderCreatedEmail(
     </html>
   `;
 
-  const { data, error } = await resend.emails.send({
+  const r = getResend();
+  if (!r) return { success: false, error: new Error("Resend not configured") };
+
+  const { data, error } = await r.emails.send({
     from: fromEmail,
     to: [to],
     subject: `Reminder Created: ${reminder.title}`,
@@ -274,7 +286,10 @@ export async function sendReminderDueEmail(
     </html>
   `;
 
-  const { data, error } = await resend.emails.send({
+  const r = getResend();
+  if (!r) return { success: false, error: new Error("Resend not configured") };
+
+  const { data, error } = await r.emails.send({
     from: fromEmail,
     to: [to],
     subject: `${isOverdue ? "OVERDUE: " : "Reminder: "}${reminder.title}`,
@@ -405,9 +420,10 @@ export async function sendWelcomeEmail(to: string, name?: string) {
     </html>
   `;
 
-  if (!process.env.RESEND_API_KEY) return { success: false };
+  const r = getResend();
+  if (!r) return { success: false };
 
-  const { data, error } = await resend.emails.send({
+  const { data, error } = await r.emails.send({
     from: fromEmail,
     to: [to],
     subject: "Welcome to Vehicle Tracker",
@@ -463,7 +479,10 @@ export async function sendPasswordResetEmail(
     </html>
   `;
 
-  const { data: result, error } = await resend.emails.send({
+  const r = getResend();
+  if (!r) return { success: false, error: new Error("Resend not configured") };
+
+  const { data: result, error } = await r.emails.send({
     from: fromEmail,
     to: [to],
     subject: "Reset Your Password - Vehicle Tracker",
@@ -531,7 +550,10 @@ export async function sendDemoRequestEmail(
     </html>
   `;
 
-  const { data: result, error } = await resend.emails.send({
+  const r = getResend();
+  if (!r) return { success: false, error: new Error("Resend not configured") };
+
+  const { data: result, error } = await r.emails.send({
     from: fromEmail,
     to: [to],
     subject: `New Demo Request from ${data.name} at ${data.company}`.replace(/<[^>]*>/g, ""),

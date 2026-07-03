@@ -1,12 +1,9 @@
 "use client";
 
-import { Check, ArrowRight, Zap, Shield, Loader2 } from "lucide-react";
+import { Check, ArrowRight, Zap, Shield } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useState } from "react";
-import { useABTest } from "@/lib/ab-test";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useABTest } from "@/lib/ab-test";
 import Nav from "@/components/landing/Nav";
 import Footer from "@/components/landing/Footer";
 
@@ -58,38 +55,7 @@ function formatPrice(priceDOP: number, priceUSD: number, locale: string): string
 }
 
 function PricingCards({ variant }: { variant: string }) {
-  const router = useRouter();
-  const { data: session } = useSession();
-  const [loading, setLoading] = useState<string | null>(null);
   const { t, locale } = useLanguage();
-
-  const handleUpgrade = async (tier: "pro" | "enterprise") => {
-    if (!session) {
-      router.push("/login?callbackUrl=/pricing");
-      return;
-    }
-    setLoading(tier);
-    try {
-      const res = await fetch("/api/billing/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tier }),
-      });
-      if (res.ok) {
-        const { url } = await res.json();
-        window.location.href = url;
-      } else if (res.status === 401) {
-        router.push("/login?callbackUrl=/pricing");
-      } else {
-        const err = await res.json();
-        alert(err.error || "Something went wrong");
-      }
-    } catch {
-      alert("Could not connect to payment server");
-    } finally {
-      setLoading(null);
-    }
-  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8 mb-20">
@@ -147,17 +113,12 @@ function PricingCards({ variant }: { variant: string }) {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             ) : (
-              <button
-                onClick={() => handleUpgrade(tier.nameKey === "pricing.pro" ? "pro" : "enterprise")}
-                disabled={loading === (tier.nameKey === "pricing.pro" ? "pro" : "enterprise")}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:opacity-90 shadow-md disabled:opacity-50"
+              <Link
+                href={`/checkout?plan=${tier.nameKey === "pricing.pro" ? "pro" : "business"}`}
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:opacity-90 shadow-md"
               >
-                {loading === (tier.nameKey === "pricing.pro" ? "pro" : "enterprise") ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>{t(tier.ctaKey)}<ArrowRight className="w-3.5 h-3.5" /></>
-                )}
-              </button>
+                {t(tier.ctaKey)}<ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             )}
             <ul className="mt-6 space-y-3">
               {(t(tier.featureKey) as string[]).map((f: string) => (

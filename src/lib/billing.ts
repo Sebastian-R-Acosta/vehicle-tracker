@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { FREE_TIER_MAX_VEHICLES, PRO_TIER } from "@/lib/stripe";
+import { FREE_TIER_MAX_VEHICLES, PRO_TIER } from "@/lib/tiers";
 
 async function isAdmin(userId: string): Promise<boolean> {
   const user = await prisma.user.findUnique({

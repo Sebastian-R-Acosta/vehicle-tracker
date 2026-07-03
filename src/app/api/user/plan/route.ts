@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { FREE_TIER_MAX_VEHICLES } from "@/lib/stripe";
+import { FREE_TIER_MAX_VEHICLES } from "@/lib/tiers";
 
 export async function GET() {
   const session = await auth();

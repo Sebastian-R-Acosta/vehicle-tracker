@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -15,17 +14,6 @@ export async function POST(request: Request) {
 
   if (tier !== "pro" && tier !== "business") {
     return NextResponse.json({ error: "Invalid tier" }, { status: 400 });
-  }
-
-  const sub = await prisma.subscription.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  const hasStripeSub = !!(sub?.stripeSubId || sub?.stripeCustomerId);
-
-  if (hasStripeSub) {
-    const { POST: stripeCheckout } = await import("@/app/api/stripe/checkout/route");
-    return stripeCheckout(request);
   }
 
   const { POST: paypalCheckout } = await import("@/app/api/paypal/checkout/route");
