@@ -17,6 +17,29 @@ Deployed at: <https://vehicle-tracker-chi.vercel.app>
 - Billing now goes through PayPal exclusively
 - Updated all 3 test files to use tiers.ts, removed Stripe mocking
 
+### Logo PNGs & Icons (2026-07-03)
+- Generated `logo.png` (200×60), `logo-icon.png` (48×48), `favicon-16.png`, `favicon-32.png`, `apple-touch-icon.png` from existing SVGs using `sharp`
+- Generated PWA icons `icon-192.png` and `icon-512.png` from `public/icon.svg`
+- Updated `layout.tsx` to reference PNG favicons + apple-touch-icon
+- Updated Nav, Footer, Login, Register, DashboardNav, and vehicle PDF report to use PNGs
+- Removed `sharp` after generation (not a runtime dependency)
+
+### License Plate Field (2026-07-03)
+- Added `licensePlate String?` to Prisma Vehicle model, ran `prisma db push`
+- Updated API routes: POST (`/api/vehicles`), PUT (`/api/vehicles/[id]`), CSV export, JSON export, report-pdf
+- Added field to create/edit vehicle forms (zod schema + UI in `vehicle/new` and `vehicle/[id]/edit`)
+- Displays on dashboard list card, vehicle detail page, settings vehicles, admin table, and PDF report
+- Driver detail page already referenced `licensePlate` — now it works
+- i18n: `vehicle.licensePlate: "License Plate"` (en) / `"Placa"` (es)
+
+### Workshops Section (2026-07-03)
+- Created `ForWorkshops.tsx` (teal/cyan theme) and added to landing page `page.tsx` (between ForInsurers and ForConstruction)
+- Created `/solutions/workshops` page with full solution layout (hero, benefits grid, CTA)
+- Added to Nav.tsx solutions dropdown, Footer.tsx solutions column
+- Landing section benefits: 3 items (Smart Scheduling, Complete Service Tracking, Parts & Team Management)
+- Solution page benefits: 6 items (Smart Scheduling, Service Bay Tracking, Customer History, Parts Management, Technician Management, Business Reports)
+- Full i18n in both en.ts and es.ts
+
 ### Public Page Fixes (2026-07-03)
 All issues from a full audit of public-facing pages fixed:
 
@@ -87,6 +110,14 @@ All issues from a full audit of public-facing pages fixed:
 
 ## Build Status
 `next build` passes with 0 errors. ~20 pre-existing ESLint warnings (unrelated to our changes).
+
+## Build & Deploy Commands
+- Build: `npm run build`
+- Dev: `npm run dev`
+- DB sync: `npx prisma db push`
+- Generate Prisma client: `npx prisma generate`
+- Type check: `npx tsc --noEmit`
+- Commit + push: `git add -A; git commit -m "msg"; git push` (PowerShell — no `&&`)
 
 ## Auth
 - NextAuth with credentials + Google providers
