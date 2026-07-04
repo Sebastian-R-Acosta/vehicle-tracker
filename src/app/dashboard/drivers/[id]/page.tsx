@@ -83,32 +83,34 @@ export default function DriverDetailPage() {
 
   useEffect(() => {
     if (session?.user && params.id) {
-      (async () => {
-        try {
-          const res = await fetch(`/api/drivers/${params.id}`);
-          if (res.ok) {
-            const data = await res.json();
-            setDriver(data);
-            reset({
-              name: data.name,
-              email: data.email || "",
-              phone: data.phone || "",
-              licenseNumber: data.licenseNumber || "",
-              licenseExpiry: data.licenseExpiry ? data.licenseExpiry.split("T")[0] : "",
-              licenseState: data.licenseState || "",
-              notes: data.notes || "",
-            });
-          } else {
-            router.push("/dashboard/drivers");
-          }
-        } catch (err) {
-          console.error("Failed to fetch driver:", err);
-        } finally {
-          setLoading(false);
-        }
-      })();
+      fetchDriver();
     }
-  }, [session, params.id, router, reset]);
+  }, [session, params.id]);
+
+  const fetchDriver = async () => {
+    try {
+      const res = await fetch(`/api/drivers/${params.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setDriver(data);
+        reset({
+          name: data.name,
+          email: data.email || "",
+          phone: data.phone || "",
+          licenseNumber: data.licenseNumber || "",
+          licenseExpiry: data.licenseExpiry || "",
+          licenseState: data.licenseState || "",
+          notes: data.notes || "",
+        });
+      } else {
+        router.push("/dashboard/drivers");
+      }
+    } catch (err) {
+      console.error("Failed to fetch driver:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onSubmit = async (data: DriverFormData) => {
     setError("");

@@ -164,7 +164,7 @@ export default function VehicleDetailPage() {
     } finally {
       setRecallsLoading(false);
     }
-  }, [vehicle?.id, vehicle?.vin, t]);
+  }, [vehicle?.id, vehicle?.vin]);
 
   const fetchDocuments = useCallback(async () => {
     if (!vehicle?.id) return;
@@ -704,7 +704,6 @@ export default function VehicleDetailPage() {
                               onClick={() => setSelectedImage(record.imageUrl)}
                               className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline"
                             >
-                              {/* eslint-disable-next-line jsx-a11y/alt-text */}
                               <Image className="w-4 h-4" />
                               {t("dashboard.vehicleDetail.viewInvoice")}
                             </button>
@@ -819,7 +818,6 @@ export default function VehicleDetailPage() {
                         <div className={`relative h-48 bg-gradient-to-br ${colors.gradient}`}>
                           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)] opacity-20" />
                           {doc.signedUrl && (
-                            /* eslint-disable-next-line @next/next/no-img-element */
                             <img
                               src={doc.signedUrl}
                               alt={doc.name}
@@ -1048,7 +1046,6 @@ export default function VehicleDetailPage() {
             </div>
             <div className="p-6 space-y-5">
               <div className="bg-muted/10 rounded-2xl overflow-hidden border border-border/50">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={viewingDoc.signedUrl || `/api/vehicles/${vehicle.id}/documents/${viewingDoc.id}`}
                   alt={viewingDoc.name}
@@ -1212,7 +1209,6 @@ export default function VehicleDetailPage() {
           >
             <X className="w-5 h-5" />
           </button>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={selectedImage}
             alt={t("dashboard.vehicleDetail.viewInvoice")}

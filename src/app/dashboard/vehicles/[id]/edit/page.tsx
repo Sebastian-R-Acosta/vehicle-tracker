@@ -71,37 +71,9 @@ export default function EditVehiclePage() {
 
   useEffect(() => {
     if (session?.user && params.id) {
-      (async () => {
-        try {
-          const res = await fetch(`/api/vehicles/${params.id}`);
-          if (res.ok) {
-            const data = await res.json();
-            reset({
-              make: data.make,
-              model: data.model,
-              year: data.year,
-              vin: data.vin || "",
-              licensePlate: data.licensePlate || "",
-              nickname: data.nickname || "",
-              vehicleType: data.vehicleType || "car",
-              status: data.status || "active",
-              currentMileage: data.currentMileage,
-              hoursMeter: data.hoursMeter ?? undefined,
-              serialNumber: data.serialNumber || "",
-              weightCapacity: data.weightCapacity ?? undefined,
-              constructionSiteId: data.constructionSiteId || "",
-            });
-          } else {
-            router.push("/dashboard/vehicles");
-          }
-        } catch (err) {
-          console.error("Failed to fetch vehicle:", err);
-        } finally {
-          setInitialLoading(false);
-        }
-      })();
+      fetchVehicle();
     }
-  }, [session, params.id, router, reset]);
+  }, [session, params.id]);
 
   const currentOrgId = session?.user?.currentOrganizationId;
 
@@ -115,6 +87,36 @@ export default function EditVehiclePage() {
       setConstructionSites([]);
     }
   }, [currentOrgId, isConstruction]);
+
+  const fetchVehicle = async () => {
+    try {
+      const res = await fetch(`/api/vehicles/${params.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        reset({
+          make: data.make,
+          model: data.model,
+          year: data.year,
+          vin: data.vin || "",
+          licensePlate: data.licensePlate || "",
+          nickname: data.nickname || "",
+          currentMileage: data.currentMileage,
+          vehicleType: data.vehicleType || "car",
+          status: data.status || "active",
+          hoursMeter: data.hoursMeter ?? undefined,
+          serialNumber: data.serialNumber || "",
+          weightCapacity: data.weightCapacity ?? undefined,
+          constructionSiteId: data.constructionSiteId || "",
+        });
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error("Failed to fetch vehicle:", err);
+    } finally {
+      setInitialLoading(false);
+    }
+  };
 
   const onSubmit = async (data: VehicleFormData) => {
     setError("");

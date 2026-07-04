@@ -28,7 +28,7 @@ export default function CTA({ onBookDemo }: { onBookDemo: () => void }) {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/register"
-            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:brightness-110 transition-all neu-shadow-lg"
+            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-500 transition-all shadow-lg hover:shadow-xl"
           >
             {t("landing.ctaButton")}
             <ArrowRight className="w-4 h-4" />

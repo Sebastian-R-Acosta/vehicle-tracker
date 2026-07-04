@@ -25,7 +25,6 @@ export function DashboardNav() {
         <div className="flex justify-between h-16">
           <div className="flex items-center gap-4 min-w-0">
             <Link href="/dashboard" className="flex items-center gap-2 shrink-0">
-               {/* eslint-disable-next-line @next/next/no-img-element */}
                <img src="/logo-icon.png" alt="Vehicle Tracker" className="h-8 w-auto" />
               <span className="text-xl font-bold text-foreground hidden sm:inline">Vehicle Tracker</span>
             </Link>

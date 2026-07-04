@@ -65,41 +65,6 @@ body {
 }
 
 @layer utilities {
-  :root {
-    --neu-bg: #eef0f4;
-    --neu-shadow-dark: #d1d6df;
-    --neu-shadow-light: #ffffff;
-  }
-  .dark {
-    --neu-bg: #2d3039;
-    --neu-shadow-dark: #22242b;
-    --neu-shadow-light: #383c47;
-  }
-  .neu-bg {
-    background-color: var(--neu-bg);
-  }
-  .neu-shadow {
-    box-shadow: 9px 9px 16px var(--neu-shadow-dark), -9px -9px 16px var(--neu-shadow-light);
-  }
-  .neu-shadow-sm {
-    box-shadow: 5px 5px 10px var(--neu-shadow-dark), -5px -5px 10px var(--neu-shadow-light);
-  }
-  .neu-shadow-lg {
-    box-shadow: 14px 14px 24px var(--neu-shadow-dark), -14px -14px 24px var(--neu-shadow-light);
-  }
-  .neu-shadow-inset {
-    box-shadow: inset 5px 5px 10px var(--neu-shadow-dark), inset -5px -5px 10px var(--neu-shadow-light);
-  }
-  .neu-button {
-    box-shadow: 5px 5px 10px var(--neu-shadow-dark), -5px -5px 10px var(--neu-shadow-light);
-    transition: all 0.2s ease;
-  }
-  .neu-button:hover {
-    box-shadow: 7px 7px 14px var(--neu-shadow-dark), -7px -7px 14px var(--neu-shadow-light);
-  }
-  .neu-button:active {
-    box-shadow: inset 5px 5px 10px var(--neu-shadow-dark), inset -5px -5px 10px var(--neu-shadow-light);
-  }
   .bg-background {
     background-color: hsl(var(--background));
   }

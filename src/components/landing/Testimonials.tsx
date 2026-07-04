@@ -20,13 +20,13 @@ export default function Testimonials() {
   }, []);
 
   return (
-    <section className="py-16 lg:py-24 neu-bg">
+    <section className="py-16 lg:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
             {t("landing.testimonialsSection.heading")}
           </h2>
-          <p className="text-lg text-gray-500 dark:text-gray-400 max-w-xl mx-auto">
+          <p className="text-lg text-gray-500 max-w-xl mx-auto">
             {t("landing.testimonialsSection.subtitle")}
           </p>
         </div>
@@ -38,7 +38,7 @@ export default function Testimonials() {
           {(t("landing.testimonialsSection.items") as { quote: string; name: string; role: string }[]).map((item, i) => (
             <div
               key={item.name}
-              className={`p-8 neu-bg rounded-2xl neu-shadow transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+              className={`p-8 bg-gray-50 rounded-2xl border border-gray-100 transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
               style={{ transitionDelay: `${i * 200}ms` }}
             >
               <div className="flex gap-1 mb-4">
@@ -48,7 +48,7 @@ export default function Testimonials() {
                   </svg>
                 ))}
               </div>
-              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6">
+              <p className="text-gray-600 text-sm leading-relaxed mb-6">
                 &ldquo;{item.quote}&rdquo;
               </p>
               <div className="flex items-center gap-3">
@@ -60,8 +60,8 @@ export default function Testimonials() {
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{item.name}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{item.role}</p>
+                  <p className="text-sm font-semibold text-gray-900">{item.name}</p>
+                  <p className="text-xs text-gray-500">{item.role}</p>
                 </div>
               </div>
             </div>

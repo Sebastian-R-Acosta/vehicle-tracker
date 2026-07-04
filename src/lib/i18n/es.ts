@@ -428,7 +428,7 @@ export const es = {
     monthly: "Mensual",
     annual: "Anual",
     free: "Gratis",
-    basic: "Básico", // sin uso
+    basic: "Básico",
     pro: "Pro",
     enterprise: "Empresarial",
     perMonth: "/mes",
@@ -436,7 +436,7 @@ export const es = {
     upgrade: "Mejorar Plan",
     downgrade: "Degradar Plan",
     freeDesc: "Para dueños de autos individuales",
-    basicDesc: "Para pequeños talleres y flotas", // sin uso
+    basicDesc: "Para pequeños talleres y flotas",
     proDesc: "Para concesionarios y flotas medianas",
     enterpriseDesc: "Para aseguradoras y flotas grandes",
     features: "Características",

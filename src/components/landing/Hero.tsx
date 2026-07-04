@@ -80,14 +80,14 @@ export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
           <Link
             href="/register"
-            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:brightness-110 transition-all neu-shadow-lg"
+            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all shadow-xl hover:shadow-2xl"
           >
             {t("landing.heroCta")}
             <ArrowRight className="w-4 h-4" />
           </Link>
           <button
             onClick={onBookDemo}
-            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-medium text-gray-700 neu-bg neu-button rounded-xl"
+            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-medium text-gray-900 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
           >
             <Play className="w-4 h-4" />
             {t("landing.heroDemo")}

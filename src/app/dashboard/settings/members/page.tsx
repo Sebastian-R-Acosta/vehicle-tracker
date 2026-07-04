@@ -58,7 +58,6 @@ export default function MembersPage() {
   useEffect(() => {
     if (currentOrgId) fetchData();
     else setLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentOrgId]);
 
   const fetchData = async () => {

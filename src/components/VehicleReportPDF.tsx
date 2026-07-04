@@ -216,7 +216,7 @@ export default function VehicleReportPDF({ data, logoUrl }: VehiclePDFProps) {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          {logoUrl && <Image src={logoUrl} style={styles.logo} /> /* eslint-disable-line jsx-a11y/alt-text */}
+          {logoUrl && <Image src={logoUrl} style={styles.logo} />}
           <Text style={styles.headerTitle}>Vehicle Tracker Vehicle History Report</Text>
           <Text style={styles.headerSubtitle}>
             {vehicle.year} {vehicle.make} {vehicle.model}

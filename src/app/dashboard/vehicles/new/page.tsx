@@ -54,7 +54,6 @@ export default function NewVehiclePage() {
     if (vin) {
       setValue("vin", vin);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {
