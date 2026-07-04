@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X, Loader2, CheckCircle } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface DemoModalProps {
   open: boolean;
@@ -9,6 +10,7 @@ interface DemoModalProps {
 }
 
 export default function DemoModal({ open, onClose }: DemoModalProps) {
+  const { t } = useLanguage();
   const [form, setForm] = useState({ name: "", email: "", company: "", phone: "", message: "" });
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
@@ -27,7 +29,7 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error("Something went wrong. Please try again.");
+      if (!res.ok) throw new Error(t("errors.generic"));
       setDone(true);
     } catch (err: any) {
       setError(err.message);
@@ -50,45 +52,45 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
         {done ? (
           <div className="text-center py-8">
             <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Thanks for reaching out!</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{t("common.thanksReachingOut")}</h3>
             <p className="text-gray-500 mb-6">
-              We&apos;ll get back to you within 24 hours to schedule your demo.
+              {t("common.willBeInTouch")}
             </p>
             <button
               onClick={onClose}
                className="px-6 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 font-medium"
             >
-              Close
+              {t("common.close")}
             </button>
           </div>
         ) : (
           <>
-            <h3 className="text-xl font-bold mb-1">Book a Demo</h3>
+            <h3 className="text-xl font-bold mb-1">{t("common.talkToSales")}</h3>
             <p className="text-sm text-gray-500 mb-6">
-              Fill out the form and we&apos;ll show you how Vehicle Tracker can transform your business.
+              {t("common.tellUsAbout")}
             </p>
 
             {error && (
-              <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 rounded-lg">{error}</div>
+              <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 rounded-lg" role="alert">{error}</div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name <span className="text-red-500">*</span>
+                    {t("common.name")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900"
-                    placeholder="John Smith"
+                    placeholder={t("common.name")}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email <span className="text-red-500">*</span>
+                    {t("common.email")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     required
@@ -96,25 +98,25 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900"
-                    placeholder="john@dealer.com"
+                    placeholder="email@example.com"
                   />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Company <span className="text-red-500">*</span>
+                    {t("common.company")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     required
                     value={form.company}
                     onChange={(e) => setForm({ ...form, company: e.target.value })}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900"
-                    placeholder="AutoNation"
+                    placeholder={t("common.company")}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.phone")}</label>
                   <input
                     type="tel"
                     value={form.phone}
@@ -125,13 +127,13 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.message")}</label>
                 <textarea
                   rows={3}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900"
-                  placeholder="Tell us about your needs..."
+                  placeholder={t("common.message")}
                 />
               </div>
               <button
@@ -140,7 +142,7 @@ export default function DemoModal({ open, onClose }: DemoModalProps) {
                 className="w-full py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {sending && <Loader2 className="w-4 h-4 animate-spin" />}
-                {sending ? "Sending..." : "Submit Request"}
+                {sending ? t("common.loading") : t("common.sendMessage")}
               </button>
             </form>
           </>

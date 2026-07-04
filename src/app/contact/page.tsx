@@ -3,11 +3,13 @@
 import { useState } from "react";
 import PageLayout from "@/components/landing/PageLayout";
 import { Send, Loader2, CheckCircle } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", company: "", phone: "", message: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,9 +31,9 @@ export default function ContactPage() {
       <section className="pt-32 pb-24">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Talk to Sales</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">{t("common.talkToSales")}</h1>
             <p className="text-lg text-gray-500">
-              Tell us about your business and we&apos;ll get back to you within one business day.
+              {t("common.tellUsAbout")}
             </p>
           </div>
 
@@ -40,14 +42,14 @@ export default function ContactPage() {
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Thanks for reaching out!</h2>
-              <p className="text-gray-500">We&apos;ll be in touch soon.</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("common.thanksReachingOut")}</h2>
+              <p className="text-gray-500">{t("common.willBeInTouch")}</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.name")} *</label>
                   <input
                     required
                     value={form.name}
@@ -56,7 +58,7 @@ export default function ContactPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.email")} *</label>
                   <input
                     required
                     type="email"
@@ -68,7 +70,7 @@ export default function ContactPage() {
               </div>
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.company")}</label>
                   <input
                     value={form.company}
                     onChange={(e) => setForm({ ...form, company: e.target.value })}
@@ -76,7 +78,7 @@ export default function ContactPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.phone")}</label>
                   <input
                     type="tel"
                     value={form.phone}
@@ -86,7 +88,7 @@ export default function ContactPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.message")}</label>
                 <textarea
                   rows={5}
                   value={form.message}
@@ -100,7 +102,7 @@ export default function ContactPage() {
                 className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                Send Message
+                {t("common.sendMessage")}
               </button>
             </form>
           )}

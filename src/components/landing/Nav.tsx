@@ -153,8 +153,12 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
                 onClick={() => {
                   setOpen(false);
                   const id = key.split(".")[1];
-                  const el = document.querySelector(`#${id}`);
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                  if (id === "pricing") {
+                    window.location.href = "/pricing";
+                  } else {
+                    const el = document.querySelector(`#${id}`);
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }
                 }}
                 className="block w-full text-left text-sm text-gray-300 hover:text-white py-3"
               >

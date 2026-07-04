@@ -13,12 +13,12 @@ export default function TrustBar() {
           {t("landing.trustBarHeading")}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
-          {placeholders.map((i) => (
+          {["/logos/logo-1.svg", "/logos/logo-2.svg", "/logos/logo-3.svg", "/logos/logo-4.svg", "/logos/logo-5.svg"].map((src, i) => (
             <div
               key={i}
               className="w-28 h-10 bg-gray-200 rounded-md flex items-center justify-center"
             >
-              <span className="text-xs text-gray-400 font-medium">{t("landing.trustBarLogo")}</span>
+              <img src={src} alt={`${t("landing.trustBarLogo")} ${i + 1}`} className="h-6 w-auto opacity-50 grayscale" />
             </div>
           ))}
         </div>

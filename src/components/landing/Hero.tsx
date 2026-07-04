@@ -66,7 +66,7 @@ export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full text-sm text-blue-100 mb-8">
           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          {t("landing.heroTitle")}
+          {t("landing.trustBarHeading")}
         </div>
 
         <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">

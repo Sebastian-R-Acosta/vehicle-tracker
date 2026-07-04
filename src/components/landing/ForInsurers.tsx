@@ -28,7 +28,7 @@ export default function ForInsurers() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
           ref={ref}
-                     className={`grid lg:grid-cols-2 gap-8 lg:gap-12 lg:gap-20 items-center transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                     className={`grid lg:grid-cols-2 gap-8 lg:gap-20 items-center transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="order-2 lg:order-1">
             <div className="bg-gray-200 rounded-2xl aspect-[4/3] flex items-center justify-center">

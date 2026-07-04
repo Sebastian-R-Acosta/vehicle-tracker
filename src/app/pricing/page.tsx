@@ -46,16 +46,13 @@ const tiers = [
   },
 ];
 
-function formatPrice(priceDOP: number, priceUSD: number, locale: string): string {
+function formatPrice(priceDOP: number, priceUSD: number): string {
   if (priceDOP === 0) return "RD$0";
-  if (locale === "es") {
-    return `RD$${priceDOP.toLocaleString("es-DO")}`;
-  }
-  return `RD$${priceDOP.toLocaleString("en-US")}`;
+  return `RD$${priceDOP.toLocaleString("es-DO")}`;
 }
 
 function PricingCards({ variant }: { variant: string }) {
-  const { t, locale } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8 mb-20">
@@ -83,7 +80,7 @@ function PricingCards({ variant }: { variant: string }) {
             </div>
             <div className="flex items-baseline gap-1 mb-1">
               <span className="text-4xl font-bold text-gray-900">
-                {formatPrice(tier.priceDOP, tier.priceUSD, locale)}
+                {formatPrice(tier.priceDOP, tier.priceUSD)}
               </span>
               {tier.priceDOP > 0 && (
                 <span className="text-gray-400">{t(tier.periodKey)}</span>
@@ -137,7 +134,7 @@ function PricingCards({ variant }: { variant: string }) {
 
 export default function PricingPage() {
   const pricingVariant = useABTest("pricing_layout");
-  const { t, locale } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <div className="bg-white min-h-screen flex flex-col">
@@ -147,20 +144,16 @@ export default function PricingPage() {
       <section className="pt-28 md:pt-36 pb-12 md:pb-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-            {locale === "es" ? "Precios Simples y Transparentes" : "Simple, Transparent Pricing"}
+            {t("pricing.simplePricing")}
           </h1>
           <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            {locale === "es"
-              ? "Empieza gratis. Mejora cuando lo necesites. Sin cargos ocultos."
-              : "Start free. Upgrade when you need more. No hidden fees, no surprises."}
+            {t("pricing.startFree")}
           </p>
           {pricingVariant === "variant_a" && (
             <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-200">
               <Shield className="w-4 h-4 text-blue-600" />
               <span className="text-sm text-blue-700 font-medium">
-                {locale === "es"
-                  ? "Nuevo: Alertas de llamados a revisión, informes de valor y glovebox digital"
-                  : "New: Recall alerts, value reports & digital glovebox"}
+                {t("pricing.newBadge")}
               </span>
             </div>
           )}
@@ -170,14 +163,14 @@ export default function PricingPage() {
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">
-            {locale === "es" ? "Comparación Completa de Características" : "Full Feature Comparison"}
+            {t("pricing.fullComparison")}
           </h2>
           <div className="bg-white rounded-2xl border border-gray-200 overflow-x-auto shadow-sm">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
                   <th className="text-left px-6 py-4 font-semibold text-gray-900">
-                    {locale === "es" ? "Característica" : "Feature"}
+                    {t("pricing.feature")}
                   </th>
                   <th className="text-center px-4 py-4 font-semibold text-gray-500">{t("pricing.free")}</th>
                   <th className="text-center px-4 py-4 font-semibold text-blue-600">{t("pricing.pro")}</th>

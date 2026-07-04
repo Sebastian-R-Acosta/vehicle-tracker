@@ -17,28 +17,29 @@ const columns = [
   {
     titleKey: "nav.settings",
     links: [
-      { label: "About", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Press", href: "#" },
+      { labelKey: "landing.forConstruction", href: "/solutions/construction" },
+      { label: "About", href: "/about" },
+      { label: "Blog", href: "/blog" },
+      { label: "Careers", href: "/careers" },
       { label: "Contact", href: "/contact" },
     ],
   },
   {
     titleKey: "nav.solutions",
     links: [
-      { label: "Documentation", href: "#" },
-      { label: "API Reference", href: "#" },
-      { label: "Help Center", href: "#" },
-      { label: "Community", href: "#" },
-      { label: "Release Notes", href: "#" },
+      { label: "Help Center", href: "/help" },
+      { label: "API Reference", href: "/docs/api" },
+      { label: "Documentation", href: "/docs" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
     ],
   },
   {
-    titleKey: "landing.ctaTitle",
+    titleKey: "nav.dashboard",
     links: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Terms of Service", href: "/terms" },
+      { labelKey: "nav.login", href: "/login" },
+      { labelKey: "nav.getStarted", href: "/register" },
+      { labelKey: "nav.dashboard", href: "/dashboard" },
     ],
   },
 ];
@@ -84,9 +85,9 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Vehicle Tracker. {t("landing.footerRights")}
           </p>
           <div className="flex items-center gap-6">
-            <span className="text-sm text-gray-500 hover:text-gray-300 cursor-pointer">Twitter</span>
-            <span className="text-sm text-gray-500 hover:text-gray-300 cursor-pointer">LinkedIn</span>
-            <span className="text-sm text-gray-500 hover:text-gray-300 cursor-pointer">YouTube</span>
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-gray-300 cursor-pointer">Twitter</a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-gray-300 cursor-pointer">LinkedIn</a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-gray-300 cursor-pointer">YouTube</a>
           </div>
         </div>
       </div>

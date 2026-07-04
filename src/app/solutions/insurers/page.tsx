@@ -15,7 +15,7 @@ export default function InsurersPage() {
     <PageLayout>
       <section className="pt-32 pb-16 lg:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 lg:gap-20 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
             <div className="order-2 lg:order-1">
               <div className="bg-gray-200 rounded-2xl aspect-[4/3] flex items-center justify-center">
                 <span className="text-gray-400 font-medium">{t("solutions.insurers.preview")}</span>

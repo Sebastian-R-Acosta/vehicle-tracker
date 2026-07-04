@@ -1,39 +1,106 @@
-# AGENTS.md — Session Context for AI Assistants
+# Memory
 
 ## Project
-**Vehicle Tracker** — Multi-segment vehicle management SaaS (Next.js 14, Prisma + Neon, Vercel).
+Vehicle Tracker — vehicle history & maintenance platform.  
+Stack: Next.js 14, TypeScript, Prisma (Neon/Postgres), NextAuth, PayPal.  
+Deployed at: <https://vehicle-tracker-chi.vercel.app>
 
-## Production
-- **URL:** https://vehicle-tracker-chi.vercel.app
-- **Database:** Neon PostgreSQL (serverless)
-- **Auth:** NextAuth.js v5 (Credentials)
+## What's Been Done
 
-## Checkout Flow
-- **Pricing → `/checkout?plan=pro|business` → Stripe or PayPal hosted checkout → Dashboard**
-- `/checkout` is a public (static) page at `src/app/checkout/page.tsx`
-- `handleCheckout(method)` calls `/api/billing/checkout` with `{ tier: "pro"|"business" }`
-- `/api/billing/checkout` routes to Stripe if user has existing Stripe sub, otherwise PayPal
-- Stripe uses price IDs from env: `STRIPE_PRO_PRICE_ID`, `STRIPE_BUSINESS_PRICE_ID`
-- PayPal uses plan IDs from env: `PAYPAL_PRO_PLAN_ID`, `PAYPAL_BUSINESS_PLAN_ID`
+### Stripe Removal (2026-07-03)
+- Extracted tier constants to `src/lib/tiers.ts` (FREE=2 vehicles, PRO, BUSINESS)
+- Gutted `src/lib/stripe.ts` to re-export from tiers.ts
+- Stripped `stripePriceId`, `stripeCustomerId`, `stripeSubId` from Prisma schema
+- Created migration `prisma/migrations/20260703000001_remove_stripe_fields`
+- Ran `prisma db push` to sync Neon (no `_prisma_migrations` table existed)
+- Removed all Stripe API routes (checkout, portal, webhook)
+- Billing now goes through PayPal exclusively
+- Updated all 3 test files to use tiers.ts, removed Stripe mocking
 
-## Admin Access
-- **Admin user:** sebasort9pc@gmail.com
-- **Role check:** `User.role` field in DB; bypasses all subscription limits via `lib/billing.ts:isAdmin()`
-- **Admin pages:** `/dashboard/admin/*` — users, vehicles, records, documents, organizations
+### Public Page Fixes (2026-07-03)
+All issues from a full audit of public-facing pages fixed:
 
-## Key Architecture Decisions
-- `lib/email.ts` uses lazy `getResend()` to avoid build crash when `RESEND_API_KEY` is unset
-- `lib/db.ts` uses global Prisma client caching in all environments
-- `auth.ts` sets JWT `role` from user object on login only (no DB query on every refresh)
-- `DashboardNav.tsx` fetches `/api/user/role` client-side to show admin badge
+**i18n / Translations:**
+- Created `src/components/LanguageSync.tsx` — syncs `document.documentElement.lang` via useLanguage() hook
+- Changed `<html lang="en">` to `lang="es"` in layout.tsx + added LanguageSync inside Providers
+- Added 90+ translation keys to both `es.ts` and `en.ts` (pricing strings, checkout strings, auth strings, common strings)
+- Fixed 3 English "again" words embedded in Spanish translations in es.ts
+- Removed all `locale === "es"` inline ternaries from pricing and checkout pages
 
-## Build & Deploy
-```bash
-npm run build
-npx vercel --prod
-```
+**Untranslated pages — now all use `useLanguage()` + `t()`:**
+- `/forgot-password` (page.tsx)
+- `/reset-password` (page.tsx)
+- `/contact` (page.tsx)
+- `/not-found` (page.tsx — converted to client component)
+- `/error` (page.tsx)
+- `/global-error` (page.tsx — uses localStorage-based locale detection since it's outside Providers)
 
-## Common Fixes
-- **Resend build error:** Lazy init (`getResend()`) — don't instantiate at module top-level
-- **Session issues on Brave:** Disable Shields for the site
-- **Missing translations:** Add keys to both `src/lib/i18n/en.ts` and `src/lib/i18n/es.ts`
+**Pricing & Checkout:**
+- Replaced all inline ternary translations with `t()` calls
+- Removed Stripe payment option from checkout (PayPal only)
+- Removed unused `CreditCard` import and `method` parameter from handleCheckout
+- Added `pricing.simplePricing`, `pricing.startFree`, `pricing.fullComparison`, etc.
+- Added checkout translations (`invalidPlan`, `completePayment`, `payWithPaypal`, etc.)
+
+**Nav & Footer:**
+- Footer: replaced `#` dead links with `/about`, `/blog`, `/careers`, `/help`, `/docs`, `/docs/api`, `/privacy`, `/terms`
+- Footer: added `/solutions/construction`, `/login`, `/register`, `/dashboard` links
+- Footer: social icons (Twitter, LinkedIn, YouTube) now clickable `<a>` tags with `target="_blank"`
+- Mobile nav: `#pricing` button now navigates to `/pricing` page instead of trying to scroll to non-existent element
+
+**UI Fixes:**
+- TrustBar: placeholder gray spans replaced with `<img>` tags pointing to `/logos/logo-*.svg`
+- Hero badge: changed from duplicating H1 text to showing `trustBarHeading` translation
+- CTA section: now has both "Register" link (primary) and "Book Demo" button (secondary)
+- DemoModal: fully translated via `useLanguage()` + `t()`
+- `role="alert"` added to all error message containers
+- Duplicate `lg:gap-12 lg:gap-20` classes collapsed to `lg:gap-20` in 5 files
+- LanguageToggle added to `/login` and `/register` pages
+
+**SEO / Sitemap:**
+- Added missing pages to `sitemap.ts`: `/solutions/construction`, `/login`, `/register`, `/forgot-password`, `/checkout`
+
+### Database
+- Prisma schema uses `SubscriptionPlan.maxVehicles` default 2 (FREE tier)
+- Seed data uses `maxVehicles: 2`
+- No Stripe columns in database
+- Migration applied via `prisma db push` (not migrate deploy)
+
+## Key Decisions
+- Default locale is Spanish (`"es"`) — affects all public pages
+- Tier limits: FREE = 2 vehicles (per spec), PRO = unlimited, BUSINESS = unlimited
+- No Stripe; PayPal only for billing
+- Pricing displayed in DOP (RD$) with fixed rate of 60 DOP/USD
+- `global-error.tsx` reads locale from `localStorage` since it renders outside `<Providers>`
+- Fable 5 behavioral config at `C:\Projects\fable-5-agent.md`
+
+## Needs Attention / Next Steps
+- `/logos/logo-*.svg` files don't exist yet — TrustBar shows broken images on production
+- `/about`, `/blog`, `/careers`, `/help`, `/docs`, `/docs/api` pages don't exist — footer links 404
+- "Basic" plan translations exist but no corresponding UI
+- `HowItWorks.tsx` component is dead code (not imported anywhere)
+- Some dashboard pages have pre-existing ESLint warnings (useEffect deps, img→Image, alt text)
+- `src/components/VehicleReportPDF.tsx:218` missing alt text on image
+- OpenGraph metadata is English-only regardless of locale
+- Consider adding `<meta name="description">` per-page in Spanish
+- Vercel deploy: set `NEXT_PUBLIC_APP_URL` to production URL
+
+## Build Status
+`next build` passes with 0 errors. ~20 pre-existing ESLint warnings (unrelated to our changes).
+
+## Auth
+- NextAuth with credentials + Google providers
+- Credentials provider at `/api/auth/[...nextauth]`
+- Auth pages: `/login`, `/register`, `/forgot-password`, `/reset-password`
+
+## Billing Flow
+1. User clicks "Upgrade" on `/pricing`
+2. Redirects to `/checkout?plan=pro|business`
+3. PayPal button → `/api/billing/checkout` → PayPal order creation
+4. User completes on PayPal → webhook at `/api/billing/webhook` activates subscription
+5. Customer portal at `/api/billing/portal`
+
+## Deployment
+- Hosted on Vercel (production: vehicle-tracker-chi.vercel.app)
+- Branch: `main` auto-deploys
+- Environment variables needed: `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `NEXT_PUBLIC_APP_URL`

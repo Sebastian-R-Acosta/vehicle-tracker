@@ -4,10 +4,12 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Lock, ArrowLeft } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,17 +24,17 @@ function ResetPasswordForm() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(t("auth.passwordsDoNotMatch"));
       return;
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters");
+      setError(t("errors.passwordLength"));
       return;
     }
 
     if (!token || !email) {
-      setError("Invalid reset link. Please request a new one.");
+      setError(t("auth.invalidResetLinkDesc"));
       return;
     }
 
@@ -47,12 +49,12 @@ function ResetPasswordForm() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to reset password");
+        throw new Error(data.error || t("errors.generic"));
       }
 
       setSuccess(true);
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      setError(err.message || t("errors.generic"));
     } finally {
       setLoading(false);
     }
@@ -64,15 +66,15 @@ function ResetPasswordForm() {
         <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
           <Lock className="w-8 h-8 text-green-600 dark:text-green-400" />
         </div>
-        <h1 className="text-2xl font-bold text-foreground mb-2">Password Reset!</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-2">{t("auth.passwordReset")}</h1>
         <p className="text-muted-foreground mb-6">
-          Your password has been reset successfully. You can now log in with your new password.
+          {t("auth.passwordResetSuccess")}
         </p>
         <Link
           href="/login"
           className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
         >
-          Log In
+          {t("auth.logIn")}
         </Link>
       </div>
     );
@@ -81,15 +83,15 @@ function ResetPasswordForm() {
   if (!token || !email) {
     return (
       <div className="max-w-md w-full bg-card rounded-lg shadow-sm p-8 text-center border border-border">
-        <h1 className="text-2xl font-bold text-foreground mb-4">Invalid Reset Link</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-4">{t("auth.invalidResetLink")}</h1>
         <p className="text-muted-foreground mb-6">
-          This reset link is invalid or has expired. Please request a new one.
+          {t("auth.invalidResetLinkDesc")}
         </p>
         <Link
           href="/forgot-password"
           className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
         >
-          Request New Link
+          {t("auth.requestNewLink")}
         </Link>
       </div>
     );
@@ -102,16 +104,16 @@ function ResetPasswordForm() {
         className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to login
+        {t("auth.backToLogin")}
       </Link>
 
-      <h1 className="text-2xl font-bold text-foreground mb-2">Reset Password</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-2">{t("auth.resetPassword")}</h1>
       <p className="text-muted-foreground mb-6">
-        Enter your new password below.
+        {t("auth.resetPasswordDesc")}
       </p>
 
       {error && (
-        <div className="mb-6 p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
+        <div className="mb-6 p-3 text-sm text-destructive bg-destructive/10 rounded-lg" role="alert">
           {error}
         </div>
       )}
@@ -119,7 +121,7 @@ function ResetPasswordForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-foreground mb-1">
-            New Password
+            {t("auth.newPassword")}
           </label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -128,7 +130,7 @@ function ResetPasswordForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-              placeholder="At least 8 characters"
+              placeholder={t("errors.passwordLength")}
               required
               minLength={8}
             />
@@ -137,7 +139,7 @@ function ResetPasswordForm() {
 
         <div>
           <label className="block text-sm font-medium text-foreground mb-1">
-            Confirm Password
+            {t("auth.confirmPassword")}
           </label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -146,7 +148,7 @@ function ResetPasswordForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-              placeholder="Repeat password"
+              placeholder={t("auth.confirmPassword")}
               required
               minLength={8}
             />
@@ -159,7 +161,7 @@ function ResetPasswordForm() {
           className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-          Reset Password
+          {t("auth.resetPassword")}
         </button>
       </form>
     </div>

@@ -3,6 +3,8 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
+import Link from "next/link";
+
 export default function CTA({ onBookDemo }: { onBookDemo: () => void }) {
   const { t } = useLanguage();
 
@@ -23,13 +25,21 @@ export default function CTA({ onBookDemo }: { onBookDemo: () => void }) {
         <p className="text-lg text-gray-300 mb-8 max-w-xl mx-auto">
           {t("landing.ctaSubtitle")}
         </p>
-        <button
-          onClick={onBookDemo}
-          className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-500 transition-all shadow-lg hover:shadow-xl"
-        >
-          {t("landing.ctaButton")}
-          <ArrowRight className="w-4 h-4" />
-        </button>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-500 transition-all shadow-lg hover:shadow-xl"
+          >
+            {t("landing.ctaButton")}
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+          <button
+            onClick={onBookDemo}
+            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-medium text-blue-300 border border-blue-400/30 rounded-xl hover:bg-white/5 transition-all"
+          >
+            {t("landing.heroDemo")}
+          </button>
+        </div>
         <p className="mt-4 text-sm text-gray-400">{t("landing.footerRights")}</p>
       </div>
     </section>

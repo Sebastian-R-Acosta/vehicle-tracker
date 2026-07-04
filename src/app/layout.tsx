@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+import { LanguageSync } from "@/components/LanguageSync";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -44,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="manifest" href="/manifest.json" />
@@ -62,6 +63,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Providers>
+          <LanguageSync />
           <div className="fixed top-4 right-4 z-50">
             <ThemeToggle />
           </div>

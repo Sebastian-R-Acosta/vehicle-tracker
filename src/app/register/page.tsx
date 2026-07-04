@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -41,7 +42,10 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="min-h-screen flex items-center justify-center bg-background relative">
+      <div className="absolute top-4 right-4">
+        <LanguageToggle className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg" />
+      </div>
       <div className="w-full max-w-md p-8 bg-card rounded-lg shadow-md border border-border">
         <div className="flex flex-col items-center mb-8">
            <img src="/logo-icon.svg" alt="Vehicle Tracker" className="h-14 w-auto" />
@@ -51,7 +55,7 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
+            <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-lg" role="alert">
               {error}
             </div>
           )}
