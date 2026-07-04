@@ -15,12 +15,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   title: {
     default: "Vehicle Tracker — Vehicle History & Maintenance Platform",
     template: "%s | Vehicle Tracker",
   },
   description:
-    "Track vehicle maintenance, service history, and get smart reminders. Free for car owners. White-label for dealerships and insurers.",
+    "Track vehicle maintenance, service history, and get smart reminders. Free for car owners. White-label for dealerships and insurers. | Monitoree mantenimiento vehicular, historial de servicio y reciba recordatorios inteligentes. Gratis para propietarios.",
   icons: {
     icon: [
       { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
@@ -31,15 +32,23 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Vehicle Tracker — Vehicle History & Maintenance Platform",
     description:
-      "Track vehicle maintenance, service history, and get smart reminders. Free for car owners. White-label for dealerships and insurers.",
+      "Track vehicle maintenance, service history, and get smart reminders. Free for car owners. White-label for dealerships and insurers. | Monitoree mantenimiento vehicular, historial de servicio y reciba recordatorios inteligentes.",
     type: "website",
     siteName: "Vehicle Tracker",
+    locale: "en_US",
+    alternateLocale: "es_ES",
   },
   twitter: {
     card: "summary_large_image",
     title: "Vehicle Tracker",
     description:
-      "Track vehicle maintenance, service history, and get smart reminders.",
+      "Track vehicle maintenance, service history, and get smart reminders. Free for car owners.",
+  },
+  alternates: {
+    languages: {
+      en: "/",
+      es: "/",
+    },
   },
 };
 

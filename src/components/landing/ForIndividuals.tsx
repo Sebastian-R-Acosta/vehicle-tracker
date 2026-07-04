@@ -24,7 +24,7 @@ export default function ForIndividuals() {
   }, []);
 
   return (
-    <section id="for-individuals" className="py-16 lg:py-24 bg-white">
+    <section id="for-individuals" className="py-16 lg:py-24 neu-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full mb-4">
@@ -47,10 +47,10 @@ export default function ForIndividuals() {
             return (
               <div
                 key={perk.title}
-                className={`p-6 bg-gray-50 rounded-xl border border-gray-100 transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                className={`p-6 neu-bg rounded-2xl neu-shadow transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
                 style={{ transitionDelay: `${i * 100}ms` }}
               >
-                <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-10 h-10 neu-bg neu-shadow-inset rounded-xl flex items-center justify-center mb-4">
                   <Icon className="w-5 h-5 text-green-600" />
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1">{perk.title}</h3>
@@ -63,14 +63,14 @@ export default function ForIndividuals() {
         <div className="text-center">
           <Link
             href="/register"
-            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-green-600 rounded-xl hover:bg-green-500 transition-all shadow-lg hover:shadow-xl"
+            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-green-600 rounded-xl hover:brightness-110 transition-all neu-shadow-sm"
           >
             {t("landing.forIndividualsSection.cta")}
           </Link>
           <div className="mt-4">
             <Link
               href="/solutions/individuals"
-              className="inline-block py-3 text-sm text-green-600 hover:text-green-500 font-medium"
+              className="inline-block py-3 text-sm text-green-700 hover:text-green-600 font-medium"
             >
               {t("landing.forIndividualsSection.learnMore")}
             </Link>

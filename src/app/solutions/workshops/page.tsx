@@ -42,6 +42,7 @@ export default function WorkshopsPage() {
               </div>
             </div>
             <div className="bg-gray-200 rounded-2xl overflow-hidden shadow-inner">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/screenshots/dashboard-preview.png" alt="Dashboard Preview" className="w-full h-auto" />
             </div>
           </div>

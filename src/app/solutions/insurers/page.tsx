@@ -18,7 +18,8 @@ export default function InsurersPage() {
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
             <div className="order-2 lg:order-1">
               <div className="bg-gray-200 rounded-2xl overflow-hidden shadow-inner">
-                <img src="/screenshots/dashboard-preview.png" alt="Insurance Dashboard Preview" className="w-full h-auto" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/screenshots/dashboard-preview.png" alt="Insurance Dashboard Preview" className="w-full h-auto" />
               </div>
             </div>
             <div className="order-1 lg:order-2">

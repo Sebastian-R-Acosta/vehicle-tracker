@@ -24,14 +24,15 @@ export default function ForInsurers() {
   }, []);
 
   return (
-    <section id="for-insurers" className="py-16 lg:py-24 bg-white">
+    <section id="for-insurers" className="py-16 lg:py-24 neu-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
           ref={ref}
                      className={`grid lg:grid-cols-2 gap-8 lg:gap-20 items-center transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="order-2 lg:order-1">
-            <div className="bg-gray-200 rounded-2xl overflow-hidden shadow-inner">
+            <div className="neu-bg rounded-2xl overflow-hidden neu-shadow-inset">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/screenshots/dashboard-preview.png" alt="Insurance Dashboard Preview" className="w-full h-auto" />
             </div>
           </div>
@@ -40,7 +41,7 @@ export default function ForInsurers() {
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full mb-6">
               {t("landing.forInsurers")}
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
               {t("landing.forInsurersSection.heading")}
             </h2>
             <p className="text-lg text-gray-500 mb-8 leading-relaxed">
@@ -51,7 +52,7 @@ export default function ForInsurers() {
                 const Icon = benefitIcons[i];
                 return (
                   <div key={b.title} className="flex gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
+                    <div className="flex-shrink-0 w-10 h-10 neu-bg neu-shadow-inset rounded-xl flex items-center justify-center">
                       <Icon className="w-5 h-5 text-indigo-600" />
                     </div>
                     <div>
@@ -68,7 +69,7 @@ export default function ForInsurers() {
             </div>
             <Link
               href="/solutions/insurers"
-              className="inline-flex items-center gap-1 mt-6 py-3 text-sm text-indigo-600 hover:text-indigo-500 font-medium"
+              className="inline-flex items-center gap-1 mt-6 py-3 text-sm text-indigo-700 hover:text-indigo-600 font-medium"
             >
               {t("landing.forInsurersSection.learnMore")}
             </Link>

@@ -19,7 +19,7 @@ export default function HomePage() {
   const [demoOpen, setDemoOpen] = useState(false);
 
   return (
-    <div className="bg-white">
+    <div className="neu-bg">
       <Nav onBookDemo={() => setDemoOpen(true)} />
       <Hero onBookDemo={() => setDemoOpen(true)} />
       <TrustBar />

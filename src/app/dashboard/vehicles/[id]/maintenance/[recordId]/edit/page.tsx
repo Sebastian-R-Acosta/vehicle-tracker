@@ -310,6 +310,7 @@ export default function EditMaintenancePage() {
               
               {imagePreview ? (
                 <div className="relative mt-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={imagePreview}
                     alt={t("maintenance.image")}

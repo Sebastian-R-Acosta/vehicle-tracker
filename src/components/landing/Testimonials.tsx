@@ -20,10 +20,10 @@ export default function Testimonials() {
   }, []);
 
   return (
-    <section className="py-16 lg:py-24 bg-white">
+    <section className="py-16 lg:py-24 neu-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
             {t("landing.testimonialsSection.heading")}
           </h2>
           <p className="text-lg text-gray-500 max-w-xl mx-auto">
@@ -38,7 +38,7 @@ export default function Testimonials() {
           {(t("landing.testimonialsSection.items") as { quote: string; name: string; role: string }[]).map((item, i) => (
             <div
               key={item.name}
-              className={`p-8 bg-gray-50 rounded-2xl border border-gray-100 transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+              className={`p-8 neu-bg rounded-2xl neu-shadow transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
               style={{ transitionDelay: `${i * 200}ms` }}
             >
               <div className="flex gap-1 mb-4">
@@ -60,7 +60,7 @@ export default function Testimonials() {
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{item.name}</p>
+                  <p className="text-sm font-semibold text-gray-800">{item.name}</p>
                   <p className="text-xs text-gray-500">{item.role}</p>
                 </div>
               </div>

@@ -43,6 +43,7 @@ export default function SettingsPage() {
     } else {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentOrgId]);
 
   const fetchOrg = async () => {

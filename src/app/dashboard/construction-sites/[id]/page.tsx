@@ -58,24 +58,22 @@ export default function SiteDetailPage() {
 
   useEffect(() => {
     if (session?.user && params.id) {
-      fetchSite();
+      (async () => {
+        try {
+          const res = await fetch(`/api/construction-sites/${params.id}`);
+          if (res.ok) {
+            setSite(await res.json());
+          } else {
+            router.push("/dashboard/construction-sites");
+          }
+        } catch (err) {
+          console.error("Failed to fetch site:", err);
+        } finally {
+          setLoading(false);
+        }
+      })();
     }
-  }, [session, params.id]);
-
-  const fetchSite = async () => {
-    try {
-      const res = await fetch(`/api/construction-sites/${params.id}`);
-      if (res.ok) {
-        setSite(await res.json());
-      } else {
-        router.push("/dashboard/construction-sites");
-      }
-    } catch (err) {
-      console.error("Failed to fetch site:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [session, params.id, router]);
 
   const handleDelete = async () => {
     setDeleting(true);

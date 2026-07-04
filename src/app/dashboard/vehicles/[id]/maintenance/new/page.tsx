@@ -284,6 +284,7 @@ export default function NewMaintenancePage() {
               
               {imagePreview ? (
                 <div className="relative mt-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={imagePreview}
                     alt={t("dashboard.maintenanceNew.invoicePreview")}

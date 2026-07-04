@@ -42,6 +42,7 @@ export default function DealersPage() {
               </div>
             </div>
             <div className="bg-gray-200 rounded-2xl overflow-hidden shadow-inner">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/screenshots/dashboard-preview.png" alt="Dealer Dashboard Preview" className="w-full h-auto" />
             </div>
           </div>

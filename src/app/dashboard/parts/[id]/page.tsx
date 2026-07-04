@@ -83,36 +83,34 @@ export default function PartDetailPage() {
 
   useEffect(() => {
     if (session?.user && params.id) {
-      fetchPart();
-      fetchCategories();
+      (async () => {
+        try {
+          const res = await fetch(`/api/parts/${params.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            setPart(data);
+            reset({
+              name: data.name,
+              partNumber: data.partNumber || "",
+              category: data.category,
+              quantity: data.quantity,
+              minStock: data.minStock,
+              unitCost: data.unitCost || "",
+              supplier: data.supplier || "",
+              notes: data.notes || "",
+            });
+          } else {
+            router.push("/dashboard/parts");
+          }
+          fetchCategories();
+        } catch (err) {
+          console.error("Failed to fetch part:", err);
+        } finally {
+          setLoading(false);
+        }
+      })();
     }
-  }, [session, params.id]);
-
-  const fetchPart = async () => {
-    try {
-      const res = await fetch(`/api/parts/${params.id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setPart(data);
-        reset({
-          name: data.name,
-          partNumber: data.partNumber || "",
-          category: data.category,
-          quantity: data.quantity,
-          minStock: data.minStock,
-          unitCost: data.unitCost ?? undefined,
-          supplier: data.supplier || "",
-          notes: data.notes || "",
-        });
-      } else {
-        router.push("/dashboard/parts");
-      }
-    } catch (err) {
-      console.error("Failed to fetch part:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [session, params.id, router, reset]);
 
   const fetchCategories = async () => {
     try {

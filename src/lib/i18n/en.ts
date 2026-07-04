@@ -430,7 +430,7 @@ export const en: Translations = {
     monthly: "Monthly",
     annual: "Annual",
     free: "Free",
-    basic: "Basic",
+    basic: "Basic", // unused
     pro: "Pro",
     enterprise: "Enterprise",
     perMonth: "/mo",
@@ -438,7 +438,7 @@ export const en: Translations = {
     upgrade: "Upgrade Plan",
     downgrade: "Downgrade Plan",
     freeDesc: "For individual car owners",
-    basicDesc: "For small workshops and fleets",
+    basicDesc: "For small workshops and fleets", // unused
     proDesc: "For dealerships and mid-size fleets",
     enterpriseDesc: "For insurers and large fleets",
     features: "Features",

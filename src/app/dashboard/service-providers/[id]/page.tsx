@@ -90,26 +90,24 @@ export default function ServiceProviderDetailPage() {
 
   useEffect(() => {
     if (session?.user && params.id) {
-      fetchProvider();
+      (async () => {
+        try {
+          const res = await fetch(`/api/service-providers/${params.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            setProvider(data);
+            populateEdit(data);
+          } else {
+            router.push("/dashboard/service-providers");
+          }
+        } catch (err) {
+          console.error("Failed to fetch provider:", err);
+        } finally {
+          setLoading(false);
+        }
+      })();
     }
-  }, [session, params.id]);
-
-  const fetchProvider = async () => {
-    try {
-      const res = await fetch(`/api/service-providers/${params.id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setProvider(data);
-        populateEdit(data);
-      } else {
-        router.push("/dashboard/service-providers");
-      }
-    } catch (err) {
-      console.error("Failed to fetch provider:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [session, params.id, router]);
 
   const populateEdit = (p: ServiceProvider) => {
     setEditName(p.name);

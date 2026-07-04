@@ -65,6 +65,31 @@ body {
 }
 
 @layer utilities {
+  .neu-bg {
+    background-color: #eef0f4;
+  }
+  .neu-shadow {
+    box-shadow: 9px 9px 16px #d1d6df, -9px -9px 16px #ffffff;
+  }
+  .neu-shadow-sm {
+    box-shadow: 5px 5px 10px #d1d6df, -5px -5px 10px #ffffff;
+  }
+  .neu-shadow-lg {
+    box-shadow: 14px 14px 24px #d1d6df, -14px -14px 24px #ffffff;
+  }
+  .neu-shadow-inset {
+    box-shadow: inset 5px 5px 10px #d1d6df, inset -5px -5px 10px #ffffff;
+  }
+  .neu-button {
+    box-shadow: 5px 5px 10px #d1d6df, -5px -5px 10px #ffffff;
+    transition: all 0.2s ease;
+  }
+  .neu-button:hover {
+    box-shadow: 7px 7px 14px #c5cad2, -7px -7px 14px #ffffff;
+  }
+  .neu-button:active {
+    box-shadow: inset 5px 5px 10px #d1d6df, inset -5px -5px 10px #ffffff;
+  }
   .bg-background {
     background-color: hsl(var(--background));
   }
