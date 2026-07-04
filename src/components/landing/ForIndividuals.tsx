@@ -30,10 +30,10 @@ export default function ForIndividuals() {
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full mb-4">
             {t("landing.forIndividuals")}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             {t("landing.forIndividualsSection.heading")}
           </h2>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-500 dark:text-gray-400 dark:text-gray-500 max-w-2xl mx-auto">
             {t("landing.forIndividualsSection.description")}
           </p>
         </div>
@@ -53,8 +53,8 @@ export default function ForIndividuals() {
                 <div className="w-10 h-10 neu-bg neu-shadow-inset rounded-xl flex items-center justify-center mb-4">
                   <Icon className="w-5 h-5 text-green-600" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">{perk.title}</h3>
-                <p className="text-sm text-gray-500">{perk.description}</p>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">{perk.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{perk.description}</p>
               </div>
             );
           })}
@@ -75,7 +75,7 @@ export default function ForIndividuals() {
               {t("landing.forIndividualsSection.learnMore")}
             </Link>
           </div>
-          <p className="mt-3 text-sm text-gray-400">{t("landing.forIndividualsSection.noCard")}</p>
+          <p className="mt-3 text-sm text-gray-400 dark:text-gray-500">{t("landing.forIndividualsSection.noCard")}</p>
         </div>
       </div>
     </section>

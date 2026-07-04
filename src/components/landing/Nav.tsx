@@ -57,7 +57,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#eef0f4]/95 backdrop-blur neu-shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#eef0f4]/95 dark:bg-[#2d3039]/95 backdrop-blur neu-shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
@@ -69,7 +69,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
             <div className="hidden md:flex items-center" ref={dropdownRef}>
               <button
                 onClick={() => setSolutionsOpen(!solutionsOpen)}
-                className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 transition-colors px-3 py-2.5"
+                className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors px-3 py-2.5"
               >
                 {t("nav.solutions")}
                 <ChevronDown
@@ -84,10 +84,10 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
                       key={s.href}
                       href={s.href}
                       onClick={() => setSolutionsOpen(false)}
-                      className="block px-5 py-3 hover:bg-gray-200/50 transition-colors"
+                      className="block px-5 py-3 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors"
                     >
-                      <div className="text-sm font-medium text-gray-800">{t(s.labelKey)}</div>
-                      <div className="text-xs text-gray-500">{t(s.descKey)}</div>
+                      <div className="text-sm font-medium text-gray-800 dark:text-gray-100">{t(s.labelKey)}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">{t(s.descKey)}</div>
                     </Link>
                   ))}
                 </div>
@@ -97,13 +97,13 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
             <div className="hidden md:flex items-center gap-6 ml-4">
               <Link
                 href="/about"
-                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               >
                 {t("nav.about")}
               </Link>
               <Link
                 href="/pricing"
-                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               >
                 {t("nav.pricing")}
               </Link>
@@ -111,10 +111,10 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <LanguageToggle className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200/50 rounded-lg" />
+            <LanguageToggle className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-lg" />
             <Link
               href="/login"
-              className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-700 neu-bg neu-button rounded-lg"
+              className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 neu-bg neu-button rounded-lg"
             >
               <LogIn className="w-3.5 h-3.5" />
               {t("nav.login")}
@@ -129,7 +129,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
 
           <button
             onClick={() => setOpen(!open)}
-            className="md:hidden p-3 text-gray-600 hover:text-gray-900"
+            className="md:hidden p-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
           >
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -137,8 +137,8 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
       </div>
 
       {open && (
-        <div className="md:hidden neu-bg border-t border-gray-200/50 px-4 py-4 space-y-3 max-h-[80vh] overflow-y-auto">
-          <div className="text-sm font-medium text-gray-500 px-2 pt-1 pb-2 border-b border-gray-200/50">
+        <div className="md:hidden neu-bg border-t border-gray-200/50 dark:border-gray-700/50 px-4 py-4 space-y-3 max-h-[80vh] overflow-y-auto">
+          <div className="text-sm font-medium text-gray-500 dark:text-gray-400 px-2 pt-1 pb-2 border-b border-gray-200/50 dark:border-gray-700/50">
             {t("nav.solutions")}
           </div>
           {solutions.map((s) => (
@@ -146,12 +146,12 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
               key={s.href}
               href={s.href}
               onClick={() => setOpen(false)}
-              className="block text-sm text-gray-700 hover:text-gray-900 py-3"
+              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 py-3"
             >
               {t(s.labelKey)}
             </Link>
           ))}
-          <div className="border-t border-gray-200/50 pt-3 mt-2">
+          <div className="border-t border-gray-200/50 dark:border-gray-700/50 pt-3 mt-2">
             {["nav.about", "nav.pricing"].map((key) => {
               const id = key.split(".")[1];
               const href = id === "about" ? "/about" : "/pricing";
@@ -160,20 +160,20 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
                   key={key}
                   href={href}
                   onClick={() => setOpen(false)}
-                  className="block text-sm text-gray-700 hover:text-gray-900 py-3"
+                  className="block text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 py-3"
                 >
                   {t(key)}
                 </Link>
               );
             })}
           </div>
-          <div className="flex items-center gap-2 px-2 py-2 border-t border-gray-200/50 mt-2 pt-3">
-            <LanguageToggle className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200/50 rounded-lg" />
-            <span className="text-sm text-gray-500">{t("nav.language")}</span>
+          <div className="flex items-center gap-2 px-2 py-2 border-t border-gray-200/50 dark:border-gray-700/50 mt-2 pt-3">
+            <LanguageToggle className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-lg" />
+            <span className="text-sm text-gray-500 dark:text-gray-400">{t("nav.language")}</span>
           </div>
           <Link
             href="/login"
-            className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-gray-900 py-3"
+            className="flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 py-3"
             onClick={() => setOpen(false)}
           >
             <LogIn className="w-3.5 h-3.5" />

@@ -41,10 +41,10 @@ export default function ForInsurers() {
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full mb-6">
               {t("landing.forInsurers")}
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">
               {t("landing.forInsurersSection.heading")}
             </h2>
-            <p className="text-lg text-gray-500 mb-8 leading-relaxed">
+            <p className="text-lg text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
               {t("landing.forInsurersSection.description")}
             </p>
             <div className="space-y-6">
@@ -56,14 +56,14 @@ export default function ForInsurers() {
                       <Icon className="w-5 h-5 text-indigo-600" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">{b.title}</h4>
-                      <p className="text-sm text-gray-500">{b.description}</p>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{b.title}</h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{b.description}</p>
                     </div>
                   </div>
                 );
               })}
             </div>
-            <div className="mt-8 flex items-center gap-4 text-sm text-gray-500">
+            <div className="mt-8 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
               <CheckCircle className="w-4 h-4 text-green-500" />
               <span>{t("landing.forInsurersSection.integration")}</span>
             </div>

@@ -15,10 +15,10 @@ export default function ForConstruction() {
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-200 text-amber-800 text-sm font-medium rounded-full mb-4">
             {t("landing.forConstruction")}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">
             {t("landing.forConstructionSection.heading")}
           </h2>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
             {t("landing.forConstructionSection.description")}
           </p>
         </div>
@@ -31,8 +31,8 @@ export default function ForConstruction() {
                 <div className="w-10 h-10 neu-bg neu-shadow-inset rounded-xl flex items-center justify-center mb-4">
                   <Icon className="w-5 h-5 text-amber-600" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">{b.title}</h3>
-                <p className="text-sm text-gray-500">{b.description}</p>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">{b.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{b.description}</p>
               </div>
             );
           })}

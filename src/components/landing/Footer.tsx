@@ -54,16 +54,16 @@ export default function Footer() {
             <div className="flex items-center gap-2 mb-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo-icon.png" alt="Vehicle Tracker" className="h-8 w-auto" />
-              <span className="text-lg font-bold text-gray-800">Vehicle Tracker</span>
+              <span className="text-lg font-bold text-gray-800 dark:text-gray-100">Vehicle Tracker</span>
             </div>
-            <p className="text-sm text-gray-400 leading-relaxed">
+            <p className="text-sm text-gray-400 dark:text-gray-400 leading-relaxed">
               {t("landing.footerDescription")}
             </p>
           </div>
 
           {columns.map((col) => (
             <div key={col.titleKey}>
-              <h4 className="text-sm font-semibold text-gray-800 mb-4">{t(col.titleKey)}</h4>
+              <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-4">{t(col.titleKey)}</h4>
               <ul className="space-y-3">
                   {col.links.map((link: any) => (
                   <li key={link.label || link.labelKey}>
@@ -71,7 +71,7 @@ export default function Footer() {
                       href={link.href}
                       className="inline-block py-1.5 text-sm text-gray-400 hover:text-white transition-colors"
                     >
-                      <span className="text-gray-600 hover:text-gray-900 transition-colors">{link.labelKey ? t(link.labelKey) : link.label}</span>
+                      <span className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{link.labelKey ? t(link.labelKey) : link.label}</span>
                     </Link>
                   </li>
                 ))}
@@ -81,13 +81,13 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-200/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             &copy; {new Date().getFullYear()} Vehicle Tracker. {t("landing.footerRights")}
           </p>
           <div className="flex items-center gap-6">
-            <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-gray-700 cursor-pointer">Twitter</a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-gray-700 cursor-pointer">LinkedIn</a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-gray-700 cursor-pointer">YouTube</a>
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 cursor-pointer">Twitter</a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 cursor-pointer">LinkedIn</a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 cursor-pointer">YouTube</a>
           </div>
         </div>
       </div>
