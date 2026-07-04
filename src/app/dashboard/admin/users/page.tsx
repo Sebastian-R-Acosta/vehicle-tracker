@@ -2,11 +2,14 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
-import { ArrowLeft, Users, Mail, Calendar } from "lucide-react";
+import { ArrowLeft, Users, Shield } from "lucide-react";
+import AdminUserActions from "@/components/admin/AdminUserActions";
 
 export default async function AdminUsersPage() {
   const session = await auth();
   if (session?.user?.role !== "admin") redirect("/dashboard");
+
+  const isSuperAdmin = session?.user?.superAdmin ?? false;
 
   const [users, total] = await Promise.all([
     prisma.user.findMany({ orderBy: { createdAt: "desc" } }),
@@ -21,6 +24,12 @@ export default async function AdminUsersPage() {
         </Link>
         <Users className="w-6 h-6 text-yellow-600" />
         <h1 className="text-2xl font-bold">Usuarios ({total})</h1>
+        {isSuperAdmin && (
+          <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-950/40">
+            <Shield className="w-3 h-3" />
+            Super Admin
+          </span>
+        )}
       </div>
       <div className="bg-card border border-border rounded-xl overflow-hidden">
         <table className="w-full text-sm">
@@ -29,8 +38,8 @@ export default async function AdminUsersPage() {
               <th className="p-4 font-medium">Email</th>
               <th className="p-4 font-medium">Nombre</th>
               <th className="p-4 font-medium">Rol</th>
-              <th className="p-4 font-medium">Vehículos</th>
               <th className="p-4 font-medium">Registro</th>
+              {isSuperAdmin && <th className="p-4 font-medium">Acciones</th>}
             </tr>
           </thead>
           <tbody>
@@ -43,16 +52,27 @@ export default async function AdminUsersPage() {
                 </td>
                 <td className="p-4 text-muted-foreground">{u.name ?? "—"}</td>
                 <td className="p-4">
-                  <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${
-                    u.role === "admin"
-                      ? "text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-950/40"
-                      : "text-muted-foreground bg-muted"
-                  }`}>
-                    {u.role}
-                  </span>
+                  {u.superAdmin ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium px-1.5 py-0.5 rounded text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-950/40">
+                      <Shield className="w-3 h-3" />
+                      super admin
+                    </span>
+                  ) : (
+                    <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${
+                      u.role === "admin"
+                        ? "text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-950/40"
+                        : "text-muted-foreground bg-muted"
+                    }`}>
+                      {u.role}
+                    </span>
+                  )}
                 </td>
-                <td className="p-4 text-muted-foreground">—</td>
                 <td className="p-4 text-muted-foreground">{u.createdAt.toLocaleDateString()}</td>
+                {isSuperAdmin && (
+                  <td className="p-4">
+                    <AdminUserActions userId={u.id} currentRole={u.role} isSuperAdmin={u.superAdmin} />
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

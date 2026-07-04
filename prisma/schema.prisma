@@ -47,6 +47,7 @@ model User {
   passwordHash  String?
   name         String?
   role         String   @default("user")
+  superAdmin   Boolean  @default(false)
   googleId     String?  @unique
   avatarUrl     String?
   resetToken    String?

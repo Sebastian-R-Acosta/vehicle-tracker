@@ -2,11 +2,14 @@ import { auth } from "@/auth";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
-import { ArrowLeft, Mail, Calendar, Car, FileText, Bell } from "lucide-react";
+import { ArrowLeft, Mail, Calendar, Car, FileText, Bell, Shield } from "lucide-react";
+import AdminUserActions from "@/components/admin/AdminUserActions";
 
 export default async function AdminUserDetailPage({ params }: { params: { id: string } }) {
   const session = await auth();
   if (session?.user?.role !== "admin") redirect("/dashboard");
+
+  const isSuperAdmin = session?.user?.superAdmin ?? false;
 
   const user = await prisma.user.findUnique({
     where: { id: params.id },
@@ -25,13 +28,23 @@ export default async function AdminUserDetailPage({ params }: { params: { id: st
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <h1 className="text-2xl font-bold">{user.name ?? user.email}</h1>
-        <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${
-          user.role === "admin"
-            ? "text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-950/40"
-            : "text-muted-foreground bg-muted"
-        }`}>
-          {user.role}
-        </span>
+        {user.superAdmin ? (
+          <span className="inline-flex items-center gap-1 text-xs font-medium px-1.5 py-0.5 rounded text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-950/40">
+            <Shield className="w-3 h-3" />
+            super admin
+          </span>
+        ) : (
+          <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${
+            user.role === "admin"
+              ? "text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-950/40"
+              : "text-muted-foreground bg-muted"
+          }`}>
+            {user.role}
+          </span>
+        )}
+        {isSuperAdmin && !user.superAdmin && (
+          <AdminUserActions userId={user.id} currentRole={user.role} isSuperAdmin={false} />
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

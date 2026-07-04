@@ -9,6 +9,7 @@ declare module "next-auth" {
   interface User {
     currentOrganizationId?: string | null;
     role?: string;
+    superAdmin?: boolean;
   }
   interface Session {
     user: {
@@ -18,6 +19,7 @@ declare module "next-auth" {
       image?: string | null;
       currentOrganizationId?: string | null;
       role?: string;
+      superAdmin?: boolean;
     };
   }
 }
@@ -63,6 +65,7 @@ export const authConfig: NextAuthConfig = {
           image: user.avatarUrl,
           currentOrganizationId: user.currentOrganizationId,
           role: user.role ?? "user",
+          superAdmin: user.superAdmin ?? false,
         };
       },
     }),
@@ -73,6 +76,7 @@ export const authConfig: NextAuthConfig = {
         token.id = user.id;
         token.currentOrganizationId = user.currentOrganizationId;
         token.role = user.role;
+        token.superAdmin = user.superAdmin;
       }
       if (trigger === "update" && session) {
         token.currentOrganizationId = session.currentOrganizationId;
@@ -84,6 +88,7 @@ export const authConfig: NextAuthConfig = {
         session.user.id = token.id as string;
         session.user.currentOrganizationId = token.currentOrganizationId as string | undefined;
         session.user.role = token.role as string | undefined;
+        session.user.superAdmin = token.superAdmin as boolean | undefined;
       }
       return session;
     },

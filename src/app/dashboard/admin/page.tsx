@@ -2,11 +2,14 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
-import { Users, Car, FileText, CreditCard, Activity, TrendingUp } from "lucide-react";
+import { Users, Car, FileText, CreditCard, Activity, TrendingUp, Shield } from "lucide-react";
+import ClaimSuperAdminButton from "@/components/admin/ClaimSuperAdminButton";
 
 export default async function AdminPage() {
   const session = await auth();
   if (session?.user?.role !== "admin") redirect("/dashboard");
+
+  const isSuperAdmin = session?.user?.superAdmin ?? false;
 
   const [userCount, vehicleCount, recordCount, docCount, orgCount, recentUsers] = await Promise.all([
     prisma.user.count(),
@@ -19,9 +22,17 @@ export default async function AdminPage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex items-center gap-3 mb-8">
+      <div className="flex items-center gap-3 mb-8 flex-wrap">
         <Activity className="w-6 h-6 text-yellow-600" />
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+        {isSuperAdmin ? (
+          <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-950/40">
+            <Shield className="w-3 h-3" />
+            Super Admin
+          </span>
+        ) : (
+          <ClaimSuperAdminButton />
+        )}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
