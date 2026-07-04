@@ -170,6 +170,7 @@ interface VehicleData {
     make: string;
     model: string;
     nickname: string | null;
+    licensePlate: string | null;
     vin: string | null;
     currentMileage: number;
   };
@@ -247,6 +248,12 @@ export default function VehicleReportPDF({ data, logoUrl }: VehiclePDFProps) {
               <Text style={styles.vehicleInfoLabel}>VIN</Text>
               <Text style={styles.vehicleInfoValue}>
                 {vehicle.vin || "Not provided"}
+              </Text>
+            </View>
+            <View style={styles.vehicleInfoItem}>
+              <Text style={styles.vehicleInfoLabel}>License Plate</Text>
+              <Text style={styles.vehicleInfoValue}>
+                {vehicle.licensePlate || "Not set"}
               </Text>
             </View>
             <View style={styles.vehicleInfoItem}>

@@ -16,6 +16,15 @@ const solutionsInsurersBenefits = [
   { title: "Informes de Cumplimiento", description: "Genera informes listos para auditorías de cumplimiento regulatorio y evaluación de riesgos." },
 ];
 
+const solutionsWorkshopsBenefits = [
+  { title: "Agendamiento Inteligente", description: "Permite a los clientes reservar citas de servicio en línea. Los recordatorios automáticos reducen las inasistencias y mantienen tu taller lleno." },
+  { title: "Seguimiento en el Taller", description: "Rastrea cada vehículo desde la recepción hasta la entrega en tiempo real. Sabé exactamente dónde está cada trabajo." },
+  { title: "Historial del Cliente", description: "Accedé al historial de servicio completo de cada vehículo que regresa. Hacé recomendaciones informadas y generá confianza." },
+  { title: "Gestión de Partes", description: "Rastrea el inventario de partes, configura alertas de stock bajo y gestioná proveedores desde un solo panel." },
+  { title: "Gestión de Técnicos", description: "Asigná trabajos a técnicos, rastreá productividad y gestioná horarios del equipo eficientemente." },
+  { title: "Informes de Negocio", description: "Generá informes de ingresos, volumen de servicio, rendimiento de técnicos y retención de clientes." },
+];
+
 const solutionsConstructionBenefits = [
   { title: "Rastreo de Equipo Pesado", description: "Rastrea excavadoras, buldóceres, camiones volquete, grúas, cargadoras y motoniveladoras con soporte para números de serie y capacidad de peso." },
   { title: "Organización por Sitio", description: "Agrupa equipos por sitio de construcción. Ve todas las máquinas asignadas a un proyecto en un panel." },
@@ -129,6 +138,7 @@ export const es = {
     forIndividuals: "Para Dueños de Autos",
     forDealers: "Para Concesionarios",
     forInsurers: "Para Aseguradoras",
+    forWorkshops: "Para Talleres",
     forConstruction: "Para Construcción",
     testimonials: "Testimonios",
     ctaBadge: "Empieza gratis, mejora cuando quieras",
@@ -179,6 +189,16 @@ export const es = {
         { title: "Retención de Clientes", description: "Dale a los clientes un portal con tu marca para ver el historial de servicio y el mantenimiento próximo." },
       ],
     },
+    forWorkshopsSection: {
+      heading: "Construido para Talleres y Centros de Servicio",
+      description: "Optimiza las operaciones de tu taller con registros de servicio digitales, comunicación automatizada con clientes y agendamiento inteligente — todo en un solo lugar.",
+      learnMore: "Más Información",
+      benefits: [
+        { title: "Agendamiento Inteligente", description: "Permite a los clientes reservar citas en línea. Los recordatorios automáticos llenan tu calendario." },
+        { title: "Seguimiento Completo", description: "Rastrea cada vehículo desde la recepción hasta la entrega con historial de servicio completo." },
+        { title: "Partes y Equipo", description: "Gestioná inventario, técnicos y rendimiento todo en un solo lugar." },
+      ],
+    },
     forConstructionSection: {
       heading: "Construido para Equipo Pesado",
       description: "Rastrea horas, gestiona sitios y mantén tu flota funcionando. Vehicle Tracker trabaja tan duro como tu equipo.",
@@ -223,6 +243,7 @@ export const es = {
     model: "Modelo",
     year: "Año",
     vin: "VIN",
+    licensePlate: "Placa",
     nickname: "Apodo",
     mileage: "Kilometraje",
     type: "Tipo",
@@ -370,6 +391,21 @@ export const es = {
       ctaHeading: "Mirá cómo las aseguradoras usan Vehicle Tracker",
       ctaDesc: "Reducí el fraude de reclamos y recompensá a los conductores seguros.",
       ctaButton: "Prueba Gratis",
+    },
+    workshops: {
+      badge: "Para Talleres",
+      heading: "Gestioná tu Taller de Forma Más Inteligente",
+      description: "Dejá de usar hojas de cálculo y notas adhesivas. Vehicle Tracker le da a tu taller herramientas digitales para agendamiento, seguimiento de servicio, gestión de clientes e inventario de partes — para que te concentres en reparar vehículos.",
+      cta: "Comenzar",
+      viewPricing: "Ver Precios",
+      preview: "Vista previa del Panel",
+      sectionHeading: "Todo lo que tu Taller Necesita",
+      sectionDesc: "Desde el agendamiento de citas hasta la gestión de partes — construido para talleres.",
+      benefits: solutionsWorkshopsBenefits,
+      ctaHeading: "¿Listo para transformar tu taller?",
+      ctaDesc: "Únete a talleres que usan Vehicle Tracker para optimizar sus operaciones.",
+      ctaButton: "Prueba Gratis",
+      ctaFootnote: "Sin compromiso. Cancela cuando quieras.",
     },
     construction: {
       badge: "Para Construcción",
@@ -975,6 +1011,7 @@ export const es = {
       placeholderMileage: "0",
       placeholderSerial: "Número de serie del equipo",
       placeholderWeight: "0",
+      placeholderLicensePlate: "ABC-1234",
       placeholderVin: "17 caracteres",
       makeRequired: "La marca es obligatoria",
       modelRequired: "El modelo es obligatorio",

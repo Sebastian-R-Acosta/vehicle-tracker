@@ -32,6 +32,7 @@ export default async function AdminVehiclesPage() {
               <th className="p-4 font-medium">Vehículo</th>
               <th className="p-4 font-medium">Propietario</th>
               <th className="p-4 font-medium">Año</th>
+              <th className="p-4 font-medium">Placa</th>
               <th className="p-4 font-medium">VIN</th>
               <th className="p-4 font-medium">Km</th>
               <th className="p-4 font-medium">Servicios</th>
@@ -45,6 +46,7 @@ export default async function AdminVehiclesPage() {
                 <td className="p-4 font-medium">{v.make} {v.model}</td>
                 <td className="p-4 text-muted-foreground">{v.user.name ?? v.user.email}</td>
                 <td className="p-4 text-muted-foreground">{v.year}</td>
+                <td className="p-4 text-muted-foreground">{v.licensePlate ?? "—"}</td>
                 <td className="p-4 text-muted-foreground font-mono text-xs">{v.vin ?? "—"}</td>
                 <td className="p-4 text-muted-foreground">{v.currentMileage.toLocaleString()}</td>
                 <td className="p-4 text-muted-foreground">{v._count.maintenanceRecords}</td>

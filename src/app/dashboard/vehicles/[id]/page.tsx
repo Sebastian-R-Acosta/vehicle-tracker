@@ -94,6 +94,7 @@ interface Vehicle {
   year: number;
   nickname: string | null;
   vin: string | null;
+  licensePlate: string | null;
   currentMileage: number;
   vehicleType: string;
   hoursMeter: number | null;
@@ -300,7 +301,7 @@ export default function VehicleDetailPage() {
         const margin = 20;
         const contentWidth = pageWidth - margin * 2;
 
-        const logoUrl = "/logo-icon.svg";
+        const logoUrl = "/logo-icon.png";
         try {
           doc.addImage(logoUrl, "SVG", margin, 10, 50, 15);
         } catch (e) {}
@@ -634,8 +635,14 @@ export default function VehicleDetailPage() {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">{t("vehicle.vin")}</p>
-                      <p className="text-lg font-semibold text-foreground">
+                      <p className="text-lg font-semibold text-foreground font-mono">
                         {vehicle.vin || t("dashboard.vehicleDetail.notProvided")}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">{t("vehicle.licensePlate")}</p>
+                      <p className="text-lg font-semibold text-foreground">
+                        {vehicle.licensePlate || t("dashboard.vehicleDetail.notProvided")}
                       </p>
                     </div>
                   </>

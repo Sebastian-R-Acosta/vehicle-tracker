@@ -18,6 +18,15 @@ const solutionsInsurersBenefits = [
   { title: "Compliance Reporting", description: "Generate audit-ready reports for regulatory compliance and risk assessment." },
 ];
 
+const solutionsWorkshopsBenefits = [
+  { title: "Smart Scheduling", description: "Let customers book service appointments online. Automated reminders reduce no-shows and keep your shop full." },
+  { title: "Service Bay Tracking", description: "Track every vehicle from intake to delivery in real time. Know exactly where each job stands." },
+  { title: "Customer History", description: "Access complete service history for every returning vehicle. Make informed recommendations and build trust." },
+  { title: "Parts Management", description: "Track parts inventory, set low-stock alerts, and manage supplier relationships from one dashboard." },
+  { title: "Technician Management", description: "Assign jobs to technicians, track productivity, and manage team schedules efficiently." },
+  { title: "Business Reports", description: "Generate reports on revenue, service volume, technician performance, and customer retention." },
+];
+
 const solutionsConstructionBenefits = [
   { title: "Heavy Equipment Tracking", description: "Track excavators, bulldozers, dump trucks, cranes, loaders, and graders with support for serial numbers and weight capacity." },
   { title: "Job Site Organization", description: "Group equipment by construction site. See all machines assigned to a project in one dashboard." },
@@ -131,6 +140,7 @@ export const en: Translations = {
     forIndividuals: "For Car Owners",
     forDealers: "For Dealerships",
     forInsurers: "For Insurers",
+    forWorkshops: "For Workshops",
     forConstruction: "For Construction",
     testimonials: "Testimonials",
     ctaBadge: "Start for free, upgrade anytime",
@@ -181,6 +191,16 @@ export const en: Translations = {
         { title: "Customer Retention", description: "Give customers a branded portal to view service history and upcoming maintenance." },
       ],
     },
+    forWorkshopsSection: {
+      heading: "Built for Repair Shops & Service Centers",
+      description: "Streamline your workshop operations with digital service records, automated customer communication, and powerful scheduling — all in one place.",
+      learnMore: "Learn More",
+      benefits: [
+        { title: "Smart Scheduling", description: "Let customers book appointments online. Automated reminders fill your calendar." },
+        { title: "Complete Service Tracking", description: "Track every vehicle from intake to delivery with full service history." },
+        { title: "Parts & Team Management", description: "Manage inventory, technicians, and performance all in one place." },
+      ],
+    },
     forConstructionSection: {
       heading: "Built for Heavy Equipment",
       description: "Track hours, manage sites, and keep your fleet running. Vehicle Tracker works just as hard as your equipment.",
@@ -225,6 +245,7 @@ export const en: Translations = {
     model: "Model",
     year: "Year",
     vin: "VIN",
+    licensePlate: "License Plate",
     nickname: "Nickname",
     mileage: "Mileage",
     type: "Type",
@@ -372,6 +393,21 @@ export const en: Translations = {
       ctaHeading: "See how insurers are using Vehicle Tracker",
       ctaDesc: "Reduce claims fraud and reward safe drivers.",
       ctaButton: "Start Free Trial",
+    },
+    workshops: {
+      badge: "For Workshops",
+      heading: "Run Your Repair Shop Smarter, Not Harder",
+      description: "Stop juggling spreadsheets and sticky notes. Vehicle Tracker gives your workshop digital tools for scheduling, service tracking, customer management, and parts inventory — so you can focus on fixing vehicles.",
+      cta: "Get Started",
+      viewPricing: "View Pricing",
+      preview: "Dashboard Preview",
+      sectionHeading: "Everything Your Workshop Needs",
+      sectionDesc: "From appointment scheduling to parts management — built for repair shops.",
+      benefits: solutionsWorkshopsBenefits,
+      ctaHeading: "Ready to transform your workshop?",
+      ctaDesc: "Join repair shops using Vehicle Tracker to streamline operations.",
+      ctaButton: "Start Free Trial",
+      ctaFootnote: "No commitment. Cancel anytime.",
     },
     construction: {
       badge: "For Construction",
@@ -977,6 +1013,7 @@ export const en: Translations = {
       placeholderMileage: "0",
       placeholderSerial: "Equipment serial #",
       placeholderWeight: "0",
+      placeholderLicensePlate: "ABC-1234",
       placeholderVin: "17 characters",
       makeRequired: "Make is required",
       modelRequired: "Model is required",

@@ -13,6 +13,7 @@ interface Vehicle {
   model: string;
   year: number;
   nickname: string | null;
+  licensePlate: string | null;
   vehicleType: string;
   status: string;
   currentMileage: number;
@@ -91,6 +92,7 @@ export default function OrgVehiclesPage() {
                     <p className="font-medium text-foreground truncate">
                       {v.year} {v.make} {v.model}
                     </p>
+                    {v.licensePlate && <p className="text-xs text-muted-foreground">{v.licensePlate}</p>}
                     <p className="text-sm text-muted-foreground truncate">
                       {v.user.name || v.user.email} &bull; {v.currentMileage.toLocaleString()} mi
                     </p>

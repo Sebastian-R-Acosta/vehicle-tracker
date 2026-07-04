@@ -16,6 +16,7 @@ const vehicleSchema = z.object({
   model: z.string().min(1, "Model is required").max(100),
   year: z.number().min(1886).max(new Date().getFullYear() + 1),
   vin: z.string().length(17).optional().or(z.literal("")),
+  licensePlate: z.string().max(20).optional().or(z.literal("")),
   nickname: z.string().max(100).optional(),
   vehicleType: z.enum(["car", "truck", "motorcycle", "excavator", "bulldozer", "dump_truck", "crane", "loader", "grader", "other"]).default("car"),
   status: z.enum(["active", "maintenance", "inactive", "sold"]).default("active"),
@@ -377,22 +378,37 @@ export default function NewVehiclePage() {
             )}
 
             {!isConstruction && (
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">
-                  {t("dashboard.vehicleNew.vinOptional")}
-                </label>
-                <input
-                  {...register("vin")}
-                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono"
-                  placeholder={t("dashboard.vehicleNew.placeholderVin")}
-                  maxLength={17}
-                />
-                {errors.vin && (
-                  <p className="mt-1 text-sm text-destructive">
-                    {errors.vin.message}
-                  </p>
-                )}
-              </div>
+              <>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">
+                      {t("vehicle.licensePlate")}
+                    </label>
+                    <input
+                      {...register("licensePlate")}
+                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                      placeholder={t("dashboard.vehicleNew.placeholderLicensePlate")}
+                      maxLength={20}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">
+                      {t("dashboard.vehicleNew.vinOptional")}
+                    </label>
+                    <input
+                      {...register("vin")}
+                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono"
+                      placeholder={t("dashboard.vehicleNew.placeholderVin")}
+                      maxLength={17}
+                    />
+                    {errors.vin && (
+                      <p className="mt-1 text-sm text-destructive">
+                        {errors.vin.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </>
             )}
 
             <button

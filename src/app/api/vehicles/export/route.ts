@@ -58,6 +58,7 @@ export async function GET(request: Request) {
         make: vehicle.make,
         model: vehicle.model,
         nickname: vehicle.nickname,
+        licensePlate: vehicle.licensePlate,
         vin: vehicle.vin,
         currentMileage: vehicle.currentMileage,
         status: vehicle.status,

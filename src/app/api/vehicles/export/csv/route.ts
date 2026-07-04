@@ -55,7 +55,7 @@ export async function GET(request: Request) {
     return str;
   };
 
-  const header = "Year,Make,Model,VIN,Mileage,Status,Last Service Date,Last Service Type,Total Maintenance Cost";
+  const header = "Year,Make,Model,License Plate,VIN,Mileage,Status,Last Service Date,Last Service Type,Total Maintenance Cost";
 
   const rows = vehicles.map((v) => {
     const lastMaint = v.maintenanceRecords[0];
@@ -65,6 +65,7 @@ export async function GET(request: Request) {
       escapeCsv(v.year),
       escapeCsv(v.make),
       escapeCsv(v.model),
+      escapeCsv(v.licensePlate),
       escapeCsv(v.vin),
       escapeCsv(v.currentMileage),
       escapeCsv(statusLabel(v.status)),

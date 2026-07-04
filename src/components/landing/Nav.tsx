@@ -27,6 +27,11 @@ const solutions = [
     labelKey: "landing.forConstruction",
     descKey: "landing.forConstruction",
   },
+  {
+    href: "/solutions/workshops",
+    labelKey: "landing.forWorkshops",
+    descKey: "landing.forWorkshops",
+  },
 ];
 
 export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
@@ -57,8 +62,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
             <a href="/" className="flex items-center gap-2.5">
-              <img src="/logo-icon.svg" alt="Vehicle Tracker" className="h-8 w-auto" />
-              <span className="text-lg font-bold text-white">Vehicle Tracker</span>
+              <img src="/logo.png" alt="Vehicle Tracker" className="h-9 w-auto" />
             </a>
 
             <div className="hidden md:flex items-center" ref={dropdownRef}>

@@ -157,6 +157,7 @@ model Vehicle {
   model           String
   year            Int
   vin             String?   @unique
+  licensePlate    String?
   nickname       String?
   vehicleType     String    @default("car")
   status          String    @default("active")

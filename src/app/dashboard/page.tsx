@@ -20,6 +20,7 @@ interface Vehicle {
   year: number;
   nickname: string | null;
   vin: string | null;
+  licensePlate: string | null;
   vehicleType: VehicleType;
   status: VehicleStatus;
   currentMileage: number;
@@ -356,7 +357,10 @@ export default function DashboardPage() {
                       <span className="text-xs text-muted-foreground">{typeLabels[vehicle.vehicleType] || vehicle.vehicleType}</span>
                     </div>
                     <h3 className="text-lg font-semibold mb-1 text-foreground">{vehicle.make} {vehicle.model}</h3>
-                    {vehicle.nickname && <p className="text-sm text-muted-foreground mb-3">{vehicle.nickname}</p>}
+                    <div className="flex items-center gap-2 mb-3">
+                      {vehicle.nickname && <p className="text-sm text-muted-foreground">{vehicle.nickname}</p>}
+                      {vehicle.licensePlate && <span className="text-xs text-muted-foreground">· {vehicle.licensePlate}</span>}
+                    </div>
                     <div className="flex items-center justify-between pt-4 border-t border-border">
                       <div>
                         <p className="text-xs text-muted-foreground">{t("vehicle.mileage")}</p>
