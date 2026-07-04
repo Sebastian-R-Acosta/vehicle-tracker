@@ -78,8 +78,20 @@ export const authConfig: NextAuthConfig = {
         token.role = user.role;
         token.superAdmin = user.superAdmin;
       }
-      if (trigger === "update" && session) {
-        token.currentOrganizationId = session.currentOrganizationId;
+      if (trigger === "update") {
+        const fresh = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { role: true, superAdmin: true, currentOrganizationId: true },
+        });
+        if (fresh) {
+          token.role = fresh.role;
+          token.superAdmin = fresh.superAdmin;
+          if (session?.currentOrganizationId !== undefined) {
+            token.currentOrganizationId = session.currentOrganizationId;
+          } else {
+            token.currentOrganizationId = fresh.currentOrganizationId;
+          }
+        }
       }
       return token;
     },
