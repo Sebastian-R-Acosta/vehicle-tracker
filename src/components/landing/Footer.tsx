@@ -5,9 +5,9 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const columns = [
   {
-    titleKey: "nav.features",
+    titleKey: "nav.about",
     links: [
-      { labelKey: "nav.features", href: "/#features" },
+      { labelKey: "nav.about", href: "/about" },
       { labelKey: "nav.pricing", href: "/pricing" },
       { labelKey: "landing.forIndividuals", href: "/solutions/individuals" },
       { labelKey: "landing.forDealers", href: "/solutions/dealers" },

@@ -103,7 +103,7 @@ export const en: Translations = {
     login: "Log In",
     getStarted: "Get Started Free",
     pricing: "Pricing",
-    features: "Features",
+    about: "About",
     solutions: "Solutions",
   },
   landing: {

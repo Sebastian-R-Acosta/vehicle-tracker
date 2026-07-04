@@ -90,12 +90,12 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
             </div>
 
             <div className="hidden md:flex items-center gap-6 ml-4">
-              <button
-                onClick={() => handleClick("#features")}
+              <Link
+                href="/about"
                 className="text-sm text-gray-300 hover:text-white transition-colors"
               >
-                {t("nav.features")}
-              </button>
+                {t("nav.about")}
+              </Link>
               <Link
                 href="/pricing"
                 className="text-sm text-gray-300 hover:text-white transition-colors"
@@ -147,24 +147,20 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
             </Link>
           ))}
           <div className="border-t border-white/10 pt-3 mt-2">
-            {["nav.features", "nav.pricing"].map((key) => (
-              <button
-                key={key}
-                onClick={() => {
-                  setOpen(false);
-                  const id = key.split(".")[1];
-                  if (id === "pricing") {
-                    window.location.href = "/pricing";
-                  } else {
-                    const el = document.querySelector(`#${id}`);
-                    if (el) el.scrollIntoView({ behavior: "smooth" });
-                  }
-                }}
-                className="block w-full text-left text-sm text-gray-300 hover:text-white py-3"
-              >
-                {t(key)}
-              </button>
-            ))}
+            {["nav.about", "nav.pricing"].map((key) => {
+              const id = key.split(".")[1];
+              const href = id === "about" ? "/about" : "/pricing";
+              return (
+                <Link
+                  key={key}
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  className="block text-sm text-gray-300 hover:text-white py-3"
+                >
+                  {t(key)}
+                </Link>
+              );
+            })}
           </div>
           <div className="flex items-center gap-2 px-2 py-2 border-t border-white/10 mt-2 pt-3">
             <LanguageToggle className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg" />

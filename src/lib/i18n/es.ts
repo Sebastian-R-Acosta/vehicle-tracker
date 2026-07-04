@@ -101,7 +101,7 @@ export const es = {
     login: "Iniciar Sesión",
     getStarted: "Empezar Gratis",
     pricing: "Precios",
-    features: "Características",
+    about: "Acerca de",
     solutions: "Soluciones",
   },
   landing: {
