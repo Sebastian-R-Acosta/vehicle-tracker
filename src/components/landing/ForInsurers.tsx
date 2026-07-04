@@ -31,8 +31,8 @@ export default function ForInsurers() {
                      className={`grid lg:grid-cols-2 gap-8 lg:gap-20 items-center transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="order-2 lg:order-1">
-            <div className="bg-gray-200 rounded-2xl aspect-[4/3] flex items-center justify-center">
-              <span className="text-gray-400 font-medium">{t("landing.forInsurersSection.preview")}</span>
+            <div className="bg-gray-200 rounded-2xl overflow-hidden shadow-inner">
+              <img src="/screenshots/dashboard-preview.png" alt="Insurance Dashboard Preview" className="w-full h-auto" />
             </div>
           </div>
 

@@ -16,7 +16,7 @@ export default function CTA({ onBookDemo }: { onBookDemo: () => void }) {
       <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/20 rounded-full text-sm text-blue-300 mb-6">
           <Sparkles className="w-3.5 h-3.5" />
-          {t("landing.ctaTitle")}
+          {t("landing.ctaBadge")}
         </div>
 
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">

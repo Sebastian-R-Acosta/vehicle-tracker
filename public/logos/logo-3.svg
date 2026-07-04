@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <rect width="200" height="50" fill="#0c4a6e" rx="8"/>
+  <circle cx="20" cy="25" r="10" fill="none" stroke="#7dd3fc" stroke-width="2.5"/>
+  <path d="M20 18 L20 25 L26 28" stroke="#7dd3fc" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <text x="38" y="32" font-family="Arial, sans-serif" font-weight="700" font-size="16" fill="#ffffff" letter-spacing="1.5">SHIELD</text>
+  <text x="98" y="32" font-family="Arial, sans-serif" font-weight="300" font-size="16" fill="#7dd3fc" letter-spacing="1.5">AUTO</text>
+</svg>

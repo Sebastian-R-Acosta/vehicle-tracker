@@ -68,8 +68,8 @@ export default function ForDealers() {
             </Link>
           </div>
 
-          <div className="bg-gray-200 rounded-2xl aspect-[4/3] flex items-center justify-center">
-            <span className="text-gray-400 font-medium">{t("landing.forDealersSection.preview")}</span>
+          <div className="bg-gray-200 rounded-2xl overflow-hidden shadow-inner">
+            <img src="/screenshots/dashboard-preview.png" alt="Dealer Dashboard Preview" className="w-full h-auto" />
           </div>
         </div>
       </div>

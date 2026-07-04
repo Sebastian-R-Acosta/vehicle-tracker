@@ -57,7 +57,7 @@ export default function Footer() {
               <span className="text-lg font-bold text-white">Vehicle Tracker</span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
-              {t("landing.heroSubtitle")}
+              {t("landing.footerDescription")}
             </p>
           </div>
 

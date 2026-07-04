@@ -6,9 +6,9 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const stats = [
-  { label: "Vehicles Tracked", target: 50000, suffix: "+" },
-  { label: "Dealerships", target: 500, suffix: "+" },
-  { label: "Service Records", target: 250000, suffix: "+" },
+  { labelKey: "landing.statVehiclesTracked", target: 50000, suffix: "+" },
+  { labelKey: "landing.statDealerships", target: 500, suffix: "+" },
+  { labelKey: "landing.statServiceRecords", target: 250000, suffix: "+" },
 ];
 
 function AnimatedCounter({ target, suffix }: { target: number; suffix: string }) {
@@ -96,9 +96,9 @@ export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
           {stats.map((stat) => (
-            <div key={stat.label} className="text-center">
+            <div key={stat.labelKey} className="text-center">
               <AnimatedCounter target={stat.target} suffix={stat.suffix} />
-              <div className="text-sm text-blue-200 mt-1">{stat.label}</div>
+              <div className="text-sm text-blue-200 mt-1">{t(stat.labelKey)}</div>
             </div>
           ))}
         </div>

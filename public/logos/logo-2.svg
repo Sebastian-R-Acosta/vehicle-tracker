@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <rect width="200" height="50" fill="#0f172a" rx="8"/>
+  <path d="M16 30 L22 18 L28 30" stroke="#38bdf8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M22 18 L28 30 L34 18" stroke="#38bdf8" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <text x="42" y="32" font-family="Arial, sans-serif" font-weight="700" font-size="16" fill="#ffffff" letter-spacing="1.5">FLEET</text>
+  <text x="90" y="32" font-family="Arial, sans-serif" font-weight="300" font-size="16" fill="#94a3b8" letter-spacing="1.5">PRO</text>
+</svg>
