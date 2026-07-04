@@ -9,7 +9,11 @@ export default async function AdminPage() {
   const session = await auth();
   if (session?.user?.role !== "admin") redirect("/dashboard");
 
-  const isSuperAdmin = session?.user?.superAdmin ?? false;
+  const currentUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { superAdmin: true },
+  });
+  const isSuperAdmin = currentUser?.superAdmin ?? false;
 
   const [userCount, vehicleCount, recordCount, docCount, orgCount, recentUsers] = await Promise.all([
     prisma.user.count(),

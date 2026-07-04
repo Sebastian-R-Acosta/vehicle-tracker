@@ -2,13 +2,10 @@
 
 import { useState } from "react";
 import { Shield, Loader2 } from "lucide-react";
-import { useSession } from "next-auth/react";
 
 export default function ClaimSuperAdminButton() {
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
   const [error, setError] = useState("");
-  const { update } = useSession();
 
   const claim = async () => {
     setLoading(true);
@@ -19,16 +16,13 @@ export default function ClaimSuperAdminButton() {
         const data = await res.json();
         throw new Error(data.error || "Failed to claim");
       }
-      await update();
-      setDone(true);
+      window.location.reload();
     } catch (e: any) {
       setError(e.message);
     } finally {
       setLoading(false);
     }
   };
-
-  if (done) return null;
 
   return (
     <div>

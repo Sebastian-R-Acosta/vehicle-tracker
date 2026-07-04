@@ -4,7 +4,12 @@ import { prisma } from "@/lib/db";
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const session = await auth();
-  if (!session?.user?.superAdmin) {
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const caller = await prisma.user.findUnique({ where: { id: session.user.id } });
+  if (!caller?.superAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
