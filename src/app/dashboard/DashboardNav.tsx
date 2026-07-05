@@ -16,7 +16,6 @@ interface NavItem {
   href: string;
   label: string;
   icon: React.ReactNode;
-  mobileLabel?: string;
 }
 
 export function DashboardNav() {
@@ -77,6 +76,16 @@ export function DashboardNav() {
 
   return (
     <header className="bg-card border-b border-border sticky top-0 z-50">
+      <style>{`
+        @media (min-width: 1024px) {
+          .nav-desktop { display: flex !important; }
+          .nav-mobile-toggle { display: none !important; }
+        }
+        @media (max-width: 1023.98px) {
+          .nav-desktop { display: none !important; }
+          .nav-mobile-toggle { display: flex !important; }
+        }
+      `}</style>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4 min-w-0">
@@ -85,7 +94,7 @@ export function DashboardNav() {
               <span className="text-xl font-bold text-foreground hidden sm:inline">Bitácora</span>
             </Link>
 
-            <nav className="hidden lg:flex items-center gap-0.5" aria-label="Main navigation">
+            <nav className="nav-desktop items-center gap-0.5" aria-label="Main navigation">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
@@ -135,7 +144,7 @@ export function DashboardNav() {
             <button
               ref={toggleRef}
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+              className="nav-mobile-toggle p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
             >
