@@ -34,13 +34,13 @@ export function DashboardNav() {
   }, []);
 
   const navItems: NavItem[] = [
-    { href: "/dashboard", label: t("dashboard.home.title"), icon: <LayoutDashboard className="w-4 h-4" /> },
-    { href: "/dashboard/construction-sites", label: t("nav.constructionSites"), icon: <Building2 className="w-4 h-4" /> },
-    { href: "/dashboard/parts", label: t("nav.parts"), icon: <Package className="w-4 h-4" /> },
-    { href: "/dashboard/service-providers", label: t("nav.serviceProviders"), icon: <Wrench className="w-4 h-4" /> },
-    { href: "/dashboard/drivers", label: t("nav.drivers"), icon: <Users className="w-4 h-4" /> },
-    { href: "/dashboard/scan", label: t("nav.scan"), icon: <Scan className="w-4 h-4" /> },
-    { href: "/dashboard/profile", label: t("nav.settings"), icon: <User className="w-4 h-4" /> },
+    { href: "/dashboard", label: t("dashboard.home.title"), icon: <LayoutDashboard className="w-3.5 h-3.5" /> },
+    { href: "/dashboard/construction-sites", label: t("nav.constructionSites"), icon: <Building2 className="w-3.5 h-3.5" /> },
+    { href: "/dashboard/parts", label: t("nav.parts"), icon: <Package className="w-3.5 h-3.5" /> },
+    { href: "/dashboard/service-providers", label: t("nav.serviceProviders"), icon: <Wrench className="w-3.5 h-3.5" /> },
+    { href: "/dashboard/drivers", label: t("nav.drivers"), icon: <Users className="w-3.5 h-3.5" /> },
+    { href: "/dashboard/scan", label: t("nav.scan"), icon: <Scan className="w-3.5 h-3.5" /> },
+    { href: "/dashboard/profile", label: t("nav.settings"), icon: <User className="w-3.5 h-3.5" /> },
   ];
 
   const isActive = (href: string) => {
@@ -99,7 +99,7 @@ export function DashboardNav() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-150 ${
+                  className={`flex items-center gap-1 px-2 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 ${
                     isActive(item.href)
                       ? "bg-primary/10 text-primary shadow-sm"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent"
