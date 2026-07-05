@@ -4,8 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { Loader2, Save, User, MapPin, Car, ChevronRight, Bell, Wallet } from "lucide-react";
-import Link from "next/link";
+import { Loader2, Save, User, Bell, Wallet } from "lucide-react";
 import toast from "react-hot-toast";
 import DocumentWallet from "@/components/DocumentWallet";
 
@@ -170,7 +169,7 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t("license.title")}</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t("nav.profile")}</h1>
           <p className="text-sm text-muted-foreground mt-1">{session?.user?.email}</p>
         </div>
         <button
@@ -329,29 +328,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Navigation Links */}
-      <div className="bg-card border border-border rounded-xl divide-y divide-border">
-        <Link
-          href="/dashboard/vehicles"
-          className="flex items-center justify-between p-4 hover:bg-accent/50 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <Car className="w-5 h-5 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">{t("vehicle.title")}</span>
-          </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
-        </Link>
-        <Link
-          href="/dashboard/settings"
-          className="flex items-center justify-between p-4 hover:bg-accent/50 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <MapPin className="w-5 h-5 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">{t("settings.title")}</span>
-          </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
-        </Link>
-      </div>
+
     </div>
   );
 }

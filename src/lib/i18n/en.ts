@@ -119,6 +119,7 @@ export const en: Translations = {
     drivers: "Drivers",
     reminders: "Reminders",
     scan: "Scan VIN",
+    profile: "Profile",
     settings: "Settings",
     members: "Members",
     logout: "Log Out",

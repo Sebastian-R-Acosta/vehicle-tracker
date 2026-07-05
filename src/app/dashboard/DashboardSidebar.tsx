@@ -42,7 +42,7 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
     { href: "/dashboard/service-providers", label: t("nav.serviceProviders"), icon: <Wrench className="w-5 h-5" /> },
     { href: "/dashboard/drivers", label: t("nav.drivers"), icon: <Users className="w-5 h-5" /> },
     { href: "/dashboard/scan", label: t("nav.scan"), icon: <Scan className="w-5 h-5" /> },
-    { href: "/dashboard/profile", label: t("nav.settings"), icon: <User className="w-5 h-5" /> },
+    { href: "/dashboard/profile", label: t("nav.profile"), icon: <User className="w-5 h-5" /> },
   ];
 
   const isActive = (href: string) => {

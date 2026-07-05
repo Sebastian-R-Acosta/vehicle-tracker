@@ -117,6 +117,7 @@ export const es = {
     drivers: "Conductores",
     reminders: "Recordatorios",
     scan: "Escaneá VIN",
+    profile: "Perfil",
     settings: "Configuración",
     members: "Miembros",
     logout: "Cerrar Sesión",
