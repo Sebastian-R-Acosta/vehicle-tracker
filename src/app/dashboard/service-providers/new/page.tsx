@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Loader2, Building2 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import Link from "next/link";
+import { getIndustryPageLabels, IndustryType } from "@/lib/industry-labels";
 
 
 
@@ -13,6 +14,7 @@ export default function NewServiceProviderPage() {
   const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
+  const labels = getIndustryPageLabels((session?.user?.industryType as IndustryType) ?? "default", "service-providers");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
@@ -106,7 +108,7 @@ export default function NewServiceProviderPage() {
             <div className="p-2 bg-primary rounded-lg">
               <Building2 className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold text-foreground">{t("dashboard.serviceProviders.new.heading")}</h1>
+            <h1 className="text-xl font-semibold text-foreground">{labels.newHeading}</h1>
           </div>
 
           {error && (
@@ -199,7 +201,7 @@ export default function NewServiceProviderPage() {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {t("dashboard.serviceProviders.new.createProvider")}
+              {labels.saveAction}
             </button>
           </form>
         </div>

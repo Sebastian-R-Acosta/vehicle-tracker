@@ -7,6 +7,7 @@ import { Building2, Users, Car, Bell, ArrowLeft, Save, Loader2, Trash2, Plus } f
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import CreateOrgModal from "@/components/CreateOrgModal";
+import { INDUSTRIES, IndustryType } from "@/lib/industry-labels";
 
 interface Org {
   id: string;
@@ -14,6 +15,7 @@ interface Org {
   slug: string;
   logoUrl: string | null;
   primaryColor: string;
+  industryType?: string;
   role: string;
   _count?: { members: number; vehicles: number };
 }
@@ -28,6 +30,7 @@ export default function SettingsPage() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [primaryColor, setPrimaryColor] = useState("#2563eb");
+  const [industryType, setIndustryType] = useState<IndustryType>("construction");
   const [error, setError] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -56,6 +59,7 @@ export default function SettingsPage() {
         setName(data.name);
         setSlug(data.slug);
         setPrimaryColor(data.primaryColor || "#2563eb");
+        setIndustryType((data.industryType as IndustryType) || "construction");
       }
     } catch (err) {
       console.error("Failed to fetch org:", err);
@@ -73,7 +77,7 @@ export default function SettingsPage() {
       const res = await fetch(`/api/organizations/${currentOrgId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, slug, primaryColor }),
+        body: JSON.stringify({ name, slug, primaryColor, industryType }),
       });
 
       if (!res.ok) {
@@ -82,6 +86,7 @@ export default function SettingsPage() {
       }
 
       fetchOrg();
+      await update();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -199,6 +204,20 @@ export default function SettingsPage() {
                 />
                 <span className="text-sm text-muted-foreground">{primaryColor}</span>
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">{t("dashboard.settings.industryType")}</label>
+              <select
+                value={industryType}
+                onChange={(e) => setIndustryType(e.target.value as IndustryType)}
+                className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
+              >
+                {INDUSTRIES.map((ind) => (
+                  <option key={ind.value} value={ind.value}>{ind.label}</option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.settings.industryTypeHelper")}</p>
             </div>
           </div>
 

@@ -48,7 +48,7 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const { name, slug, logoUrl, primaryColor } = body;
+  const { name, slug, logoUrl, primaryColor, industryType } = body;
 
   if (slug) {
     const existing = await prisma.organization.findFirst({
@@ -61,7 +61,7 @@ export async function PUT(
 
   const org = await prisma.organization.update({
     where: { id: params.id },
-    data: { name, slug, logoUrl, primaryColor },
+    data: { name, slug, logoUrl, primaryColor, industryType },
   });
 
   return NextResponse.json(org);

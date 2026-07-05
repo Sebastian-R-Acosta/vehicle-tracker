@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Loader2, User } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { getIndustryPageLabels, IndustryType } from "@/lib/industry-labels";
 
 const driverSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
@@ -25,6 +26,7 @@ export default function NewDriverPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { t } = useLanguage();
+  const labels = getIndustryPageLabels((session?.user?.industryType as IndustryType) ?? "default", "drivers");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -84,7 +86,7 @@ export default function NewDriverPage() {
           <div className="p-2 bg-primary rounded-lg">
             <User className="w-5 h-5 text-primary-foreground" />
           </div>
-          <h1 className="text-xl font-semibold text-foreground">{t("dashboard.driversNew.heading")}</h1>
+          <h1 className="text-xl font-semibold text-foreground">{labels.newHeading}</h1>
         </div>
 
         {error && (
@@ -190,7 +192,7 @@ export default function NewDriverPage() {
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {t("dashboard.driversNew.createDriver")}
+            {labels.saveAction}
           </button>
         </form>
       </div>

@@ -7,6 +7,7 @@ import { AlertTriangle, Package, Plus, Search, Filter, Loader2, PackageOpen } fr
 import Link from "next/link";
 import { useFetch } from "@/lib/queries";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { getIndustryPageLabels, IndustryType } from "@/lib/industry-labels";
 
 interface VehicleRef {
   id: string;
@@ -31,6 +32,7 @@ export default function PartsPage() {
   const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
+  const labels = getIndustryPageLabels((session?.user?.industryType as IndustryType) ?? "default", "parts");
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
@@ -123,15 +125,15 @@ export default function PartsPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t("dashboard.parts.heading")}</h1>
-            <p className="text-muted-foreground">{t("dashboard.parts.subtitle")}</p>
+            <h1 className="text-2xl font-bold text-foreground">{labels.heading}</h1>
+            <p className="text-muted-foreground">{labels.subtitle}</p>
           </div>
           <Link
             href="/dashboard/parts/new"
             className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
           >
             <Plus className="w-4 h-4" />
-            {t("dashboard.parts.addPart")}
+            {labels.action}
           </Link>
         </div>
 
@@ -197,7 +199,7 @@ export default function PartsPage() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
               >
                 <Plus className="w-4 h-4" />
-                {t("dashboard.parts.addPartCta")}
+                {labels.action}
               </Link>
             )}
           </div>

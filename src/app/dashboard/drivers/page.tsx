@@ -7,6 +7,7 @@ import Link from "next/link";
 import { AlertTriangle, Plus, Loader2, Users, Search, CheckCircle, XCircle, Mail, Phone, BadgeCheck } from "lucide-react";
 import { useFetch } from "@/lib/queries";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { getIndustryPageLabels, IndustryType } from "@/lib/industry-labels";
 
 interface Driver {
   id: string;
@@ -21,6 +22,7 @@ export default function DriversPage() {
   const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
+  const labels = getIndustryPageLabels((session?.user?.industryType as IndustryType) ?? "default", "drivers");
   const [search, setSearch] = useState("");
 
   const orgId = session?.user?.currentOrganizationId || "";
@@ -89,15 +91,15 @@ export default function DriversPage() {
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t("dashboard.drivers.heading")}</h1>
-          <p className="text-muted-foreground">{t("dashboard.drivers.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-foreground">{labels.heading}</h1>
+          <p className="text-muted-foreground">{labels.subtitle}</p>
         </div>
         <Link
           href="/dashboard/drivers/new"
           className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
         >
           <Plus className="w-4 h-4" />
-          {t("dashboard.drivers.addDriver")}
+          {labels.action}
         </Link>
       </div>
 
@@ -139,7 +141,7 @@ export default function DriversPage() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
             >
               <Plus className="w-4 h-4" />
-              {t("dashboard.drivers.addDriverCta")}
+              {labels.action}
             </Link>
           )}
         </div>

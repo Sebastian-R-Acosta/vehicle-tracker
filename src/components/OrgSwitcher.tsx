@@ -86,7 +86,7 @@ export default function OrgSwitcher() {
         </button>
 
         {open && (
-          <div className="absolute top-full left-0 mt-1 w-64 bg-card border border-border rounded-lg shadow-lg z-50 py-1">
+          <div className="absolute bottom-full left-0 mb-1 w-64 bg-card border border-border rounded-lg shadow-lg z-50 py-1">
             <div className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Switch account
             </div>

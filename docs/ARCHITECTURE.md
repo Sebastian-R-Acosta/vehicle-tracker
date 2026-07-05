@@ -56,6 +56,31 @@ Bitácora is a full-stack SaaS platform for personal and commercial vehicle mana
 - Prisma Migrate for schema management
 - Key tables: `users`, `vehicles`, `maintenance_records`, `reminders`, `transfer_codes`, `documents`, `organizations`, `organization_members`, `construction_sites`, `drivers`, `parts`, `service_providers`
 
+### Database Migrations (Current Strategy)
+
+**⚠️ Important: This project uses `prisma db push` instead of `prisma migrate dev`.**
+
+**Why:** The `_prisma_migrations` table in the Neon database is empty (the schema was originally created via `db push`, not `migrate dev`). Running `prisma migrate dev` will fail with error P3015 ("Found failed migrations in the `_prisma_migrations` table") because the existing migration files in `prisma/migrations/` were never recorded in the database.
+
+**How to apply schema changes:**
+
+```bash
+# After editing prisma/schema.prisma:
+npx prisma db push
+```
+
+This directly applies the schema to the database without creating a new migration file. It's safe for development but does not produce reversible migration files.
+
+**To transition back to `prisma migrate dev` (future):**
+
+1. Run `prisma migrate resolve --applied 20260516000001_init` for each existing migration directory to mark them as applied in `_prisma_migrations`
+2. Then `prisma migrate dev` will work for future changes
+
+**General rules:**
+- Always run `npx prisma generate` after schema changes to update the Prisma Client
+- `db push` does not create migration files — changes are applied directly
+- `db push` will warn if the change requires dropping data (destructive changes like removing columns)
+
 ### Monitoring & Analytics
 
 | Service | Purpose |

@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { name, slug } = body;
+  const { name, slug, industryType } = body;
 
   if (!name || !slug) {
     return new NextResponse("Name and slug are required", { status: 400 });
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
   }
 
   const org = await prisma.organization.create({
-    data: { name, slug },
+    data: { name, slug, industryType: industryType ?? "construction" },
   });
 
   await prisma.organizationMember.create({

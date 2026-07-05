@@ -9,6 +9,7 @@ import jsPDF from "jspdf";
 import { useFetch } from "@/lib/queries";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { getIndustryPageLabels, IndustryType } from "@/lib/industry-labels";
 
 type VehicleType = "car" | "truck" | "motorcycle" | "excavator" | "bulldozer" | "dump_truck" | "crane" | "loader" | "grader" | "other";
 type VehicleStatus = "active" | "maintenance" | "sold" | "inactive";
@@ -44,6 +45,7 @@ export default function DashboardPage() {
   const { t } = useLanguage();
   const { data: session, status: authStatus } = useSession();
   const router = useRouter();
+  const vehicleLabels = getIndustryPageLabels((session?.user?.industryType as IndustryType) ?? "default", "vehicles");
   const [filterType, setFilterType] = useState<VehicleType | "all">("all");
   const [filterStatus, setFilterStatus] = useState<VehicleStatus | "all">("all");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -219,7 +221,7 @@ export default function DashboardPage() {
             className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
           >
             <Plus className="w-4 h-4" />
-            {t("dashboard.home.addVehicle")}
+            {vehicleLabels.action}
           </Link>
         </div>
 
@@ -324,7 +326,7 @@ export default function DashboardPage() {
             <h2 className="text-lg font-medium mb-2 text-foreground">{t("dashboard.home.noVehicles")}</h2>
             <p className="text-muted-foreground mb-4">{t("dashboard.home.addFirstVehicle")}</p>
             <Link href="/dashboard/vehicles/new" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90">
-              <Plus className="w-4 h-4" />{t("dashboard.home.addVehicleCta")}
+              <Plus className="w-4 h-4" />{vehicleLabels.action}
             </Link>
           </div>
         ) : filteredVehicles.length === 0 ? (

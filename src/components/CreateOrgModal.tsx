@@ -6,6 +6,7 @@ import { Building2, Loader2, Sparkles, X } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import toast from "react-hot-toast";
+import { INDUSTRIES, IndustryType } from "@/lib/industry-labels";
 
 interface CreateOrgModalProps {
   open: boolean;
@@ -23,6 +24,7 @@ export default function CreateOrgModal({ open, onClose, onCreated }: CreateOrgMo
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [nameManuallyEdited, setNameManuallyEdited] = useState(false);
+  const [industryType, setIndustryType] = useState<IndustryType>("construction");
 
   useEffect(() => {
     if (!open) return;
@@ -55,7 +57,7 @@ export default function CreateOrgModal({ open, onClose, onCreated }: CreateOrgMo
       const res = await fetch("/api/organizations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), slug: slug.trim() }),
+        body: JSON.stringify({ name: name.trim(), slug: slug.trim(), industryType }),
       });
       if (!res.ok) {
         const err = await res.text();
@@ -120,6 +122,18 @@ export default function CreateOrgModal({ open, onClose, onCreated }: CreateOrgMo
                   placeholder="taller-el-chapin"
                 />
                 <p className="text-xs text-muted-foreground mt-1">bitacora.app/{slug || "..."}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Industry Type</label>
+                <select
+                  value={industryType}
+                  onChange={(e) => setIndustryType(e.target.value as IndustryType)}
+                  className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
+                >
+                  {INDUSTRIES.map((ind) => (
+                    <option key={ind.value} value={ind.value}>{ind.label}</option>
+                  ))}
+                </select>
               </div>
             </div>
           ) : (

@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { useFetch } from "@/lib/queries";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { VehicleTaskSection } from "@/components/VehicleTaskSection";
 import toast from "react-hot-toast";
 
 interface MaintenanceRecord {
@@ -772,6 +773,8 @@ export default function VehicleDetailPage() {
                 )}
               </div>
             )}
+
+            <VehicleTaskSection vehicleId={vehicle.id} />
 
             <div className="bg-card rounded-lg border border-border p-6">
               <div className="flex items-center justify-between mb-4">

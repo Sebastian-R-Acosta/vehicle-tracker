@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2, Car, Truck, Bike, Zap, Drill, Tractor, Hammer, Buil
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { getIndustryPageLabels, IndustryType } from "@/lib/industry-labels";
 
 const vehicleSchema = z.object({
   make: z.string().min(1, "Make is required").max(100),
@@ -44,6 +45,7 @@ export default function NewVehiclePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { t } = useLanguage();
+  const labels = getIndustryPageLabels((session?.user?.industryType as IndustryType) ?? "default", "vehicles");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [constructionSites, setConstructionSites] = useState<{ id: string; name: string }[]>([]);
@@ -176,7 +178,7 @@ export default function NewVehiclePage() {
             <div className="p-2 bg-primary rounded-lg">
               <Car className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold text-foreground">{t("dashboard.vehicleNew.heading")}</h1>
+            <h1 className="text-xl font-semibold text-foreground">{labels.newHeading}</h1>
           </div>
 
           {error && (
@@ -417,7 +419,7 @@ export default function NewVehiclePage() {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {t("dashboard.vehicleNew.addVehicle")}
+              {labels.saveAction}
             </button>
           </form>
         </div>

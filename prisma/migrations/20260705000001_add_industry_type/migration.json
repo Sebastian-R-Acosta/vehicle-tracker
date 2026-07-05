@@ -1,0 +1,20 @@
+{
+  "version": "5.2",
+  "steps": [
+    {
+      "tag": "AlterTable",
+      "table": "Organization",
+      "operations": [
+        {
+          "tag": "AddColumn",
+          "column": {
+            "name": "industryType",
+            "type": "TEXT",
+            "default": "'construction'",
+            "isRequired": true
+          }
+        }
+      ]
+    }
+  ]
+}

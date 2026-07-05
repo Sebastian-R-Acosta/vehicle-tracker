@@ -1,9 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+
+const ThreeJSVehicle = dynamic(
+  () => import("@/components/landing/ThreeJSVehicle"),
+  { ssr: false }
+);
 
 const stats = [
   { labelKey: "landing.statVehiclesTracked", target: 50000, suffix: "+" },
@@ -57,50 +63,60 @@ export default function Hero({ onBookDemo }: { onBookDemo?: () => void }) {
   const { t } = useLanguage();
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 overflow-hidden pt-16">
+    <section className="relative min-h-screen flex items-center bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 overflow-hidden pt-16">
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.12),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.08),transparent_50%)]" />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full text-sm text-blue-100 mb-8">
-          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          {t("landing.trustBarHeading")}
-        </div>
-
-        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
-          {t("landing.heroTitle")}
-        </h1>
-
-        <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-10 leading-relaxed">
-          {t("landing.heroSubtitle")}
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-          <Link
-            href="/register"
-            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all shadow-xl hover:shadow-2xl"
-          >
-            {t("landing.heroCta")}
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-          <button
-            onClick={onBookDemo}
-            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-medium text-gray-900 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
-          >
-            <Play className="w-4 h-4" />
-            {t("landing.heroDemo")}
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
-          {stats.map((stat) => (
-            <div key={stat.labelKey} className="text-center">
-              <AnimatedCounter target={stat.target} suffix={stat.suffix} />
-              <div className="text-sm text-blue-200 mt-1">{t(stat.labelKey)}</div>
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="text-center md:text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full text-sm text-blue-100 mb-8">
+              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              {t("landing.trustBarHeading")}
             </div>
-          ))}
+
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
+              {t("landing.heroTitle")}
+            </h1>
+
+            <p className="text-lg md:text-xl text-blue-100 max-w-2xl mb-10 leading-relaxed">
+              {t("landing.heroSubtitle")}
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center md:justify-start gap-4 mb-16">
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all shadow-xl hover:shadow-2xl"
+              >
+                {t("landing.heroCta")}
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <button
+                onClick={onBookDemo}
+                className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-medium text-gray-900 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
+              >
+                <Play className="w-4 h-4" />
+                {t("landing.heroDemo")}
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl">
+              {stats.map((stat) => (
+                <div key={stat.labelKey} className="text-center md:text-left">
+                  <AnimatedCounter target={stat.target} suffix={stat.suffix} />
+                  <div className="text-sm text-blue-200 mt-1">{t(stat.labelKey)}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="hidden md:flex items-center justify-center">
+            <div className="w-full max-w-[500px] aspect-square">
+              <ThreeJSVehicle />
+            </div>
+          </div>
         </div>
       </div>
     </section>
