@@ -106,16 +106,16 @@ export default function SettingsPage() {
     }
   };
 
+  let content: React.ReactNode;
+
   if (status === "loading" || loading) {
-    return (
+    content = (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
-  }
-
-  if (!currentOrgId || !org) {
-    return (
+  } else if (!currentOrgId || !org) {
+    content = (
       <div className="min-h-screen bg-background">
         <header className="bg-card border-b border-border">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-16">
@@ -139,22 +139,21 @@ export default function SettingsPage() {
         </main>
       </div>
     );
-  }
+  } else {
+    const isOwner = org.role === "owner";
 
-  const isOwner = org.role === "owner";
+    content = (
+      <div className="min-h-screen bg-background">
+        <header className="bg-card border-b border-border">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-16">
+            <Link href="/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="w-4 h-4" />
+              {t("dashboard.settings.back")}
+            </Link>
+          </div>
+        </header>
 
-  return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b border-border">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-16">
-          <Link href="/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="w-4 h-4" />
-            {t("dashboard.settings.back")}
-          </Link>
-        </div>
-      </header>
-
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-2xl font-bold text-foreground mb-2">{t("dashboard.settings.heading")}</h1>
         <p className="text-muted-foreground mb-8">
           {t("dashboard.settings.subtitle")}
@@ -249,27 +248,34 @@ export default function SettingsPage() {
           </Link>
         </div>
 
-        {isOwner && (
-          <div className="bg-card rounded-lg border border-destructive/30 p-6">
-            <h2 className="text-lg font-semibold text-destructive mb-2">{t("dashboard.settings.dangerZone")}</h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              {t("dashboard.settings.dangerZoneDesc")}
-            </p>
-            <button
-              onClick={handleDelete}
-               className="flex items-center gap-2 px-4 py-3 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90 transition-opacity"
-            >
-              <Trash2 className="w-4 h-4" />
-              {t("dashboard.settings.deleteOrg")}
-            </button>
-          </div>
-        )}
-      </main>
+            {isOwner && (
+              <div className="bg-card rounded-lg border border-destructive/30 p-6">
+                <h2 className="text-lg font-semibold text-destructive mb-2">{t("dashboard.settings.dangerZone")}</h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {t("dashboard.settings.dangerZoneDesc")}
+                </p>
+                <button
+                  onClick={handleDelete}
+                   className="flex items-center gap-2 px-4 py-3 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90 transition-opacity"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  {t("dashboard.settings.deleteOrg")}
+                </button>
+              </div>
+            )}
+          </main>
+        </div>
+      );
+  }
+
+  return (
+    <>
+      {content}
       <CreateOrgModal
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onCreated={() => window.location.reload()}
       />
-    </div>
+    </>
   );
 }
