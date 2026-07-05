@@ -3,9 +3,10 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Building2, Users, Car, Bell, ArrowLeft, Save, Loader2, Trash2 } from "lucide-react";
+import { Building2, Users, Car, Bell, ArrowLeft, Save, Loader2, Trash2, Plus } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import CreateOrgModal from "@/components/CreateOrgModal";
 
 interface Org {
   id: string;
@@ -28,6 +29,7 @@ export default function SettingsPage() {
   const [slug, setSlug] = useState("");
   const [primaryColor, setPrimaryColor] = useState("#2563eb");
   const [error, setError] = useState("");
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const currentOrgId = session?.user?.currentOrganizationId;
 
@@ -126,7 +128,14 @@ export default function SettingsPage() {
         <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <Building2 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
           <h2 className="text-lg font-medium mb-2 text-foreground">{t("dashboard.settings.noOrgHeading")}</h2>
-          <p className="text-muted-foreground">{t("dashboard.settings.noOrgDesc")}</p>
+          <p className="text-muted-foreground mb-6">{t("dashboard.settings.noOrgDesc")}</p>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
+          >
+            <Plus className="w-4 h-4" />
+            {t("common.createOrganization")}
+          </button>
         </main>
       </div>
     );
@@ -256,6 +265,11 @@ export default function SettingsPage() {
           </div>
         )}
       </main>
+      <CreateOrgModal
+        open={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreated={() => window.location.reload()}
+      />
     </div>
   );
 }
