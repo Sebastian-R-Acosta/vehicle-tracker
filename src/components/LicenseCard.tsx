@@ -2,7 +2,8 @@
 
 import { useState, useRef, useCallback } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { Camera, Upload, RotateCw, User } from "lucide-react";
+import { Upload, RotateCw, User, Loader2 } from "lucide-react";
+import { processLicenseImage } from "@/lib/image-process";
 
 interface LicenseCardProps {
   name: string | null;
@@ -14,6 +15,7 @@ interface LicenseCardProps {
   avatarUrl: string | null;
   onUpload: (side: "front" | "back", base64: string) => void;
   onPhotograph: (side: "front" | "back") => void;
+  onView: () => void;
 }
 
 export default function LicenseCard({
@@ -26,12 +28,13 @@ export default function LicenseCard({
   avatarUrl,
   onUpload,
   onPhotograph,
+  onView,
 }: LicenseCardProps) {
   const { t, locale } = useLanguage();
   const [flipped, setFlipped] = useState(false);
-  const [activeSide, setActiveSide] = useState<"front" | "back">("front");
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingSide, setUploadingSide] = useState<"front" | "back" | null>(null);
+  const frontInputRef = useRef<HTMLInputElement>(null);
+  const backInputRef = useRef<HTMLInputElement>(null);
 
   const daysUntilExpiry = licenseExpiry
     ? Math.ceil((new Date(licenseExpiry).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
@@ -46,22 +49,27 @@ export default function LicenseCard({
     const file = e.target.files?.[0];
     if (!file) return;
     setUploadingSide(side);
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = (reader.result as string).split(",")[1];
-      onUpload(side, base64);
+    try {
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve((reader.result as string).split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const processed = await processLicenseImage(base64);
+      onUpload(side, processed);
+    } catch {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(",")[1];
+        onUpload(side, base64);
+      };
+      reader.readAsDataURL(file);
+    } finally {
       setUploadingSide(null);
-    };
-    reader.readAsDataURL(file);
-    e.target.value = "";
-  }, [onUpload]);
-
-  const triggerUpload = (side: "front" | "back") => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-      setActiveSide(side);
+      e.target.value = "";
     }
-  };
+  }, [onUpload]);
 
   const formatExpiry = (dateStr: string | null) => {
     if (!dateStr) return "—";
@@ -73,7 +81,9 @@ export default function LicenseCard({
     });
   };
 
+  const hasImage = !!(licenseImageFront || licenseImageBack);
   const showBothSidesToggle = licenseImageFront && licenseImageBack;
+  const currentImage = flipped ? licenseImageBack : licenseImageFront;
 
   return (
     <div className="space-y-4">
@@ -88,7 +98,7 @@ export default function LicenseCard({
         </div>
         {showBothSidesToggle && (
           <button
-            onClick={() => setFlipped(!flipped)}
+            onClick={(e) => { e.stopPropagation(); setFlipped(!flipped); }}
             className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
             title={t("license.tapToFlip")}
           >
@@ -98,16 +108,30 @@ export default function LicenseCard({
         )}
       </div>
 
+      {uploadingSide && (
+        <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          {t("common.loading")}
+        </div>
+      )}
+
       <div
-        className="relative perspective-[1200px] h-[220px] sm:h-[240px] cursor-pointer"
-        onClick={() => showBothSidesToggle && setFlipped(!flipped)}
+        className={`relative perspective-[1200px] h-[220px] sm:h-[240px] ${
+          hasImage ? "cursor-pointer" : ""
+        }`}
+        onClick={() => {
+          if (hasImage) {
+            onView();
+          } else {
+            setFlipped(!flipped);
+          }
+        }}
       >
         <div
           className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${
             flipped ? "[transform:rotateY(180deg)]" : ""
           }`}
         >
-          {/* ── FRONT FACE ── */}
           <div className={`absolute inset-0 [backface-visibility:hidden] ${flipped ? "pointer-events-none" : ""}`}>
             <div className="relative h-full rounded-2xl overflow-hidden"
               style={{
@@ -120,15 +144,12 @@ export default function LicenseCard({
                 `,
               }}
             >
-              {/* Card inner border */}
               <div className="absolute inset-[3px] rounded-[14px] border border-white/40 pointer-events-none" />
 
-              {/* Flag stripe */}
               <div className="absolute top-0 left-0 right-0 h-2"
                 style={{ background: "linear-gradient(90deg, #002776 0%, #002776 33%, #fff 33%, #fff 66%, #CE1126 66%, #CE1126 100%)" }}
               />
 
-              {/* Header */}
               <div className="absolute top-3 left-5 right-5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold"
@@ -143,7 +164,6 @@ export default function LicenseCard({
                 <span className="text-[9px] text-neutral-400 uppercase tracking-wider font-medium">License</span>
               </div>
 
-              {/* Photo */}
               <div className="absolute top-[52px] left-5 w-[68px] h-[82px] rounded-lg overflow-hidden border border-neutral-300 bg-neutral-100 flex items-center justify-center shadow-inner">
                 {(licenseImageFront || avatarUrl) ? (
                   <img
@@ -156,7 +176,6 @@ export default function LicenseCard({
                 )}
               </div>
 
-              {/* Fields */}
               <div className="absolute top-[50px] left-[100px] right-5 space-y-0.5">
                 <div className="mb-1">
                   <p className="text-[9px] uppercase tracking-wider text-neutral-400 font-medium">{t("driver.name")}</p>
@@ -168,7 +187,6 @@ export default function LicenseCard({
                 </div>
               </div>
 
-              {/* Bottom row */}
               <div className="absolute bottom-4 left-5 right-5 grid grid-cols-3 gap-2">
                 <div>
                   <p className="text-[8px] uppercase tracking-wider text-neutral-400 font-medium">{t("driver.licenseClass")}</p>
@@ -186,19 +204,16 @@ export default function LicenseCard({
                 </div>
               </div>
 
-              {/* Holographic seal */}
               <div className="absolute top-[52px] right-5 w-[22px] h-[22px] rounded-full opacity-30"
                 style={{ background: "linear-gradient(135deg, #fbbf24, #f59e0b, #fbbf24, #f59e0b)" }}
               />
 
-              {/* Bottom gradient line */}
               <div className="absolute bottom-0 left-0 right-0 h-0.5"
                 style={{ background: "linear-gradient(90deg, #002776, #fff, #CE1126)" }}
               />
             </div>
           </div>
 
-          {/* ── BACK FACE ── */}
           <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
             <div className="relative h-full rounded-2xl overflow-hidden"
               style={{
@@ -213,7 +228,6 @@ export default function LicenseCard({
             >
               <div className="absolute inset-[3px] rounded-[14px] border border-white/40 pointer-events-none" />
 
-              {/* Magnetic stripe */}
               <div className="absolute top-8 left-0 right-0 h-10"
                 style={{
                   background: "linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)",
@@ -221,7 +235,6 @@ export default function LicenseCard({
                 }}
               />
 
-              {/* Signature area */}
               <div className="absolute top-[88px] left-5 right-5">
                 <p className="text-[9px] uppercase tracking-wider text-neutral-400 font-medium mb-1">Signature</p>
                 <div className="h-8 rounded border border-neutral-300 bg-white/60 flex items-center px-3"
@@ -234,7 +247,6 @@ export default function LicenseCard({
                 </div>
               </div>
 
-              {/* Barcode placeholder */}
               <div className="absolute bottom-7 left-5 right-5 flex justify-center">
                 <div className="flex items-end gap-[2px] h-10">
                   {Array.from({ length: 40 }).map((_, i) => (
@@ -250,7 +262,6 @@ export default function LicenseCard({
                 </div>
               </div>
 
-              {/* Footer on back */}
               <div className="absolute bottom-1 left-0 right-0 text-center">
                 <span className="text-[8px] text-neutral-300 tracking-wider">Vehicle Tracker · Digital License</span>
               </div>
@@ -259,15 +270,18 @@ export default function LicenseCard({
         </div>
       </div>
 
-      {/* Upload buttons */}
       <div className="flex gap-3">
         <label className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed cursor-pointer transition-all ${
           uploadingSide === "front" ? "opacity-50 pointer-events-none" : ""
         } border-neutral-300 hover:border-blue-400 hover:bg-blue-50/50 text-neutral-600 hover:text-blue-600`}>
-          <Upload className="w-4 h-4" />
+          {uploadingSide === "front" ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Upload className="w-4 h-4" />
+          )}
           <span className="text-sm font-medium">{t("license.uploadFront")}</span>
           <input
-            ref={fileInputRef}
+            ref={frontInputRef}
             type="file"
             accept="image/*"
             className="hidden"
@@ -277,9 +291,14 @@ export default function LicenseCard({
         <label className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed cursor-pointer transition-all ${
           uploadingSide === "back" ? "opacity-50 pointer-events-none" : ""
         } border-neutral-300 hover:border-blue-400 hover:bg-blue-50/50 text-neutral-600 hover:text-blue-600`}>
-          <Upload className="w-4 h-4" />
+          {uploadingSide === "back" ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Upload className="w-4 h-4" />
+          )}
           <span className="text-sm font-medium">{t("license.uploadBack")}</span>
           <input
+            ref={backInputRef}
             type="file"
             accept="image/*"
             className="hidden"
@@ -287,10 +306,6 @@ export default function LicenseCard({
           />
         </label>
       </div>
-
-      {showBothSidesToggle && (
-        <p className="text-[11px] text-muted-foreground text-center">{t("license.tapToFlip")}</p>
-      )}
     </div>
   );
 }

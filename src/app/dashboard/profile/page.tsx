@@ -8,6 +8,7 @@ import { Loader2, Save, User, Calendar, MapPin, Car, ChevronRight, Bell } from "
 import Link from "next/link";
 import toast from "react-hot-toast";
 import LicenseCard from "@/components/LicenseCard";
+import LicenseViewerModal from "@/components/LicenseViewerModal";
 
 interface ProfileData {
   id: string;
@@ -47,6 +48,7 @@ export default function ProfilePage() {
   const [remind90, setRemind90] = useState(true);
   const [remind30, setRemind30] = useState(true);
   const [remindExpiry, setRemindExpiry] = useState(true);
+  const [viewerOpen, setViewerOpen] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -180,8 +182,16 @@ export default function ProfilePage() {
           avatarUrl={session?.user?.image || null}
           onUpload={handleLicenseImageUpload}
           onPhotograph={handlePhotograph}
+          onView={() => setViewerOpen(true)}
         />
       </div>
+
+      <LicenseViewerModal
+        open={viewerOpen}
+        onClose={() => setViewerOpen(false)}
+        imageFront={licenseImageFront}
+        imageBack={licenseImageBack}
+      />
 
       {/* Form Fields */}
       <div className="bg-card border border-border rounded-xl p-6 space-y-6">
