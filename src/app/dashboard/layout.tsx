@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { DashboardNav } from "./DashboardNav";
+import { DashboardShell } from "./DashboardShell";
 
 export default async function DashboardLayout({
   children,
@@ -13,10 +13,5 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  return (
-    <div>
-      <DashboardNav />
-      {children}
-    </div>
-  );
+  return <DashboardShell>{children}</DashboardShell>;
 }
