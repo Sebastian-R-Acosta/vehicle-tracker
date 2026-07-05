@@ -24,6 +24,15 @@ Deployed at: <https://bitacora.vercel.app>
 - Updated Nav, Footer, Login, Register, DashboardNav, and vehicle PDF report to use PNGs
 - Removed `sharp` after generation (not a runtime dependency)
 
+### 3D Hero Vehicle Model (2026-07-05)
+- Created `src/components/landing/ThreeJSVehicle.tsx` — Three.js Lexus GX470 model (blue, 360° rotation, subtle bounce)
+- Installed `three` + `@types/three` as dependencies
+- Integrated via `next/dynamic` with `ssr: false` into `Hero.tsx`
+- Hero layout changed to 2-column grid: text (left) + 3D car (right)
+- Car hidden on mobile (`hidden md:flex`), uses aspect-square container at 500px max-width
+- Component uses dynamic import of Three.js to avoid SSR issues
+- `renderer.dispose()` and `cancelAnimationFrame` in cleanup for no memory leaks
+
 ### License Plate Field (2026-07-03)
 - Added `licensePlate String?` to Prisma Vehicle model, ran `prisma db push`
 - Updated API routes: POST (`/api/vehicles`), PUT (`/api/vehicles/[id]`), CSV export, JSON export, report-pdf
@@ -98,6 +107,8 @@ All issues from a full audit of public-facing pages fixed:
 - Fable 5 behavioral config at `C:\Projects\fable-5-agent.md`
 
 ## Needs Attention / Next Steps
+- If 3D car doesn't look right, try: different camera angle, materials, opacity, or swap model geometry
+- Car only shows on `md:` screens and up — consider mobile fallback or smaller version
 - `/logos/logo-*.svg` files don't exist yet — TrustBar shows broken images on production
 - `/about`, `/blog`, `/careers`, `/help`, `/docs`, `/docs/api` pages don't exist — footer links 404
 - "Basic" plan translations exist but no corresponding UI
