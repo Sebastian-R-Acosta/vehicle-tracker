@@ -4,11 +4,10 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { Loader2, Save, User, Calendar, MapPin, Car, ChevronRight, Bell } from "lucide-react";
+import { Loader2, Save, User, MapPin, Car, ChevronRight, Bell, Wallet } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import LicenseCard from "@/components/LicenseCard";
-import LicenseViewerModal from "@/components/LicenseViewerModal";
+import DocumentWallet from "@/components/DocumentWallet";
 
 interface ProfileData {
   id: string;
@@ -27,6 +26,15 @@ interface ProfileData {
   createdAt: string;
 }
 
+interface VehicleData {
+  id: string;
+  make: string;
+  model: string;
+  year: number;
+  vin: string | null;
+  licensePlate: string | null;
+}
+
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -41,6 +49,7 @@ export default function ProfilePage() {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [licenseExpiry, setLicenseExpiry] = useState("");
   const [licenseClass, setLicenseClass] = useState("");
+  const [licenseState, setLicenseState] = useState("");
   const [licenseImageFront, setLicenseImageFront] = useState<string | null>(null);
   const [licenseImageBack, setLicenseImageBack] = useState<string | null>(null);
   const [smsNotifications, setSmsNotifications] = useState(false);
@@ -48,7 +57,7 @@ export default function ProfilePage() {
   const [remind90, setRemind90] = useState(true);
   const [remind30, setRemind30] = useState(true);
   const [remindExpiry, setRemindExpiry] = useState(true);
-  const [viewerOpen, setViewerOpen] = useState(false);
+  const [vehicles, setVehicles] = useState<VehicleData[]>([]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -57,19 +66,23 @@ export default function ProfilePage() {
     }
     if (status !== "authenticated") return;
 
-    fetch("/api/user/profile")
-      .then((res) => res.json())
-      .then((data: ProfileData) => {
-        setProfile(data);
-        setName(data.name || "");
-        setPhone(data.phone || "");
-        setLicenseNumber(data.licenseNumber || "");
-        setLicenseExpiry(data.licenseExpiry ? data.licenseExpiry.slice(0, 10) : "");
-        setLicenseClass(data.licenseClass || "");
-        setLicenseImageFront(data.licenseImageFront || null);
-        setLicenseImageBack(data.licenseImageBack || null);
-        setSmsNotifications(data.smsNotifications);
-        setPushNotifications(data.pushNotifications);
+    Promise.all([
+      fetch("/api/user/profile").then((r) => r.json()),
+      fetch("/api/vehicles").then((r) => r.json()),
+    ])
+      .then(([profileData, vehiclesData]: [ProfileData, VehicleData[]]) => {
+        setProfile(profileData);
+        setVehicles(vehiclesData);
+        setName(profileData.name || "");
+        setPhone(profileData.phone || "");
+        setLicenseNumber(profileData.licenseNumber || "");
+        setLicenseExpiry(profileData.licenseExpiry ? profileData.licenseExpiry.slice(0, 10) : "");
+        setLicenseClass(profileData.licenseClass || "");
+        setLicenseState(profileData.licenseState || "");
+        setLicenseImageFront(profileData.licenseImageFront || null);
+        setLicenseImageBack(profileData.licenseImageBack || null);
+        setSmsNotifications(profileData.smsNotifications);
+        setPushNotifications(profileData.pushNotifications);
       })
       .catch(() => toast.error(t("errors.generic")))
       .finally(() => setLoading(false));
@@ -170,28 +183,30 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      {/* License Card */}
+      {/* Document Wallet */}
       <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
-        <LicenseCard
-          name={name}
-          licenseNumber={licenseNumber}
-          licenseExpiry={licenseExpiry}
-          licenseClass={licenseClass}
-          licenseImageFront={licenseImageFront}
-          licenseImageBack={licenseImageBack}
-          avatarUrl={session?.user?.image || null}
+        <div className="flex items-center gap-2 mb-4">
+          <Wallet className="w-5 h-5 text-muted-foreground" />
+          <h2 className="text-lg font-semibold text-foreground">Document Wallet</h2>
+        </div>
+        <DocumentWallet
+          license={{
+            name,
+            licenseNumber,
+            licenseExpiry,
+            licenseClass,
+            licenseState,
+            licenseImageFront,
+            licenseImageBack,
+            avatarUrl: session?.user?.image || null,
+            phone,
+            email: session?.user?.email || null,
+          }}
+          vehicles={vehicles}
           onUpload={handleLicenseImageUpload}
           onPhotograph={handlePhotograph}
-          onView={() => setViewerOpen(true)}
         />
       </div>
-
-      <LicenseViewerModal
-        open={viewerOpen}
-        onClose={() => setViewerOpen(false)}
-        imageFront={licenseImageFront}
-        imageBack={licenseImageBack}
-      />
 
       {/* Form Fields */}
       <div className="bg-card border border-border rounded-xl p-6 space-y-6">
