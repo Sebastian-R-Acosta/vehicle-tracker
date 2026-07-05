@@ -64,6 +64,9 @@ model User {
   licenseExpiry   DateTime?
   licenseState    String?
   licenseClass    String?
+  licenseImageFront String?
+  licenseImageBack  String?
+  pushSubscription  String?
 
   currentOrganization  Organization?    @relation("CurrentOrganization", fields: [currentOrganizationId], references: [id])
   organizations        OrganizationMember[]

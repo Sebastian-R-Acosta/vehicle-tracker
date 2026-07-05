@@ -42,6 +42,93 @@ export async function GET(request: Request) {
 
     const results = [];
 
+    // ── License expiry notifications ──────────────────────────
+    const in90Days = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+    const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    const usersWithExpiringLicense = await prisma.user.findMany({
+      where: {
+        licenseExpiry: { not: null },
+        pushNotifications: true,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        licenseNumber: true,
+        licenseExpiry: true,
+        pushNotifications: true,
+      },
+    });
+
+    for (const u of usersWithExpiringLicense) {
+      if (!u.licenseExpiry) continue;
+      const daysUntil = Math.ceil((u.licenseExpiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+      let shouldNotify = false;
+      let notificationType = "";
+
+      if (daysUntil <= 0) {
+        shouldNotify = true;
+        notificationType = "license_expired";
+      } else if (daysUntil <= 30) {
+        shouldNotify = true;
+        notificationType = "license_30days";
+      } else if (daysUntil <= 90) {
+        shouldNotify = true;
+        notificationType = "license_90days";
+      }
+
+      if (shouldNotify && u.email) {
+        const result = await sendReminderDueEmail(u.email, {
+          title: notificationType === "license_expired" ? "License Expired" : "License Expiring Soon",
+          description: `Your driver's license${u.licenseNumber ? ` (${u.licenseNumber})` : ""} expires on ${u.licenseExpiry.toLocaleDateString()}. Please renew.`,
+          dueDate: u.licenseExpiry,
+          dueMileage: null,
+          vehicle: {
+            make: "",
+            model: "",
+            year: new Date().getFullYear(),
+            nickname: null,
+            currentMileage: 0,
+          },
+        });
+
+        results.push({
+          userId: u.id,
+          type: notificationType,
+          emailSent: result.success,
+        });
+      }
+
+      // Send push notification
+      const userWithSub = await prisma.user.findUnique({
+        where: { id: u.id },
+        select: { pushSubscription: true },
+      });
+
+      if (userWithSub?.pushSubscription) {
+        const { sendPushNotification } = await import("@/lib/push");
+        const pushResult = await sendPushNotification(userWithSub.pushSubscription, {
+          title: notificationType === "license_expired" ? "License Expired" : "License Expiring Soon",
+          body: `Your driver's license${u.licenseNumber ? ` (${u.licenseNumber})` : ""} expires on ${u.licenseExpiry.toLocaleDateString()}.`,
+          url: "/dashboard/profile",
+        });
+
+        if (pushResult.expired) {
+          await prisma.user.update({
+            where: { id: u.id },
+            data: { pushSubscription: null },
+          });
+        }
+
+        results.push({
+          userId: u.id,
+          pushSent: pushResult.success,
+        });
+      }
+    }
+
     for (const reminder of overdueReminders) {
       if (!reminder.user?.email) continue;
 

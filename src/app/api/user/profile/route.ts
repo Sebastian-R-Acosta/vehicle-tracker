@@ -20,6 +20,8 @@ export async function GET() {
       licenseExpiry: true,
       licenseState: true,
       licenseClass: true,
+      licenseImageFront: true,
+      licenseImageBack: true,
       smsNotifications: true,
       pushNotifications: true,
       createdAt: true,
@@ -40,7 +42,7 @@ export async function PUT(request: Request) {
   }
 
   const body = await request.json();
-  const { name, phone, licenseNumber, licenseExpiry, licenseState, licenseClass, smsNotifications, pushNotifications } = body;
+  const { name, phone, licenseNumber, licenseExpiry, licenseState, licenseClass, licenseImageFront, licenseImageBack, smsNotifications, pushNotifications } = body;
 
   const data: Record<string, any> = {};
   if (name !== undefined) data.name = name;
@@ -49,6 +51,8 @@ export async function PUT(request: Request) {
   if (licenseExpiry !== undefined) data.licenseExpiry = new Date(licenseExpiry);
   if (licenseState !== undefined) data.licenseState = licenseState;
   if (licenseClass !== undefined) data.licenseClass = licenseClass;
+  if (licenseImageFront !== undefined) data.licenseImageFront = licenseImageFront;
+  if (licenseImageBack !== undefined) data.licenseImageBack = licenseImageBack;
   if (smsNotifications !== undefined) data.smsNotifications = smsNotifications;
   if (pushNotifications !== undefined) data.pushNotifications = pushNotifications;
 
@@ -65,6 +69,8 @@ export async function PUT(request: Request) {
       licenseExpiry: true,
       licenseState: true,
       licenseClass: true,
+      licenseImageFront: true,
+      licenseImageBack: true,
       smsNotifications: true,
       pushNotifications: true,
     },

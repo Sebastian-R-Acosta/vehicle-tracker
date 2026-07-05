@@ -89,17 +89,42 @@ export async function GET() {
 
   if (user.licenseExpiry) {
     const isExpired = user.licenseExpiry <= now;
-    const isClose = user.licenseExpiry <= in30Days;
-    if (isExpired || isClose) {
+    const in90Days = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+    const isClose90 = user.licenseExpiry <= in90Days;
+    const isClose30 = user.licenseExpiry <= in30Days;
+
+    if (isExpired) {
       notifications.push({
-        id: "license",
-        type: isExpired ? "license_expired" : "license_expiring",
-        title: isExpired ? "License Expired" : "License Expiring Soon",
-        description: `${user.licenseNumber || "License"} expires ${user.licenseExpiry.toLocaleDateString()}`,
+        id: "license-expired",
+        type: "license_expired",
+        title: "License Expired",
+        description: `${user.licenseNumber || "License"} expired on ${user.licenseExpiry.toLocaleDateString()}. Please renew immediately.`,
         dueDate: user.licenseExpiry.toISOString(),
         vehicleId: null,
         link: "/dashboard/profile",
-        severity: isExpired ? "error" : "warning",
+        severity: "error",
+      });
+    } else if (isClose30) {
+      notifications.push({
+        id: "license-30",
+        type: "license_expiring",
+        title: "License Expiring Soon (30 days)",
+        description: `${user.licenseNumber || "License"} expires ${user.licenseExpiry.toLocaleDateString()}. Renewal recommended.`,
+        dueDate: user.licenseExpiry.toISOString(),
+        vehicleId: null,
+        link: "/dashboard/profile",
+        severity: "warning",
+      });
+    } else if (isClose90) {
+      notifications.push({
+        id: "license-90",
+        type: "license_expiring",
+        title: "License Expiring (90 days)",
+        description: `${user.licenseNumber || "License"} expires ${user.licenseExpiry.toLocaleDateString()}. Schedule your renewal.`,
+        dueDate: user.licenseExpiry.toISOString(),
+        vehicleId: null,
+        link: "/dashboard/profile",
+        severity: "warning",
       });
     }
   }
