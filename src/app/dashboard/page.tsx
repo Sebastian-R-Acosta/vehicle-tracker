@@ -56,7 +56,7 @@ export default function DashboardPage() {
     { enabled: authStatus === "authenticated" }
   );
 
-  const { data: plan } = useFetch<{ tier: string; maxVehicles: number; name?: string; status?: string }>(
+  const { data: plan } = useFetch<{ tier: string; maxVehicles: number; name?: string; status?: string; paymentProcessor?: string }>(
     ["plan"],
     "/api/user/plan",
     { enabled: authStatus === "authenticated" }
@@ -223,7 +223,7 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {plan && plan.tier !== "free" && (
+        {plan && plan.tier !== "free" && plan.paymentProcessor !== "free" && (
           <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Sparkles className="w-5 h-5 text-primary" />
