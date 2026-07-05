@@ -146,8 +146,8 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
         {/* Bottom */}
         <div className="border-t border-border p-4 space-y-3 shrink-0">
           <OrgSwitcher />
-          <div className="flex items-center gap-2 lg:hidden">
-            <LanguageToggle />
+          <div className="flex items-center gap-2">
+            <span className="lg:hidden"><LanguageToggle /></span>
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
