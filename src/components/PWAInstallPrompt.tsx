@@ -55,7 +55,7 @@ export function PWAInstallPrompt() {
     <div className="fixed bottom-4 right-4 z-50 bg-card border border-border rounded-xl shadow-lg p-4 max-w-xs">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-sm font-semibold text-foreground">Install Vehicle Tracker</p>
+          <p className="text-sm font-semibold text-foreground">Install Bitácora</p>
           <p className="text-xs text-muted-foreground mt-1">Add to your home screen for quick access</p>
         </div>
         <button onClick={handleDismiss} className="p-1 text-muted-foreground hover:text-foreground rounded">

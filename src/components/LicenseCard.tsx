@@ -263,7 +263,7 @@ export default function LicenseCard({
               </div>
 
               <div className="absolute bottom-1 left-0 right-0 text-center">
-                <span className="text-[8px] text-neutral-300 tracking-wider">Vehicle Tracker · Digital License</span>
+                <span className="text-[8px] text-neutral-300 tracking-wider">Bitácora · Digital License</span>
               </div>
             </div>
           </div>

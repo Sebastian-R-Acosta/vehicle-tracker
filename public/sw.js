@@ -4,7 +4,7 @@ self.addEventListener("fetch", (e) => e.respondWith(fetch(e.request).catch(() =>
 
 self.addEventListener("push", (event) => {
   const data = event.data?.json() || {};
-  const title = data.title || "Vehicle Tracker";
+  const title = data.title || "Bitácora";
   const options = {
     body: data.body || "",
     icon: data.icon || "/icon-192.png",

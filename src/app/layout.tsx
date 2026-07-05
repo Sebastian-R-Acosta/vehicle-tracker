@@ -16,8 +16,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Vehicle Tracker — Vehicle History & Maintenance Platform",
-    template: "%s | Vehicle Tracker",
+    default: "Bitácora — Vehicle History & Maintenance Platform",
+    template: "%s | Bitácora",
   },
   description:
     "Track vehicle maintenance, service history, and get smart reminders. Free for car owners. White-label for dealerships and insurers.",
@@ -29,15 +29,15 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Vehicle Tracker — Vehicle History & Maintenance Platform",
+    title: "Bitácora — Vehicle History & Maintenance Platform",
     description:
       "Track vehicle maintenance, service history, and get smart reminders. Free for car owners. White-label for dealerships and insurers.",
     type: "website",
-    siteName: "Vehicle Tracker",
+    siteName: "Bitácora",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vehicle Tracker",
+    title: "Bitácora",
     description:
       "Track vehicle maintenance, service history, and get smart reminders.",
   },

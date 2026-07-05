@@ -1,6 +1,6 @@
 # Architecture & Project Overview
 
-> Living document for the Vehicle Tracker monorepo.
+> Living document for the Bitácora monorepo.
 
 ## Table of Contents
 
@@ -19,7 +19,7 @@
 
 ## Project Overview
 
-Vehicle Tracker is a full-stack SaaS platform for personal and commercial vehicle management — maintenance logging, document storage (digital glovebox), mileage/date-based reminders, PDF history reports, ownership transfer, multi-tenant organizations, and fleet/construction equipment tracking. Serves four market segments from a single codebase: individual owners, car dealerships, insurance companies, and construction fleets.
+Bitácora is a full-stack SaaS platform for personal and commercial vehicle management — maintenance logging, document storage (digital glovebox), mileage/date-based reminders, PDF history reports, ownership transfer, multi-tenant organizations, and fleet/construction equipment tracking. Serves four market segments from a single codebase: individual owners, car dealerships, insurance companies, and construction fleets.
 
 ---
 
@@ -316,7 +316,7 @@ Git push → GitHub Actions (lint → typecheck → test → build) → Vercel a
 
 | Environment | URL | Notes |
 |---|---|---|
-| Production | `https://vehicle-tracker.vercel.app` | Auto-deployed from `main` |
+| Production | `https://bitacora.vercel.app` | Auto-deployed from `main` |
 | Preview | `https://{branch}.vercel.app` | Auto-deployed per PR |
 
 ### Manual Deploy

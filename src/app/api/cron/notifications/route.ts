@@ -245,7 +245,7 @@ export async function GET(request: Request) {
           // TODO: Integrate Twilio for SMS:
           // const twilio = require('twilio');
           // const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-          // const body = `Vehicle Tracker: ${isExpired ? "EXPIRED" : "Expiring"} document "${doc.name}" for ${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+          // const body = `Bitácora: ${isExpired ? "EXPIRED" : "Expiring"} document "${doc.name}" for ${vehicle.year} ${vehicle.make} ${vehicle.model}`;
           // await client.messages.create({ body, from: process.env.TWILIO_PHONE_NUMBER, to: user.phone });
           console.log(`[SMS Placeholder] Would send SMS to ${user.phone} about document "${doc.name}"`);
         }

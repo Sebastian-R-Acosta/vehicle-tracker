@@ -108,7 +108,7 @@ export function createPayPalSubscriptionRequest(
     body: {
       planId,
       application_context: {
-        brand_name: "Vehicle Tracker",
+        brand_name: "Bitácora",
         locale: "en-US",
         shipping_preference: "NO_SHIPPING" as const,
         user_action: "SUBSCRIBE_NOW" as const,

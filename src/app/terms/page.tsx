@@ -10,7 +10,7 @@ export default function TermsPage() {
 
           <h2>Acceptance of Terms</h2>
           <p>
-            By creating an account or using Vehicle Tracker, you agree to these terms. If you do not agree,
+            By creating an account or using Bitácora, you agree to these terms. If you do not agree,
             do not use the service.
           </p>
 
@@ -22,7 +22,7 @@ export default function TermsPage() {
 
           <h2>Service Description</h2>
           <p>
-            Vehicle Tracker provides vehicle history tracking, maintenance logging, reminder notifications,
+            Bitácora provides vehicle history tracking, maintenance logging, reminder notifications,
             and PDF report generation. Free accounts are limited to 2 vehicles. Paid plans offer additional
             features as described on our Pricing page.
           </p>
@@ -42,13 +42,13 @@ export default function TermsPage() {
 
           <h2>Data Ownership</h2>
           <p>
-            You retain ownership of all data you enter into the service. Vehicle Tracker claims no ownership
+            You retain ownership of all data you enter into the service. Bitácora claims no ownership
             over your vehicle information, maintenance records, or uploaded content.
           </p>
 
           <h2>Limitation of Liability</h2>
           <p>
-            Vehicle Tracker is provided &ldquo;as is&rdquo; without warranty. We are not liable for damages arising from
+            Bitácora is provided &ldquo;as is&rdquo; without warranty. We are not liable for damages arising from
             use of the service, including missed maintenance, data loss, or service interruptions.
           </p>
 

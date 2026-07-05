@@ -217,7 +217,7 @@ export default function VehicleReportPDF({ data, logoUrl }: VehiclePDFProps) {
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           {logoUrl && <Image src={logoUrl} style={styles.logo} />}
-          <Text style={styles.headerTitle}>Vehicle Tracker Vehicle History Report</Text>
+          <Text style={styles.headerTitle}>Bitácora Vehicle History Report</Text>
           <Text style={styles.headerSubtitle}>
             {vehicle.year} {vehicle.make} {vehicle.model}
           </Text>
@@ -334,7 +334,7 @@ export default function VehicleReportPDF({ data, logoUrl }: VehiclePDFProps) {
 
         <View style={styles.footer}>
           <Text style={styles.footerBrand}>
-            Vehicle Tracker | Professional Fleet & Vehicle Management System
+            Bitácora | Professional Fleet & Vehicle Management System
           </Text>
           <Text style={styles.footerText}>
             CONFIDENTIAL: This report is intended solely for the use of the

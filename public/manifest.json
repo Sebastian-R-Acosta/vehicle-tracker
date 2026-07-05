@@ -1,6 +1,6 @@
 {
-  "name": "Vehicle Tracker",
-  "short_name": "VTracker",
+  "name": "Bitácora",
+  "short_name": "Bitácora",
   "description": "Professional fleet and vehicle management system",
   "start_url": "/dashboard",
   "display": "standalone",

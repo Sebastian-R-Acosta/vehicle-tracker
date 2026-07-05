@@ -59,7 +59,7 @@ describe("paypal client", () => {
       body: {
         planId: "plan_123",
         application_context: {
-          brand_name: "Vehicle Tracker",
+          brand_name: "Bitácora",
           locale: "en-US",
           shipping_preference: "NO_SHIPPING",
           user_action: "SUBSCRIBE_NOW",

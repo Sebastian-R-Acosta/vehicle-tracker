@@ -17,7 +17,7 @@ export default function PrivacyPage() {
 
           <h2>How We Use Your Information</h2>
           <p>
-            Your data is used to provide and improve the Vehicle Tracker service: displaying vehicle history,
+            Your data is used to provide and improve the Bitácora service: displaying vehicle history,
             sending maintenance reminders, generating reports, and communicating service-related notifications.
             We never sell your personal data to third parties.
           </p>

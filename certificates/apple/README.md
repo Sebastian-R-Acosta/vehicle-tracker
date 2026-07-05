@@ -8,7 +8,7 @@ You need an active Apple Developer Program membership ($99/year).
 ### 2. Create a Pass Type ID
 - Go to https://developer.apple.com/account/resources/identifiers/list/passTypeId
 - Click "+" → "Pass Type ID"
-- Enter a description (e.g. "Vehicle Tracker Documents")
+- Enter a description (e.g. "Bitácora Documents")
 - Enter an identifier (e.g. `pass.com.yourdomain.vehicletracker`)
 - Register
 

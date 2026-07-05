@@ -1,9 +1,9 @@
 # Memory
 
 ## Project
-Vehicle Tracker — vehicle history & maintenance platform.  
+Bitácora — vehicle history & maintenance platform.  
 Stack: Next.js 14, TypeScript, Prisma (Neon/Postgres), NextAuth, PayPal.  
-Deployed at: <https://vehicle-tracker-chi.vercel.app>
+Deployed at: <https://bitacora.vercel.app>
 
 ## What's Been Done
 
@@ -132,6 +132,6 @@ All issues from a full audit of public-facing pages fixed:
 5. Customer portal at `/api/billing/portal`
 
 ## Deployment
-- Hosted on Vercel (production: vehicle-tracker-chi.vercel.app)
+- Hosted on Vercel (production: bitacora.vercel.app)
 - Branch: `main` auto-deploys
 - Environment variables needed: `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `NEXT_PUBLIC_APP_URL`

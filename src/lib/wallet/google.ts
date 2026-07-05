@@ -60,7 +60,7 @@ export async function generateGoogleWalletPass(input: WalletPassInput): Promise<
     header: {
       defaultValue: {
         language: "en",
-        value: "Vehicle Tracker",
+        value: "Bitácora",
       },
     },
     barcode: input.fileUrl
@@ -81,7 +81,7 @@ export async function generateGoogleWalletPass(input: WalletPassInput): Promise<
       uris: [
         {
           uri: `${input.baseUrl}/dashboard/vehicles/${input.docId}/documents`,
-          description: "View in Vehicle Tracker",
+          description: "View in Bitácora",
         },
       ],
     },

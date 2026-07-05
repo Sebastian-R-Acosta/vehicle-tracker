@@ -1,9 +1,9 @@
-# Vehicle Tracker
+# Bitácora
 
-> Multi-segment vehicle management platform — from personal车主 to fleet operators, dealerships, and insurers.
+> Multi-segment vehicle management platform — from personal owners to fleet operators, dealerships, and insurers.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![CI](https://github.com/yourusername/vehicle-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/vehicle-tracker/actions)
+[![CI](https://github.com/yourusername/bitacora/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/bitacora/actions)
 [![Vercel](https://img.shields.io/badge/deployed%20on-Vercel-black)](https://vercel.com)
 
 ---
@@ -29,7 +29,7 @@
 
 ## Overview
 
-Vehicle Tracker is a full-stack SaaS that lets users log maintenance, store documents, set reminders, generate PDF reports, transfer ownership, and manage fleets — all in one place. It serves **four distinct markets** from a single codebase.
+Bitácora is a full-stack SaaS that lets users log maintenance, store documents, set reminders, generate PDF reports, transfer ownership, and manage fleets — all in one place. It serves **four distinct markets** from a single codebase.
 
 Built with Next.js 14, Prisma + PostgreSQL, Stripe billing, AWS S3 file storage, and deployed on Vercel.
 
@@ -141,8 +141,8 @@ Built with Next.js 14, Prisma + PostgreSQL, Stripe billing, AWS S3 file storage,
 
 ```bash
 # 1. Clone
-git clone https://github.com/yourusername/vehicle-tracker.git
-cd vehicle-tracker
+git clone https://github.com/yourusername/bitacora.git
+cd bitacora
 
 # 2. Install
 npm install

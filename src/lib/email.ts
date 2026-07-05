@@ -4,7 +4,7 @@ function getResend() {
   if (!process.env.RESEND_API_KEY) return null;
   return new Resend(process.env.RESEND_API_KEY);
 }
-const fromEmail = "Vehicle Tracker <onboarding@resend.dev>";
+const fromEmail = "Bitácora <onboarding@resend.dev>";
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -111,7 +111,7 @@ export async function sendMaintenanceConfirmation(
           ${maintenance.notes ? `<div class="notes"><strong>Notes:</strong><br>${escapeHtml(maintenance.notes)}</div>` : ""}
         </div>
         <div class="footer">
-          Vehicle Tracker - Keep your vehicles in top shape
+          Bitácora - Keep your vehicles in top shape
         </div>
       </div>
     </body>
@@ -191,7 +191,7 @@ export async function sendReminderCreatedEmail(
           ${reminder.description ? `<div class="description"><strong>Notes:</strong><br>${reminder.description}</div>` : ""}
         </div>
         <div class="footer">
-          Vehicle Tracker - You'll receive an email when this reminder is due
+          Bitácora - You'll receive an email when this reminder is due
         </div>
       </div>
     </body>
@@ -279,7 +279,7 @@ export async function sendReminderDueEmail(
           </div>
         </div>
         <div class="footer">
-          Vehicle Tracker - Don't forget to take care of your vehicle!
+          Bitácora - Don't forget to take care of your vehicle!
         </div>
       </div>
     </body>
@@ -368,7 +368,7 @@ function generateReminderEmailHtml(
           ${!hasContent ? "<p>No reminders at this time. Your vehicles are in good shape!</p>" : ""}
         </div>
         <div class="footer">
-          Vehicle Tracker - Keep your vehicles in top shape
+          Bitácora - Keep your vehicles in top shape
         </div>
       </div>
     </body>
@@ -395,7 +395,7 @@ export async function sendWelcomeEmail(to: string, name?: string) {
     <body>
       <div class="container">
         <div class="header">
-          <h1 style="margin: 0;">Welcome to Vehicle Tracker</h1>
+          <h1 style="margin: 0;">Welcome to Bitácora</h1>
         </div>
         <div class="content">
           <p>Hi ${escapeHtml(name || "there")},</p>
@@ -413,7 +413,7 @@ export async function sendWelcomeEmail(to: string, name?: string) {
           </p>
         </div>
         <div class="footer">
-          Vehicle Tracker &mdash; Your vehicle history platform
+          Bitácora &mdash; Your vehicle history platform
         </div>
       </div>
     </body>
@@ -426,7 +426,7 @@ export async function sendWelcomeEmail(to: string, name?: string) {
   const { data, error } = await r.emails.send({
     from: fromEmail,
     to: [to],
-    subject: "Welcome to Vehicle Tracker",
+    subject: "Welcome to Bitácora",
     html,
   });
 
@@ -472,7 +472,7 @@ export async function sendPasswordResetEmail(
           </div>
         </div>
         <div class="footer">
-          Vehicle Tracker - Your vehicle management app
+          Bitácora - Your vehicle management app
         </div>
       </div>
     </body>
@@ -485,7 +485,7 @@ export async function sendPasswordResetEmail(
   const { data: result, error } = await r.emails.send({
     from: fromEmail,
     to: [to],
-    subject: "Reset Your Password - Vehicle Tracker",
+    subject: "Reset Your Password - Bitácora",
     html,
   });
 
@@ -543,7 +543,7 @@ export async function sendDemoRequestEmail(
           ${data.message ? `<hr class="divider" /><div class="field"><div class="label">Message</div><div class="value">${escapeHtml(data.message)}</div></div>` : ""}
         </div>
         <div class="footer">
-          Vehicle Tracker - Demo Request Notification
+          Bitácora - Demo Request Notification
         </div>
       </div>
     </body>

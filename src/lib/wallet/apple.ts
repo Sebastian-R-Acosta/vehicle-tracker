@@ -25,7 +25,7 @@ const DOC_TYPE_LABELS: Record<string, string> = {
  *
  * Prerequisites:
  *   1. Apple Developer account ($99/yr)
- *   2. Create a Pass Type ID (e.g. pass.com.yourdomain.vehicle-tracker)
+ *   2. Create a Pass Type ID (e.g. pass.com.yourdomain.bitacora)
  *   3. Generate a Signer Certificate (.p12) from the Pass Type ID
  *   4. Download the Apple WWDR Intermediate Certificate
  *   5. Place both certificates in: certificates/apple/
@@ -63,7 +63,7 @@ export async function generateAppleWalletPass(input: WalletPassInput): Promise<B
       teamIdentifier: teamId,
       passTypeIdentifier: passTypeId,
       description: `${DOC_TYPE_LABELS[input.docType] || input.docType} — ${input.vehicleName}`,
-      organizationName: "Vehicle Tracker",
+      organizationName: "Bitácora",
       logoText: input.vehicleName.slice(0, 20),
       backgroundColor: getBgColor(input.docType),
       foregroundColor: "rgb(255, 255, 255)",

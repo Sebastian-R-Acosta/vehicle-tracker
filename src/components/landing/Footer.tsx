@@ -52,8 +52,8 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <img src="/logo-icon.png" alt="Vehicle Tracker" className="h-8 w-auto" />
-              <span className="text-lg font-bold text-white">Vehicle Tracker</span>
+              <img src="/logo-icon.png" alt="Bitácora" className="h-8 w-auto" />
+              <span className="text-lg font-bold text-white">Bitácora</span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
               {t("landing.footerDescription")}
@@ -81,7 +81,7 @@ export default function Footer() {
 
         <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} Vehicle Tracker. {t("landing.footerRights")}
+            &copy; {new Date().getFullYear()} Bitácora. {t("landing.footerRights")}
           </p>
           <div className="flex items-center gap-6">
             <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-gray-300 cursor-pointer">Twitter</a>
