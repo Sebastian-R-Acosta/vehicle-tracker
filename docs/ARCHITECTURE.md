@@ -148,14 +148,6 @@ This directly applies the schema to the database without creating a new migratio
 - [x] Cron job for daily notification dispatch
 - [x] Pricing page with A/B testing
 
-### 3D Hero Vehicle Model (2026-07-05)
-
-- Added `ThreeJSVehicle.tsx` — interactive 3D Lexus GX470 model using Three.js
-- Placed in hero section (right column, `md:` breakpoint and up)
-- Dynamic import via `next/dynamic` with `ssr: false`
-- Features: 360° rotation, subtle bounce animation, blue body with transparent glass, headlights, wheels
-- Dependency: `three` npm package + `@types/three`
-
 ### Phase 5 — Marketing & Polish
 
 - [x] Landing page (Hero, Features, TrustBar, Testimonials, CTA, Footer)
