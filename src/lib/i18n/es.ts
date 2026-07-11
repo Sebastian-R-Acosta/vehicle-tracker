@@ -135,7 +135,7 @@ export const es = {
     solutions: "Soluciones",
   },
   landing: {
-    heroTitle: "Todas las historias de servicio de tu vehículo en un solo lugar",
+    heroTitle: "Tu Vehículo, su historia.",
     heroSubtitle: "Grá mantenimiento, historial de servicio, recordatorios inteligentes y más. Gratis para dueños de autos. Soluciones blancas para concesionarios y aseguradoras.",
     heroCta: "Empieza Gratis",
     heroDemo: "Agenda una Demo",

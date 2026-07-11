@@ -137,7 +137,7 @@ export const en: Translations = {
     solutions: "Solutions",
   },
   landing: {
-    heroTitle: "Every vehicle's full service history in one place",
+    heroTitle: "Your Vehicle, its story.",
     heroSubtitle: "Track maintenance, service history, smart reminders, and more. Free for car owners. White-label for dealerships and insurers.",
     heroCta: "Get Started Free",
     heroDemo: "Book a Demo",
