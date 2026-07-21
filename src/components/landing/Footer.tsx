@@ -16,19 +16,15 @@ const columns = [
     ],
   },
   {
-    titleKey: "nav.settings",
+    titleKey: "landing.forConstruction",
     links: [
       { labelKey: "landing.forConstruction", href: "/solutions/construction" },
-      { label: "About", href: "/about" },
-      { label: "Contact", href: "/contact" },
+      { labelKey: "nav.contact", href: "/contact" },
     ],
   },
   {
-    titleKey: "nav.solutions",
+    titleKey: "nav.settings",
     links: [
-      { label: "Help Center", href: "/help" },
-      { label: "API Reference", href: "/docs/api" },
-      { label: "Documentation", href: "/docs" },
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Terms of Service", href: "/terms" },
     ],
@@ -83,11 +79,6 @@ export default function Footer() {
           <p className="text-sm text-gray-500">
             &copy; {new Date().getFullYear()} Bitácora. {t("landing.footerRights")}
           </p>
-          <div className="flex items-center gap-6">
-            <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-gray-300 cursor-pointer">Twitter</a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-gray-300 cursor-pointer">LinkedIn</a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-gray-300 cursor-pointer">YouTube</a>
-          </div>
         </div>
       </div>
     </footer>

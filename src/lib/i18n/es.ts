@@ -62,6 +62,7 @@ export const es = {
     search: "Buscar",
     noResults: "Sin resultados",
     back: "Volver",
+    next: "Siguiente",
     confirm: "Confirmar",
     close: "Cerrar",
     download: "Descargar",
@@ -132,6 +133,7 @@ export const es = {
     getStarted: "Empezar Gratis",
     pricing: "Precios",
     about: "Acerca de",
+    contact: "Contacto",
     solutions: "Soluciones",
   },
   landing: {
@@ -500,7 +502,7 @@ export const es = {
     byContinuing: "Al continuar, aceptas nuestros Términos de Servicio y Política de Privacidad.",
     includesBadge: "Incluye Alertas de Llamados a Revisión, Informes de Valor y Glovebox Digital",
     tierFreeFeatures: [
-      "1 vehículo",
+      "2 vehículos",
       "Registro de mantenimiento",
       "Recordatorios manuales",
       "Información básica del vehículo",
@@ -591,6 +593,7 @@ export const es = {
     home: {
       title: "Mis Vehículos",
       addVehicle: "Agregar Vehículo",
+      loadingVehicles: "Cargando vehículos...",
       plan: "Plan",
       unlimitedVehicles: "Ilimitado",
       manage: "Gestionar",
@@ -1055,6 +1058,9 @@ export const es = {
       modelRequired: "El modelo es obligatorio",
       failedCreate: "Error al crear vehículo",
       somethingWentWrong: "Algo salió mal",
+      stepType: "Tipo",
+      stepBasic: "Info",
+      stepDetails: "Detalles",
     },
     vehicleEdit: {
       heading: "Editar Vehículo",

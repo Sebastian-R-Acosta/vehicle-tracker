@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { requirePro } from "@/lib/billing";
+import { getAccessibleVehicle } from "@/lib/vehicle-access";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION || "us-east-2",
@@ -22,9 +23,7 @@ export async function GET(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const vehicle = await prisma.vehicle.findFirst({
-    where: { id: params.id, userId: session.user.id },
-  });
+  const vehicle = await getAccessibleVehicle(params.id, session.user.id);
 
   if (!vehicle) {
     return new NextResponse("Not found", { status: 404 });
@@ -68,9 +67,7 @@ export async function POST(
     return NextResponse.json({ error }, { status: 403 });
   }
 
-  const vehicle = await prisma.vehicle.findFirst({
-    where: { id: params.id, userId: session.user.id },
-  });
+  const vehicle = await getAccessibleVehicle(params.id, session.user.id);
 
   if (!vehicle) {
     return new NextResponse("Not found", { status: 404 });

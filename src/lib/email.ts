@@ -98,7 +98,7 @@ export async function sendMaintenanceConfirmation(
           </div>
           <div class="detail-row">
             <span class="label">Service Type</span>
-            <span class="value">${maintenance.serviceType}</span>
+            <span class="value">${escapeHtml(maintenance.serviceType)}</span>
           </div>
           <div class="detail-row">
             <span class="label">Date</span>
@@ -171,7 +171,7 @@ export async function sendReminderCreatedEmail(
           <h1>Reminder Created</h1>
         </div>
         <div class="content">
-          <div class="reminder-title">${reminder.title}</div>
+          <div class="reminder-title">${escapeHtml(reminder.title)}</div>
           <div class="vehicle-name">
             ${reminder.vehicle.year} ${reminder.vehicle.make} ${reminder.vehicle.model}
             ${reminder.vehicle.nickname ? `(${reminder.vehicle.nickname})` : ""}
@@ -188,7 +188,7 @@ export async function sendReminderCreatedEmail(
             <span class="label">Due Hours</span>
             <span class="value">${reminder.dueHours ? `${reminder.dueHours.toLocaleString()} hrs` : "Not set"}</span>
           </div>
-          ${reminder.description ? `<div class="description"><strong>Notes:</strong><br>${reminder.description}</div>` : ""}
+          ${reminder.description ? `<div class="description"><strong>Notes:</strong><br>${escapeHtml(reminder.description)}</div>` : ""}
         </div>
         <div class="footer">
           Bitácora - You'll receive an email when this reminder is due
@@ -240,7 +240,7 @@ export async function sendReminderDueEmail(
         .reminder-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-bottom: 15px; }
         .status { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600; margin-bottom: 15px; }
         .status.overdue { background: #fef2f2; color: #ef4444; }
-        .status.due { background: #fef3c7; color: "#f59e0b"; }
+        .status.due { background: #fef3c7; color: #f59e0b; }
         .vehicle-name { font-size: 16px; color: #4b5563; margin-bottom: 20px; }
         .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e5e7eb; }
         .label { color: #6b7280; }
@@ -260,7 +260,7 @@ export async function sendReminderDueEmail(
               ${isOverdue ? "OVERDUE" : "Due Soon"}
             </span>
           </div>
-          <div class="reminder-title">${reminder.title}</div>
+          <div class="reminder-title">${escapeHtml(reminder.title)}</div>
           <div class="vehicle-name">
             ${reminder.vehicle.year} ${reminder.vehicle.make} ${reminder.vehicle.model}
             ${reminder.vehicle.nickname ? `(${reminder.vehicle.nickname})` : ""}
@@ -273,7 +273,7 @@ export async function sendReminderDueEmail(
             <span class="label">Due Mileage</span>
             <span class="value">${reminder.dueMileage ? `${reminder.dueMileage.toLocaleString()} mi` : "Not set"}</span>
           </div>
-          ${reminder.description ? `<div style="background: white; padding: 15px; border-radius: 6px; margin-top: 15px;"><strong>Notes:</strong><br>${reminder.description}</div>` : ""}
+          ${reminder.description ? `<div style="background: white; padding: 15px; border-radius: 6px; margin-top: 15px;"><strong>Notes:</strong><br>${escapeHtml(reminder.description)}</div>` : ""}
           <div class="current-mileage">
             <strong>Current Mileage:</strong> ${reminder.vehicle.currentMileage.toLocaleString()} mi
           </div>
@@ -324,7 +324,7 @@ function generateReminderEmailHtml(
               ${r.vehicle.year} ${r.vehicle.make} ${r.vehicle.model}
               ${r.vehicle.nickname ? `(${r.vehicle.nickname})` : ""}
             </p>
-            ${r.description ? `<p style="margin: 5px 0; font-size: 14px;">${r.description}</p>` : ""}
+            ${r.description ? `<p style="margin: 5px 0; font-size: 14px;">${escapeHtml(r.description)}</p>` : ""}
             <p style="margin: 5px 0 0 0; font-size: 14px; color: #374151;">
               ${r.dueDate ? `Due: ${new Date(r.dueDate).toLocaleDateString()}` : ""}
               ${r.dueMileage ? `Due at: ${r.dueMileage.toLocaleString()} mi` : ""}
@@ -399,12 +399,12 @@ export async function sendWelcomeEmail(to: string, name?: string) {
         </div>
         <div class="content">
           <p>Hi ${escapeHtml(name || "there")},</p>
-          <p>Thanks for signing up! You now have a free account with 1 vehicle slot.</p>
+          <p>Thanks for signing up! You now have a free account with 2 vehicle slots.</p>
           <div style="text-align: center;">
             <a href="${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/onboarding" class="button">Get Started</a>
           </div>
           <div class="features">
-            <div class="feature">Track 1 vehicle free</div>
+            <div class="feature">Track 2 vehicles free</div>
             <div class="feature">Maintenance logging</div>
             <div class="feature">Smart reminders</div>
           </div>

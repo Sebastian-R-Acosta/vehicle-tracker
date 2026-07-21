@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, Loader2, Car, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Car, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -30,7 +30,7 @@ const vehicleSchema = z.object({
 
 type VehicleFormData = z.infer<typeof vehicleSchema>;
 
-const iconMap = {
+const iconMap: Record<string, React.ElementType> = {
   car: Car, truck: Truck, motorcycle: Bike, excavator: Drill,
   bulldozer: Tractor, dump_truck: Truck, crane: Building2,
   loader: Hammer, grader: Tractor, other: Zap,
@@ -41,6 +41,8 @@ const constructionTypes = new Set(["excavator", "bulldozer", "dump_truck", "cran
 const vehicleTypeValues = ["car", "truck", "motorcycle", "excavator", "bulldozer", "dump_truck", "crane", "loader", "grader", "other"] as const;
 const statusValues = ["active", "maintenance", "inactive", "sold"] as const;
 
+const TOTAL_STEPS = 3;
+
 export default function NewVehiclePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -48,6 +50,7 @@ export default function NewVehiclePage() {
   const labels = getIndustryPageLabels((session?.user?.industryType as IndustryType) ?? "default", "vehicles");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [step, setStep] = useState(1);
   const [constructionSites, setConstructionSites] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
@@ -55,6 +58,7 @@ export default function NewVehiclePage() {
     const vin = params.get("vin");
     if (vin) {
       setValue("vin", vin);
+      setStep(3);
     }
   }, []);
 
@@ -63,6 +67,7 @@ export default function NewVehiclePage() {
     handleSubmit,
     watch,
     setValue,
+    trigger,
     formState: { errors },
   } = useForm<VehicleFormData>({
     resolver: zodResolver(vehicleSchema),
@@ -94,6 +99,29 @@ export default function NewVehiclePage() {
       setConstructionSites([]);
     }
   }, [currentOrgId, isConstruction]);
+
+  const validateStep = async (stepToValidate: number): Promise<boolean> => {
+    if (stepToValidate === 1) {
+      return await trigger("vehicleType");
+    }
+    if (stepToValidate === 2) {
+      return await trigger(["make", "model", "year"]);
+    }
+    return true;
+  };
+
+  const handleNext = async () => {
+    const valid = await validateStep(step);
+    if (valid && step < TOTAL_STEPS) {
+      setStep(step + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
 
   const onSubmit = async (data: VehicleFormData) => {
     setError("");
@@ -174,12 +202,14 @@ export default function NewVehiclePage() {
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-card rounded-lg border border-border p-6">
-          <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-primary rounded-lg">
               <Car className="w-5 h-5 text-primary-foreground" />
             </div>
             <h1 className="text-xl font-semibold text-foreground">{labels.newHeading}</h1>
           </div>
+
+          <StepIndicator currentStep={step} totalSteps={TOTAL_STEPS} />
 
           {error && (
             <div className="mb-6 p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
@@ -192,238 +222,344 @@ export default function NewVehiclePage() {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">
-                  {t("vehicle.make")} <span className="text-destructive">*</span>
-                </label>
-                <input
-                  {...register("make")}
-                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder={t("dashboard.vehicleNew.placeholderMake")}
-                />
-                {errors.make && (
-                  <p className="mt-1 text-sm text-destructive">
-                    {errors.make.message}
-                  </p>
-                )}
-              </div>
+            {step === 1 && <StepTypeSelection selectedType={selectedType} register={register} errors={errors} />}
+            {step === 2 && <StepBasicInfo register={register} errors={errors} statusLabels={statusLabels} />}
+            {step === 3 && (
+              <StepDetails
+                isConstruction={isConstruction}
+                register={register}
+                errors={errors}
+                constructionSites={constructionSites}
+              />
+            )}
 
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">
-                  {t("vehicle.model")} <span className="text-destructive">*</span>
-                </label>
-                <input
-                  {...register("model")}
-                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder={t("dashboard.vehicleNew.placeholderModel")}
-                />
-                {errors.model && (
-                  <p className="mt-1 text-sm text-destructive">
-                    {errors.model.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                {t("dashboard.vehicleNew.vehicleType")} <span className="text-destructive">*</span>
-              </label>
-              <div className="grid grid-cols-5 gap-3">
-                {vehicleTypeValues.map((typeValue) => {
-                  const Icon = iconMap[typeValue];
-                  const isSelected = selectedType === typeValue;
-                  return (
-                    <label
-                      key={typeValue}
-                      className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                        isSelected
-                          ? "border-primary bg-primary/10"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        value={typeValue}
-                        {...register("vehicleType")}
-                        className="sr-only"
-                      />
-                      <Icon className={`w-6 h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-                      <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
-                        {t(`dashboard.home.vehicleTypes.${typeValue}`)}
-                      </span>
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">
-                  {t("vehicle.year")} <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="number"
-                  {...register("year", { valueAsNumber: true })}
-                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder={t("dashboard.vehicleNew.placeholderYear")}
-                />
-                {errors.year && (
-                  <p className="mt-1 text-sm text-destructive">
-                    {errors.year.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">
-                  {t("vehicle.status")}
-                </label>
-                <select
-                  {...register("status")}
-                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+            <div className="flex items-center justify-between pt-4">
+              {step > 1 ? (
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {statusValues.map((s) => (
-                    <option key={s} value={s}>
-                      {statusLabels[s]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">
-                  {t("dashboard.vehicleNew.nicknameOptional")}
-                </label>
-                <input
-                  {...register("nickname")}
-                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  placeholder={t("dashboard.vehicleNew.placeholderNickname")}
-                />
-              </div>
-
-              {isConstruction ? (
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">
-                    {t("dashboard.vehicleNew.hoursMeter")}
-                  </label>
-                  <input
-                    type="number"
-                    {...register("hoursMeter", { valueAsNumber: true })}
-                    className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                    placeholder={t("dashboard.vehicleNew.placeholderMileage")}
-                  />
-                </div>
+                  <ArrowLeft className="w-4 h-4" />
+                  {t("common.back")}
+                </button>
               ) : (
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">
-                    {t("dashboard.vehicleNew.currentMileage")}
-                  </label>
-                  <input
-                    type="number"
-                    {...register("currentMileage", { valueAsNumber: true })}
-                    className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                    placeholder={t("dashboard.vehicleNew.placeholderMileage")}
-                  />
-                </div>
+                <div />
+              )}
+
+              {step < TOTAL_STEPS ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+                >
+                  {t("common.next")}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {labels.saveAction}
+                </button>
               )}
             </div>
-
-            {isConstruction && (
-              <>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">
-                      {t("dashboard.vehicleNew.serialNumber")}
-                    </label>
-                    <input
-                      {...register("serialNumber")}
-                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                      placeholder={t("dashboard.vehicleNew.placeholderSerial")}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">
-                      {t("dashboard.vehicleNew.weightCapacity")}
-                    </label>
-                    <input
-                      type="number"
-                      {...register("weightCapacity", { valueAsNumber: true })}
-                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                      placeholder={t("dashboard.vehicleNew.placeholderWeight")}
-                    />
-                  </div>
-                </div>
-                {constructionSites.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">
-                      {t("dashboard.vehicleNew.constructionSite")}
-                    </label>
-                    <select
-                      {...register("constructionSiteId")}
-                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                    >
-                      <option value="">{t("dashboard.vehicleNew.noSiteAssignment")}</option>
-                      {constructionSites.map((site) => (
-                        <option key={site.id} value={site.id}>
-                          {site.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </>
-            )}
-
-            {!isConstruction && (
-              <>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">
-                      {t("vehicle.licensePlate")}
-                    </label>
-                    <input
-                      {...register("licensePlate")}
-                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                      placeholder={t("dashboard.vehicleNew.placeholderLicensePlate")}
-                      maxLength={20}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">
-                      {t("dashboard.vehicleNew.vinOptional")}
-                    </label>
-                    <input
-                      {...register("vin")}
-                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono"
-                      placeholder={t("dashboard.vehicleNew.placeholderVin")}
-                      maxLength={17}
-                    />
-                    {errors.vin && (
-                      <p className="mt-1 text-sm text-destructive">
-                        {errors.vin.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {labels.saveAction}
-            </button>
           </form>
         </div>
       </main>
     </div>
+  );
+}
+
+function StepIndicator({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) {
+  const { t } = useLanguage();
+  const stepLabels = [
+    t("dashboard.vehicleNew.stepType"),
+    t("dashboard.vehicleNew.stepBasic"),
+    t("dashboard.vehicleNew.stepDetails"),
+  ];
+
+  return (
+    <div className="flex items-center gap-2 mb-6 mt-4">
+      {Array.from({ length: totalSteps }, (_, i) => i + 1).map((s) => (
+        <div key={s} className="flex items-center gap-2 flex-1">
+          <div className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-medium transition-colors ${
+            s < currentStep
+              ? "bg-primary text-primary-foreground"
+              : s === currentStep
+              ? "bg-primary/20 text-primary border-2 border-primary"
+              : "bg-muted text-muted-foreground"
+          }`}>
+            {s < currentStep ? "✓" : s}
+          </div>
+          {s < totalSteps && (
+            <div className={`flex-1 h-0.5 ${s < currentStep ? "bg-primary" : "bg-muted"}`} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function StepTypeSelection({
+  selectedType,
+  register,
+  errors,
+}: {
+  selectedType: string;
+  register: any;
+  errors: any;
+}) {
+  const { t } = useLanguage();
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-foreground mb-3">
+        {t("dashboard.vehicleNew.vehicleType")} <span className="text-destructive">*</span>
+      </label>
+      <div className="grid grid-cols-5 gap-3">
+        {vehicleTypeValues.map((typeValue) => {
+          const Icon = iconMap[typeValue];
+          const isSelected = selectedType === typeValue;
+          return (
+            <label
+              key={typeValue}
+              className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                isSelected
+                  ? "border-primary bg-primary/10"
+                  : "border-border hover:border-primary/50"
+              }`}
+            >
+              <input
+                type="radio"
+                value={typeValue}
+                {...register("vehicleType")}
+                className="sr-only"
+              />
+              <Icon className={`w-6 h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+              <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
+                {t(`dashboard.home.vehicleTypes.${typeValue}`)}
+              </span>
+            </label>
+          );
+        })}
+      </div>
+      {errors.vehicleType && (
+        <p className="mt-2 text-sm text-destructive">{errors.vehicleType.message}</p>
+      )}
+    </div>
+  );
+}
+
+function StepBasicInfo({
+  register,
+  errors,
+  statusLabels,
+}: {
+  register: any;
+  errors: any;
+  statusLabels: Record<string, string>;
+}) {
+  const { t } = useLanguage();
+
+  return (
+    <>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-1">
+            {t("vehicle.make")} <span className="text-destructive">*</span>
+          </label>
+          <input
+            {...register("make")}
+            className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+            placeholder={t("dashboard.vehicleNew.placeholderMake")}
+          />
+          {errors.make && (
+            <p className="mt-1 text-sm text-destructive">{errors.make.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-1">
+            {t("vehicle.model")} <span className="text-destructive">*</span>
+          </label>
+          <input
+            {...register("model")}
+            className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+            placeholder={t("dashboard.vehicleNew.placeholderModel")}
+          />
+          {errors.model && (
+            <p className="mt-1 text-sm text-destructive">{errors.model.message}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-1">
+            {t("vehicle.year")} <span className="text-destructive">*</span>
+          </label>
+          <input
+            type="number"
+            {...register("year", { valueAsNumber: true })}
+            className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+            placeholder={t("dashboard.vehicleNew.placeholderYear")}
+          />
+          {errors.year && (
+            <p className="mt-1 text-sm text-destructive">{errors.year.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-1">
+            {t("vehicle.status")}
+          </label>
+          <select
+            {...register("status")}
+            className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+          >
+            {statusValues.map((s) => (
+              <option key={s} value={s}>
+                {statusLabels[s]}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-1">
+          {t("dashboard.vehicleNew.nicknameOptional")}
+        </label>
+        <input
+          {...register("nickname")}
+          className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+          placeholder={t("dashboard.vehicleNew.placeholderNickname")}
+        />
+      </div>
+    </>
+  );
+}
+
+function StepDetails({
+  isConstruction,
+  register,
+  errors,
+  constructionSites,
+}: {
+  isConstruction: boolean;
+  register: any;
+  errors: any;
+  constructionSites: { id: string; name: string }[];
+}) {
+  const { t } = useLanguage();
+
+  if (isConstruction) {
+    return (
+      <>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">
+              {t("dashboard.vehicleNew.hoursMeter")}
+            </label>
+            <input
+              type="number"
+              {...register("hoursMeter", { valueAsNumber: true })}
+              className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+              placeholder={t("dashboard.vehicleNew.placeholderMileage")}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">
+              {t("dashboard.vehicleNew.serialNumber")}
+            </label>
+            <input
+              {...register("serialNumber")}
+              className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+              placeholder={t("dashboard.vehicleNew.placeholderSerial")}
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">
+              {t("dashboard.vehicleNew.weightCapacity")}
+            </label>
+            <input
+              type="number"
+              {...register("weightCapacity", { valueAsNumber: true })}
+              className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+              placeholder={t("dashboard.vehicleNew.placeholderWeight")}
+            />
+          </div>
+          {constructionSites.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                {t("dashboard.vehicleNew.constructionSite")}
+              </label>
+              <select
+                {...register("constructionSiteId")}
+                className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+              >
+                <option value="">{t("dashboard.vehicleNew.noSiteAssignment")}</option>
+                {constructionSites.map((site) => (
+                  <option key={site.id} value={site.id}>
+                    {site.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-1">
+            {t("dashboard.vehicleNew.currentMileage")}
+          </label>
+          <input
+            type="number"
+            {...register("currentMileage", { valueAsNumber: true })}
+            className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+            placeholder={t("dashboard.vehicleNew.placeholderMileage")}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-1">
+            {t("vehicle.licensePlate")}
+          </label>
+          <input
+            {...register("licensePlate")}
+            className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+            placeholder={t("dashboard.vehicleNew.placeholderLicensePlate")}
+            maxLength={20}
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-1">
+          {t("dashboard.vehicleNew.vinOptional")}
+        </label>
+        <input
+          {...register("vin")}
+          className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono"
+          placeholder={t("dashboard.vehicleNew.placeholderVin")}
+          maxLength={17}
+        />
+        {errors.vin && (
+          <p className="mt-1 text-sm text-destructive">{errors.vin.message}</p>
+        )}
+      </div>
+    </>
   );
 }

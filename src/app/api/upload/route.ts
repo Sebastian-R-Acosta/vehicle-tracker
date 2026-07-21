@@ -34,6 +34,10 @@ export async function POST(request: Request) {
     }
 
     const buffer = Buffer.from(imageBase64, "base64");
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    if (buffer.length > MAX_SIZE) {
+      return NextResponse.json({ error: "File too large. Maximum size is 10MB." }, { status: 413 });
+    }
     const key = `maintenance/${session.user.id}/${Date.now()}-${filename}`;
 
     const command = new PutObjectCommand({
@@ -51,6 +55,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ imageUrl: publicUrl, key });
   } catch (error) {
     console.error("Image upload error:", error);
-    return new NextResponse(`Error uploading image: ${error}`, { status: 500 });
+    return new NextResponse("Error uploading image", { status: 500 });
   }
 }

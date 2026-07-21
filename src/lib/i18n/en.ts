@@ -64,6 +64,7 @@ export const en: Translations = {
     search: "Search",
     noResults: "No results",
     back: "Back",
+    next: "Next",
     confirm: "Confirm",
     close: "Close",
     download: "Download",
@@ -134,6 +135,7 @@ export const en: Translations = {
     getStarted: "Get Started Free",
     pricing: "Pricing",
     about: "About",
+    contact: "Contact",
     solutions: "Solutions",
   },
   landing: {
@@ -502,7 +504,7 @@ export const en: Translations = {
     byContinuing: "By continuing, you agree to our Terms of Service and Privacy Policy.",
     includesBadge: "Includes Recall Alerts, Value Reports & Digital Glovebox",
     tierFreeFeatures: [
-      "1 vehicle",
+      "2 vehicles",
       "Maintenance logging",
       "Manual reminders",
       "Basic vehicle info",
@@ -593,6 +595,7 @@ export const en: Translations = {
     home: {
       title: "My Vehicles",
       addVehicle: "Add Vehicle",
+      loadingVehicles: "Loading vehicles...",
       plan: "Plan",
       unlimitedVehicles: "Unlimited",
       manage: "Manage",
@@ -1057,6 +1060,9 @@ export const en: Translations = {
       modelRequired: "Model is required",
       failedCreate: "Failed to create vehicle",
       somethingWentWrong: "Something went wrong",
+      stepType: "Type",
+      stepBasic: "Info",
+      stepDetails: "Details",
     },
     vehicleEdit: {
       heading: "Edit Vehicle",

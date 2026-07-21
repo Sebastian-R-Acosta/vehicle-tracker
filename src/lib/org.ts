@@ -34,10 +34,6 @@ export async function getUserRole(organizationId: string, userId: string) {
 }
 
 export async function generateInviteToken(): Promise<string> {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let token = "";
-  for (let i = 0; i < 24; i++) {
-    token += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return token;
+  const { randomBytes } = await import("crypto");
+  return randomBytes(18).toString("base64url");
 }

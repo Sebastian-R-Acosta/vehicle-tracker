@@ -109,6 +109,7 @@ export async function POST(request: Request) {
     }
   } catch (err) {
     console.error("PayPal webhook error:", err);
+    return NextResponse.json({ received: false, error: "Webhook processing failed" }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });

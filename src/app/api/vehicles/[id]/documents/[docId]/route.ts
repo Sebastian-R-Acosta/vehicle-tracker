@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { S3Client, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { getAccessibleVehicle } from "@/lib/vehicle-access";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION || "us-east-2",
@@ -20,8 +21,13 @@ export async function GET(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
+  const vehicle = await getAccessibleVehicle(params.id, session.user.id);
+  if (!vehicle) {
+    return new NextResponse("Not found", { status: 404 });
+  }
+
   const doc = await prisma.vehicleDocument.findFirst({
-    where: { id: params.docId, vehicleId: params.id, vehicle: { userId: session.user.id } },
+    where: { id: params.docId, vehicleId: params.id },
   });
 
   if (!doc) {
@@ -68,8 +74,13 @@ export async function DELETE(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
+  const vehicle = await getAccessibleVehicle(params.id, session.user.id);
+  if (!vehicle) {
+    return new NextResponse("Not found", { status: 404 });
+  }
+
   const doc = await prisma.vehicleDocument.findFirst({
-    where: { id: params.docId, vehicleId: params.id, vehicle: { userId: session.user.id } },
+    where: { id: params.docId, vehicleId: params.id },
   });
 
   if (!doc) {

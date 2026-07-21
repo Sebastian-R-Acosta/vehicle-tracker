@@ -1,5 +1,13 @@
 const store = new Map<string, { count: number; resetAt: number }>();
 
+const CLEANUP_INTERVAL = 60000;
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, record] of Array.from(store.entries())) {
+    if (now > record.resetAt) store.delete(key);
+  }
+}, CLEANUP_INTERVAL).unref();
+
 let kvClient: import("@vercel/kv").VercelKV | null = null;
 
 async function getKv(): Promise<import("@vercel/kv").VercelKV | null> {

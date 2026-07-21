@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendMaintenanceConfirmation } from "@/lib/email";
+import { getAccessibleVehicle } from "@/lib/vehicle-access";
 
 const SERVICE_RECOMMENDATIONS: Record<string, { miles: number; months: number; hours?: number }> = {
   "Oil Change": { miles: 5000, months: 6, hours: 250 },
@@ -27,12 +28,7 @@ export async function GET(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const vehicle = await prisma.vehicle.findFirst({
-    where: { 
-      id: params.id,
-      userId: session.user.id 
-    },
-  });
+  const vehicle = await getAccessibleVehicle(params.id, session.user.id);
 
   if (!vehicle) {
     return new NextResponse("Vehicle not found", { status: 404 });
@@ -56,12 +52,7 @@ export async function POST(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const vehicle = await prisma.vehicle.findFirst({
-    where: { 
-      id: params.id,
-      userId: session.user.id 
-    },
-  });
+  const vehicle = await getAccessibleVehicle(params.id, session.user.id);
 
   if (!vehicle) {
     return new NextResponse("Vehicle not found", { status: 404 });

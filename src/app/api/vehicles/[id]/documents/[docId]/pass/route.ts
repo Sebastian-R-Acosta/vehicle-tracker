@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { generateAppleWalletPass, generateGoogleWalletPass } from "@/lib/wallet";
 import { requirePro } from "@/lib/billing";
+import { getAccessibleVehicle } from "@/lib/vehicle-access";
 
 export async function POST(
   request: Request,
@@ -18,19 +19,22 @@ export async function POST(
     return NextResponse.json({ error }, { status: 403 });
   }
 
+  const vehicle = await getAccessibleVehicle(params.id, session.user.id);
+  if (!vehicle) {
+    return new NextResponse("Not found", { status: 404 });
+  }
+
   const body = await request.json();
   const platform: string = body.platform || "apple";
 
   const doc = await prisma.vehicleDocument.findFirst({
     where: { id: params.docId, vehicleId: params.id },
-    include: { vehicle: true },
   });
 
   if (!doc) {
     return new NextResponse("Not found", { status: 404 });
   }
 
-  const vehicle = doc.vehicle;
   const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const vehicleName = `${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.nickname ? ` (${vehicle.nickname})` : ""}`;
 

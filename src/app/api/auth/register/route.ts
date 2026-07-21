@@ -70,7 +70,7 @@ export async function POST(request: Request) {
       });
     } catch (dbError) {
       console.error("Database error:", dbError);
-      return NextResponse.json({ error: "Database connection failed", details: String(dbError) }, { status: 500 });
+      return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
   } catch (error) {
     console.error("Registration error:", error);

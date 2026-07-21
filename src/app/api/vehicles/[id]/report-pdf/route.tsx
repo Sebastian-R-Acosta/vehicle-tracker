@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { renderToStream } from "@react-pdf/renderer";
 import VehicleReportPDF from "@/components/VehicleReportPDF";
 import { requirePro } from "@/lib/billing";
+import { getAccessibleVehicle } from "@/lib/vehicle-access";
 
 export async function GET(
   request: Request,
@@ -20,11 +21,14 @@ export async function GET(
     return NextResponse.json({ error }, { status: 403 });
   }
 
-  const vehicle = await prisma.vehicle.findFirst({
-    where: {
-      id: params.id,
-      userId: session.user.id,
-    },
+  const vehicle = await getAccessibleVehicle(params.id, session.user.id);
+
+  if (!vehicle) {
+    return new NextResponse("Vehicle not found", { status: 404 });
+  }
+
+  const fullVehicle = await prisma.vehicle.findFirst({
+    where: { id: params.id },
     include: {
       maintenanceRecords: {
         orderBy: { date: "desc" },
@@ -37,23 +41,23 @@ export async function GET(
     },
   });
 
-  if (!vehicle) {
+  if (!fullVehicle) {
     return new NextResponse("Vehicle not found", { status: 404 });
   }
 
-  const lastMaintenance = vehicle.maintenanceRecords[0];
-  const nextReminder = vehicle.reminders.find(r => r.dueDate || r.dueMileage);
-  const totalCost = vehicle.maintenanceRecords.reduce((sum, r) => sum + (r.cost || 0), 0);
+  const lastMaintenance = fullVehicle.maintenanceRecords[0];
+  const nextReminder = fullVehicle.reminders.find(r => r.dueDate || r.dueMileage);
+  const totalCost = fullVehicle.maintenanceRecords.reduce((sum, r) => sum + (r.cost || 0), 0);
 
   const data = {
     vehicle: {
-      year: vehicle.year,
-      make: vehicle.make,
-      model: vehicle.model,
-      nickname: vehicle.nickname,
-      licensePlate: vehicle.licensePlate,
-      vin: vehicle.vin,
-      currentMileage: vehicle.currentMileage,
+      year: fullVehicle.year,
+      make: fullVehicle.make,
+      model: fullVehicle.model,
+      nickname: fullVehicle.nickname,
+      licensePlate: fullVehicle.licensePlate,
+      vin: fullVehicle.vin,
+      currentMileage: fullVehicle.currentMileage,
     },
     summary: {
       lastMaintenance: lastMaintenance ? {
@@ -68,15 +72,15 @@ export async function GET(
       } : null,
       totalCost,
     },
-    maintenanceHistory: vehicle.maintenanceRecords.map(r => ({
+    maintenanceHistory: fullVehicle.maintenanceRecords.map(r => ({
       date: r.date.toISOString(),
       serviceType: r.serviceType,
       mileage: r.mileage,
       notes: r.notes,
       cost: r.cost,
     })),
-    ownershipHistory: vehicle.previousOwner
-      ? [{ ownerName: vehicle.previousOwner.name || "Unknown", transferDate: null }]
+    ownershipHistory: fullVehicle.previousOwner
+      ? [{ ownerName: fullVehicle.previousOwner.name || "Unknown", transferDate: null }]
       : undefined,
   };
 
@@ -90,7 +94,7 @@ export async function GET(
   return new NextResponse(pdfBuffer, {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="vehicle-report-${vehicle.make}-${vehicle.model}.pdf"`,
+      "Content-Disposition": `attachment; filename="vehicle-report-${fullVehicle.make}-${fullVehicle.model}.pdf"`,
     },
   });
 }

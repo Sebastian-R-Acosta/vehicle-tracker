@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getAccessibleVehicle } from "@/lib/vehicle-access";
 
 export const dynamic = "force-dynamic";
 
@@ -14,11 +15,14 @@ export async function GET(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const vehicle = await prisma.vehicle.findFirst({
-    where: { 
-      id: params.id,
-      userId: session.user.id 
-    },
+  const vehicle = await getAccessibleVehicle(params.id, session.user.id);
+
+  if (!vehicle) {
+    return new NextResponse("Vehicle not found", { status: 404 });
+  }
+
+  const fullVehicle = await prisma.vehicle.findFirst({
+    where: { id: params.id },
     include: {
       maintenanceRecords: {
         orderBy: { date: "desc" },
@@ -30,13 +34,13 @@ export async function GET(
     },
   });
 
-  if (!vehicle) {
+  if (!fullVehicle) {
     return new NextResponse("Vehicle not found", { status: 404 });
   }
 
-  const lastMaintenance = vehicle.maintenanceRecords[0];
-  const nextReminder = vehicle.reminders.find(r => r.dueDate || r.dueMileage);
-  const totalCost = vehicle.maintenanceRecords.reduce(
+  const lastMaintenance = fullVehicle.maintenanceRecords[0];
+  const nextReminder = fullVehicle.reminders.find(r => r.dueDate || r.dueMileage);
+  const totalCost = fullVehicle.maintenanceRecords.reduce(
     (sum, record) => sum + (record.cost || 0),
     0
   );
@@ -67,7 +71,7 @@ export async function GET(
         : null,
       totalCost: totalCost > 0 ? totalCost : null,
     },
-    maintenanceHistory: vehicle.maintenanceRecords.map(record => ({
+    maintenanceHistory: fullVehicle.maintenanceRecords.map(record => ({
       date: record.date.toISOString().split('T')[0],
       serviceType: record.serviceType,
       mileage: record.mileage,

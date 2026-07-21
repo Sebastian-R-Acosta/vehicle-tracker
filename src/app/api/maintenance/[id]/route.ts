@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getAccessibleVehicle } from "@/lib/vehicle-access";
 
 export async function GET(
   request: Request,
@@ -13,13 +14,16 @@ export async function GET(
   }
 
   const record = await prisma.maintenanceRecord.findFirst({
-    where: { 
-      id: params.id,
-      vehicle: { userId: session.user.id }
-    },
+    where: { id: params.id },
+    include: { vehicle: true },
   });
 
   if (!record) {
+    return new NextResponse("Record not found", { status: 404 });
+  }
+
+  const vehicle = await getAccessibleVehicle(record.vehicleId, session.user.id);
+  if (!vehicle) {
     return new NextResponse("Record not found", { status: 404 });
   }
 
@@ -37,14 +41,16 @@ export async function PUT(
   }
 
   const existingRecord = await prisma.maintenanceRecord.findFirst({
-    where: { 
-      id: params.id,
-      vehicle: { userId: session.user.id }
-    },
-    include: { vehicle: true }
+    where: { id: params.id },
+    include: { vehicle: true },
   });
 
   if (!existingRecord) {
+    return new NextResponse("Record not found", { status: 404 });
+  }
+
+  const vehicle = await getAccessibleVehicle(existingRecord.vehicleId, session.user.id);
+  if (!vehicle) {
     return new NextResponse("Record not found", { status: 404 });
   }
 
@@ -84,13 +90,16 @@ export async function DELETE(
   }
 
   const existingRecord = await prisma.maintenanceRecord.findFirst({
-    where: { 
-      id: params.id,
-      vehicle: { userId: session.user.id }
-    },
+    where: { id: params.id },
+    include: { vehicle: true },
   });
 
   if (!existingRecord) {
+    return new NextResponse("Record not found", { status: 404 });
+  }
+
+  const vehicle = await getAccessibleVehicle(existingRecord.vehicleId, session.user.id);
+  if (!vehicle) {
     return new NextResponse("Record not found", { status: 404 });
   }
 

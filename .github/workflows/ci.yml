@@ -9,6 +9,7 @@ on:
 env:
   NEXTAUTH_SECRET: test-secret-do-not-use-in-prod
   NEXTAUTH_URL: http://localhost:3000
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vehicle-tracker
   AWS_ACCESS_KEY_ID: test-access-key
   AWS_SECRET_ACCESS_KEY: test-secret-key
   AWS_REGION: us-east-2
@@ -16,10 +17,9 @@ env:
   GOOGLE_CLIENT_ID: test-google-id
   GOOGLE_CLIENT_SECRET: test-google-secret
   RESEND_API_KEY: test-resend-key
-  STRIPE_SECRET_KEY: test-stripe-key
-  STRIPE_PRO_PRICE_ID: price_test_pro
-  STRIPE_BUSINESS_PRICE_ID: price_test_biz
-  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_key
+  PAYPAL_CLIENT_ID: test-paypal-client-id
+  PAYPAL_CLIENT_SECRET: test-paypal-client-secret
+  PAYPAL_WEBHOOK_ID: test-paypal-webhook-id
   NEXT_PUBLIC_POSTHOG_KEY: test-posthog-key
   NEXT_PUBLIC_SENTRY_DSN: ""
 

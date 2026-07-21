@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { randomBytes } from "crypto";
+import { getAccessibleVehicle } from "@/lib/vehicle-access";
 
 export async function POST(
   request: Request,
@@ -13,12 +14,7 @@ export async function POST(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const vehicle = await prisma.vehicle.findFirst({
-    where: { 
-      id: params.id,
-      userId: session.user.id 
-    },
-  });
+  const vehicle = await getAccessibleVehicle(params.id, session.user.id);
 
   if (!vehicle) {
     return new NextResponse("Vehicle not found", { status: 404 });

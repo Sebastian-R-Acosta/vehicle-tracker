@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getAccessibleVehicle } from "@/lib/vehicle-access";
 
 const NHTSA_API = "https://api.nhtsa.gov/recalls/recallsByVehicle";
 
@@ -28,9 +29,7 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const vehicle = await prisma.vehicle.findFirst({
-    where: { id: params.id, userId: session.user.id },
-  });
+  const vehicle = await getAccessibleVehicle(params.id, session.user.id);
 
   if (!vehicle) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
