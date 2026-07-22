@@ -9,16 +9,16 @@ const benefitIcons = [Calendar, Wrench, Clock, Package, Users, BarChart3];
 export default function ForWorkshops() {
   const { t } = useLanguage();
   return (
-    <section className="py-16 lg:py-24 bg-teal-50">
+    <section className="py-16 lg:py-24 bg-teal-50 dark:bg-teal-950/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-teal-200 text-teal-800 text-sm font-medium rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-teal-200 dark:bg-teal-900/30 text-teal-800 dark:text-teal-400 text-sm font-medium rounded-full mb-4">
             {t("landing.forWorkshops")}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
             {t("landing.forWorkshopsSection.heading")}
           </h2>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             {t("landing.forWorkshopsSection.description")}
           </p>
         </div>
@@ -27,12 +27,12 @@ export default function ForWorkshops() {
           {(t("landing.forWorkshopsSection.benefits") as { title: string; description: string }[]).map((b, i) => {
             const Icon = benefitIcons[i];
             return (
-              <div key={b.title} className="p-6 bg-white rounded-xl border border-teal-200">
-                <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
-                  <Icon className="w-5 h-5 text-teal-700" />
+              <div key={b.title} className="p-6 bg-card rounded-xl border border-teal-200 dark:border-teal-800/30">
+                <div className="w-10 h-10 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center mb-4">
+                  <Icon className="w-5 h-5 text-teal-700 dark:text-teal-400" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">{b.title}</h3>
-                <p className="text-sm text-gray-500">{b.description}</p>
+                <h3 className="font-semibold text-foreground mb-1">{b.title}</h3>
+                <p className="text-sm text-muted-foreground">{b.description}</p>
               </div>
             );
           })}

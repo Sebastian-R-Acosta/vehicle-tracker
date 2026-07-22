@@ -9,16 +9,16 @@ const benefitIcons = [HardHat, MapPin, Clock, BarChart3, Wrench, Drill];
 export default function ForConstruction() {
   const { t } = useLanguage();
   return (
-    <section className="py-16 lg:py-24 bg-amber-50">
+    <section className="py-16 lg:py-24 bg-amber-50 dark:bg-amber-950/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-200 text-amber-800 text-sm font-medium rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-200 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 text-sm font-medium rounded-full mb-4">
             {t("landing.forConstruction")}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
             {t("landing.forConstructionSection.heading")}
           </h2>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             {t("landing.forConstructionSection.description")}
           </p>
         </div>
@@ -27,12 +27,12 @@ export default function ForConstruction() {
           {(t("landing.forConstructionSection.benefits") as { title: string; description: string }[]).map((b, i) => {
             const Icon = benefitIcons[i];
             return (
-              <div key={b.title} className="p-6 bg-white rounded-xl border border-amber-200">
-                <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
-                  <Icon className="w-5 h-5 text-amber-700" />
+              <div key={b.title} className="p-6 bg-card rounded-xl border border-amber-200 dark:border-amber-800/30">
+                <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center mb-4">
+                  <Icon className="w-5 h-5 text-amber-700 dark:text-amber-400" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">{b.title}</h3>
-                <p className="text-sm text-gray-500">{b.description}</p>
+                <h3 className="font-semibold text-foreground mb-1">{b.title}</h3>
+                <p className="text-sm text-muted-foreground">{b.description}</p>
               </div>
             );
           })}

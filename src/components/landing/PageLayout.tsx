@@ -9,7 +9,7 @@ export default function PageLayout({ children }: { children: ReactNode }) {
   const [demoOpen, setDemoOpen] = useState(false);
 
   return (
-    <div className="bg-white min-h-screen flex flex-col">
+    <div className="bg-background min-h-screen flex flex-col">
       <Nav onBookDemo={() => setDemoOpen(true)} />
       <main className="flex-1">{children}</main>
       <Footer />
