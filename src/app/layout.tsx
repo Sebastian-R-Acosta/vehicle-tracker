@@ -70,7 +70,7 @@ export default function RootLayout({
         </a>
         <Providers>
           <LanguageSync />
-          <div className="fixed top-4 right-4 z-50">
+          <div className="fixed top-4 right-4 z-[60]">
             <ThemeToggle />
           </div>
           <div id="main-content">{children}</div>
