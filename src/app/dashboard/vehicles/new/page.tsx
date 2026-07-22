@@ -11,6 +11,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { getIndustryPageLabels, IndustryType } from "@/lib/industry-labels";
+import { useQueryClient } from "@tanstack/react-query";
 
 const vehicleBaseFields = {
   year: z.number().min(1886).max(new Date().getFullYear() + 1),
@@ -58,6 +59,7 @@ export default function NewVehiclePage() {
   const [error, setError] = useState("");
   const [step, setStep] = useState(1);
   const [constructionSites, setConstructionSites] = useState<{ id: string; name: string }[]>([]);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -157,7 +159,8 @@ export default function NewVehiclePage() {
       }
 
       const vehicle = result;
-      router.push(`/dashboard/vehicles/${vehicle.id}`);
+      await queryClient.invalidateQueries({ queryKey: ["vehicles"] });
+      router.push("/dashboard");
     } catch (err: any) {
       const msg = err.message || t("dashboard.vehicleNew.somethingWentWrong");
       setError(msg);
