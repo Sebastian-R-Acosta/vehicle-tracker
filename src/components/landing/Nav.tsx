@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Menu, X, LogIn, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const solutions = [
@@ -111,6 +112,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
 
           <div className="hidden md:flex items-center gap-3">
             <LanguageToggle className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg" />
+            <ThemeToggle className="text-gray-300 hover:text-white hover:bg-white/10 rounded-full" />
             <Link
               href="/login"
               className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white border border-white/30 rounded-lg hover:bg-white/10 transition-all"
@@ -168,6 +170,7 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
           </div>
           <div className="flex items-center gap-2 px-2 py-2 border-t border-white/10 mt-2 pt-3">
             <LanguageToggle className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg" />
+            <ThemeToggle className="text-gray-300 hover:text-white hover:bg-white/10 rounded-full" />
             <span className="text-sm text-gray-400">{t("nav.language")}</span>
           </div>
           <Link

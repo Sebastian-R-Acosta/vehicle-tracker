@@ -3,7 +3,7 @@
 import { useTheme, ThemeContext } from "./ThemeProvider";
 import { useContext } from "react";
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
   const context = useContext(ThemeContext);
   const theme = context?.theme || "light";
   const toggleTheme = context?.toggleTheme || (() => {});
@@ -11,7 +11,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="relative w-10 h-10 flex items-center justify-center rounded-full bg-secondary hover:bg-accent transition-colors duration-200"
+      className={`relative w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-200 ${className || "bg-secondary hover:bg-accent"}`}
       aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
     >
       <span className="relative w-5 h-5">

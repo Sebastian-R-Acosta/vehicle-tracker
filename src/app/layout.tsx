@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { LanguageSync } from "@/components/LanguageSync";
 import Script from "next/script";
@@ -70,9 +69,6 @@ export default function RootLayout({
         </a>
         <Providers>
           <LanguageSync />
-          <div className="fixed top-4 right-4 z-[60]">
-            <ThemeToggle />
-          </div>
           <div id="main-content">{children}</div>
           <PWAInstallPrompt />
         </Providers>
