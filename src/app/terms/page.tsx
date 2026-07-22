@@ -4,17 +4,17 @@ import PageLayout from "@/components/landing/PageLayout";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const termsEs = {
-  title: "Términos y Condiciones de Uso — Vehicle Tracker",
+  title: "Términos y Condiciones de Uso — Bitácora",
   updated: "Última actualización: julio 2026",
   intro: [
-    'Bienvenido a Vehicle Tracker. Estos Términos y Condiciones ("Términos") rigen el acceso y uso de la plataforma web Vehicle Tracker (el "Servicio"), operada en la República Dominicana.',
+    'Bienvenido a Bitácora. Estos Términos y Condiciones ("Términos") rigen el acceso y uso de la plataforma web Bitácora (el "Servicio"), operada en la República Dominicana.',
     "Al crear una cuenta, acceder o utilizar el Servicio, usted declara que ha leído, entendido y aceptado estos Términos. Si no está de acuerdo, no debe utilizar el Servicio.",
   ],
   sections: [
     {
       heading: "1. Descripción del Servicio",
       content: [
-        "Vehicle Tracker es una plataforma digital que permite a los usuarios registrar, organizar y consultar el historial de mantenimiento, reparaciones y documentación de sus vehículos. Las funcionalidades disponibles pueden incluir:",
+        "Bitácora es una plataforma digital que permite a los usuarios registrar, organizar y consultar el historial de mantenimiento, reparaciones y documentación de sus vehículos. Las funcionalidades disponibles pueden incluir:",
       ],
       list: [
         "Registro de vehículos (marca, modelo, año, placa, chasis)",
@@ -24,7 +24,7 @@ const termsEs = {
         "Generación de reportes en PDF",
         "Gestión de usuarios y perfiles",
       ],
-      after: "Vehicle Tracker puede modificar, suspender o descontinuar funciones, planes o precios en cualquier momento.",
+      after: "Bitácora puede modificar, suspender o descontinuar funciones, planes o precios en cualquier momento.",
     },
     {
       heading: "2. Cuenta de Usuario",
@@ -36,7 +36,7 @@ const termsEs = {
         "Mantener sus credenciales de acceso de forma confidencial",
         "Ser responsable de toda actividad realizada bajo su cuenta",
       ],
-      after: "Vehicle Tracker no se hace responsable por accesos no autorizados derivados de negligencia del usuario (contraseñas compartidas, dispositivos desprotegidos, etc.).",
+      after: "Bitácora no se hace responsable por accesos no autorizados derivados de negligencia del usuario (contraseñas compartidas, dispositivos desprotegidos, etc.).",
     },
     {
       heading: "3. Aceptación de los Términos",
@@ -47,7 +47,7 @@ const termsEs = {
     {
       heading: "4. Planes y Suscripciones",
       content: [
-        "Vehicle Tracker puede ofrecer un modelo freemium con planes gratuitos y de pago. Los precios, funciones y condiciones de cada plan pueden cambiar; se notificará a los usuarios con antelación razonable ante cambios relevantes.",
+        "Bitácora puede ofrecer un modelo freemium con planes gratuitos y de pago. Los precios, funciones y condiciones de cada plan pueden cambiar; se notificará a los usuarios con antelación razonable ante cambios relevantes.",
       ],
       list: [
         "Las suscripciones pueden cancelarse en cualquier momento.",
@@ -72,14 +72,14 @@ const termsEs = {
         "Realizar ingeniería inversa o intentar vulnerar la seguridad de la plataforma",
         "Extraer datos mediante scraping, bots o herramientas automatizadas",
         "Copiar, redistribuir o explotar el contenido de la plataforma sin autorización",
-        "Usar los datos de Vehicle Tracker para entrenar modelos de inteligencia artificial sin autorización expresa",
+        "Usar los datos de Bitácora para entrenar modelos de inteligencia artificial sin autorización expresa",
       ],
       after: "El incumplimiento puede resultar en suspensión o cancelación de la cuenta.",
     },
     {
       heading: "7. Propiedad Intelectual",
       content: [
-        "El software, diseño, base de datos, marca, interfaz y demás elementos de Vehicle Tracker son propiedad de sus desarrolladores y están protegidos por las leyes de propiedad intelectual de la República Dominicana. El uso del Servicio no transfiere ningún derecho de propiedad al usuario.",
+        "El software, diseño, base de datos, marca, interfaz y demás elementos de Bitácora son propiedad de sus desarrolladores y están protegidos por las leyes de propiedad intelectual de la República Dominicana. El uso del Servicio no transfiere ningún derecho de propiedad al usuario.",
       ],
     },
     {
@@ -91,25 +91,25 @@ const termsEs = {
     {
       heading: "9. Disponibilidad del Servicio y Exclusión de Garantías",
       content: [
-        'Vehicle Tracker se ofrece "tal cual" y "según disponibilidad". No garantizamos operación continua, ininterrumpida o libre de errores. Pueden ocurrir interrupciones por mantenimiento, actualizaciones o fallas de terceros.',
+        'Bitácora se ofrece "tal cual" y "según disponibilidad". No garantizamos operación continua, ininterrumpida o libre de errores. Pueden ocurrir interrupciones por mantenimiento, actualizaciones o fallas de terceros.',
       ],
     },
     {
       heading: "10. Limitación de Responsabilidad",
       content: [
-        "En la máxima medida permitida por la ley, Vehicle Tracker no será responsable por:",
+        "En la máxima medida permitida por la ley, Bitácora no será responsable por:",
       ],
       list: [
         "Pérdidas financieras, comerciales u operativas",
         "Pérdida de datos o lucro cesante",
         "Decisiones tomadas por el usuario con base en la información registrada en la plataforma",
       ],
-      after: "Vehicle Tracker no sustituye asesoría profesional (mecánica, legal o de seguros) ni sistemas críticos de seguridad vehicular.",
+      after: "Bitácora no sustituye asesoría profesional (mecánica, legal o de seguros) ni sistemas críticos de seguridad vehicular.",
     },
     {
       heading: "11. Suspensión y Terminación",
       content: [
-        "Vehicle Tracker puede suspender o cancelar cuentas que incumplan estos Términos, presenten indicios de fraude, o representen un riesgo técnico o legal para la plataforma.",
+        "Bitácora puede suspender o cancelar cuentas que incumplan estos Términos, presenten indicios de fraude, o representen un riesgo técnico o legal para la plataforma.",
       ],
     },
     {
@@ -135,17 +135,17 @@ const termsEs = {
 };
 
 const termsEn = {
-  title: "Terms of Service — Vehicle Tracker",
+  title: "Terms of Service — Bitácora",
   updated: "Last updated: July 2026",
   intro: [
-    'Welcome to Vehicle Tracker. These Terms of Service ("Terms") govern your access to and use of the Vehicle Tracker web platform (the "Service"), operated in the Dominican Republic.',
+    'Welcome to Bitácora. These Terms of Service ("Terms") govern your access to and use of the Bitácora web platform (the "Service"), operated in the Dominican Republic.',
     "By creating an account, accessing, or using the Service, you represent that you have read, understood, and accepted these Terms. If you do not agree, you must not use the Service.",
   ],
   sections: [
     {
       heading: "1. Description of the Service",
       content: [
-        "Vehicle Tracker is a digital platform that allows users to register, organize, and consult the maintenance history, repairs, and documentation of their vehicles. Available features may include:",
+        "Bitácora is a digital platform that allows users to register, organize, and consult the maintenance history, repairs, and documentation of their vehicles. Available features may include:",
       ],
       list: [
         "Vehicle registration (make, model, year, license plate, VIN)",
@@ -155,7 +155,7 @@ const termsEn = {
         "PDF report generation",
         "User and profile management",
       ],
-      after: "Vehicle Tracker may modify, suspend, or discontinue features, plans, or pricing at any time.",
+      after: "Bitácora may modify, suspend, or discontinue features, plans, or pricing at any time.",
     },
     {
       heading: "2. User Account",
@@ -167,7 +167,7 @@ const termsEn = {
         "Keep access credentials confidential",
         "Be responsible for all activity performed under their account",
       ],
-      after: "Vehicle Tracker is not responsible for unauthorized access resulting from user negligence (shared passwords, unprotected devices, etc.).",
+      after: "Bitácora is not responsible for unauthorized access resulting from user negligence (shared passwords, unprotected devices, etc.).",
     },
     {
       heading: "3. Acceptance of Terms",
@@ -178,7 +178,7 @@ const termsEn = {
     {
       heading: "4. Plans and Subscriptions",
       content: [
-        "Vehicle Tracker may offer a freemium model with free and paid plans. Prices, features, and conditions of each plan may change; users will be notified with reasonable advance notice of relevant changes.",
+        "Bitácora may offer a freemium model with free and paid plans. Prices, features, and conditions of each plan may change; users will be notified with reasonable advance notice of relevant changes.",
       ],
       list: [
         "Subscriptions may be canceled at any time.",
@@ -203,14 +203,14 @@ const termsEn = {
         "Reverse engineering or attempting to compromise the platform's security",
         "Extracting data through scraping, bots, or automated tools",
         "Copying, redistributing, or exploiting the platform's content without authorization",
-        "Using Vehicle Tracker data to train artificial intelligence models without express authorization",
+        "Using Bitácora data to train artificial intelligence models without express authorization",
       ],
       after: "Non-compliance may result in suspension or cancellation of the account.",
     },
     {
       heading: "7. Intellectual Property",
       content: [
-        "The software, design, database, brand, interface, and other elements of Vehicle Tracker are the property of its developers and are protected by the intellectual property laws of the Dominican Republic. Use of the Service does not transfer any ownership rights to the user.",
+        "The software, design, database, brand, interface, and other elements of Bitácora are the property of its developers and are protected by the intellectual property laws of the Dominican Republic. Use of the Service does not transfer any ownership rights to the user.",
       ],
     },
     {
@@ -222,25 +222,25 @@ const termsEn = {
     {
       heading: "9. Service Availability and Warranty Disclaimer",
       content: [
-        'Vehicle Tracker is provided "as is" and "as available." We do not guarantee continuous, uninterrupted, or error-free operation. Interruptions may occur due to maintenance, updates, or third-party failures.',
+        'Bitácora is provided "as is" and "as available." We do not guarantee continuous, uninterrupted, or error-free operation. Interruptions may occur due to maintenance, updates, or third-party failures.',
       ],
     },
     {
       heading: "10. Limitation of Liability",
       content: [
-        "To the maximum extent permitted by law, Vehicle Tracker shall not be liable for:",
+        "To the maximum extent permitted by law, Bitácora shall not be liable for:",
       ],
       list: [
         "Financial, commercial, or operational losses",
         "Data loss or lost profits",
         "Decisions made by the user based on information registered on the platform",
       ],
-      after: "Vehicle Tracker does not replace professional advice (mechanical, legal, or insurance) or critical vehicle safety systems.",
+      after: "Bitácora does not replace professional advice (mechanical, legal, or insurance) or critical vehicle safety systems.",
     },
     {
       heading: "11. Suspension and Termination",
       content: [
-        "Vehicle Tracker may suspend or cancel accounts that violate these Terms, show signs of fraud, or pose a technical or legal risk to the platform.",
+        "Bitácora may suspend or cancel accounts that violate these Terms, show signs of fraud, or pose a technical or legal risk to the platform.",
       ],
     },
     {
