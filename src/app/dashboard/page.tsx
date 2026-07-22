@@ -93,7 +93,7 @@ function DashboardHeader({ vehicleLabels }: { vehicleLabels: any }) {
         className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
       >
         <Plus className="w-4 h-4" />
-        {vehicleLabels.action}
+        {t(vehicleLabels.action)}
       </Link>
     </div>
   );
@@ -381,7 +381,7 @@ function VehicleSection({ vehicleLabels }: { vehicleLabels: any }) {
           message={t("dashboard.home.noVehicles")}
           action={
             <Link href="/dashboard/vehicles/new" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 mt-2">
-              <Plus className="w-4 h-4" />{vehicleLabels.action}
+              <Plus className="w-4 h-4" />{t(vehicleLabels.action)}
             </Link>
           }
         />

@@ -131,7 +131,7 @@ export default function CreateOrgModal({ open, onClose, onCreated }: CreateOrgMo
                   className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
                 >
                   {INDUSTRIES.map((ind) => (
-                    <option key={ind.value} value={ind.value}>{ind.label}</option>
+                    <option key={ind.value} value={ind.value}>{t(ind.label)}</option>
                   ))}
                 </select>
               </div>

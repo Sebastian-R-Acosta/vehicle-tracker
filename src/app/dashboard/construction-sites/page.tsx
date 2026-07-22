@@ -88,12 +88,12 @@ export default function ConstructionSitesPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{labels.heading}</h1>
-            <p className="text-muted-foreground">{labels.subtitle}</p>
+            <h1 className="text-2xl font-bold text-foreground">{t(labels.heading)}</h1>
+            <p className="text-muted-foreground">{t(labels.subtitle)}</p>
           </div>
           <Link href="/dashboard/construction-sites/new" className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
             <Plus className="w-4 h-4" />
-            {labels.action}
+            {t(labels.action)}
           </Link>
         </div>
 
@@ -123,7 +123,7 @@ export default function ConstructionSitesPage() {
             {!search && (
               <Link href="/dashboard/construction-sites/new" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90">
                 <Plus className="w-4 h-4" />
-                {labels.action}
+                {t(labels.action)}
               </Link>
             )}
           </div>

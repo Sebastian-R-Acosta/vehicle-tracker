@@ -206,7 +206,7 @@ export default function NewVehiclePage() {
             <div className="p-2 bg-primary rounded-lg">
               <Car className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-semibold text-foreground">{labels.newHeading}</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t(labels.newHeading)}</h1>
           </div>
 
           <StepIndicator currentStep={step} totalSteps={TOTAL_STEPS} />
@@ -263,7 +263,7 @@ export default function NewVehiclePage() {
                   className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {labels.saveAction}
+                  {t(labels.saveAction)}
                 </button>
               )}
             </div>

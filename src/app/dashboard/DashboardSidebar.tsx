@@ -56,7 +56,7 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
       { href: "/dashboard", label: t("dashboard.home.title"), icon: <LayoutDashboard className="w-5 h-5" /> },
     ];
     for (const cfg of getIndustryNavItems(industryType)) {
-      items.push({ href: cfg.href, label: cfg.label, icon: navIcon(cfg.icon) });
+      items.push({ href: cfg.href, label: t(cfg.label), icon: navIcon(cfg.icon) });
     }
     items.push(
       { href: "/dashboard/scan", label: t("nav.scan"), icon: <Scan className="w-5 h-5" /> },
@@ -154,7 +154,7 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
               className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
             >
               <Bell className="w-5 h-5" />
-              Notifications
+              {t("nav.notifications")}
             </Link>
             {isAdmin && (
               <Link
@@ -162,7 +162,7 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
                 className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-yellow-600 dark:text-yellow-400 rounded-lg hover:bg-yellow-50 dark:hover:bg-yellow-950/40"
               >
                 <Shield className="w-5 h-5" />
-                Admin
+                {t("nav.admin")}
               </Link>
             )}
           </div>
@@ -178,7 +178,7 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
             >
               <LogOut className="w-4 h-4" />
-              Sign out
+              {t("nav.signOut")}
             </button>
           </div>
         </div>
