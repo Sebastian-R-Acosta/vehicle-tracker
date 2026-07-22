@@ -24,7 +24,10 @@ export async function GET(request: Request) {
     }
     where = { organizationId };
   } else {
-    where = { userId: session.user.id, organizationId: null };
+    const effectiveOrgId = session.user.currentOrganizationId || null;
+    where = effectiveOrgId
+      ? { organizationId: effectiveOrgId }
+      : { userId: session.user.id, organizationId: null };
   }
 
   const vehicles = await prisma.vehicle.findMany({
