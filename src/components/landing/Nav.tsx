@@ -128,12 +128,22 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
             </Link>
           </div>
 
-          <button
-            onClick={() => setOpen(!open)}
-            className="md:hidden p-3 text-gray-300 hover:text-white"
-          >
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          <div className="flex md:hidden items-center gap-1">
+            <LanguageToggle className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg" />
+            <ThemeToggle className="text-gray-300 hover:text-white hover:bg-white/10 rounded-full" />
+            <Link
+              href="/login"
+              className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg"
+            >
+              <LogIn className="w-4 h-4" />
+            </Link>
+            <button
+              onClick={() => setOpen(!open)}
+              className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg"
+            >
+              {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -168,22 +178,9 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
               );
             })}
           </div>
-          <div className="flex items-center gap-2 px-2 py-2 border-t border-white/10 mt-2 pt-3">
-            <LanguageToggle className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg" />
-            <ThemeToggle className="text-gray-300 hover:text-white hover:bg-white/10 rounded-full" />
-            <span className="text-sm text-gray-400">{t("nav.language")}</span>
-          </div>
-          <Link
-            href="/login"
-            className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white py-3"
-            onClick={() => setOpen(false)}
-          >
-            <LogIn className="w-3.5 h-3.5" />
-            {t("nav.login")}
-          </Link>
           <Link
             href="/register"
-            className="block w-full px-5 py-2.5 text-sm font-semibold text-center text-white bg-blue-600 rounded-lg hover:bg-blue-500"
+            className="block w-full px-5 py-2.5 text-sm font-semibold text-center text-white bg-blue-600 rounded-lg hover:bg-blue-500 mt-3"
             onClick={() => setOpen(false)}
           >
             {t("nav.getStarted")}
