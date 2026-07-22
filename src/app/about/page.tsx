@@ -40,7 +40,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">Core Values</h2>
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">{t("common.aboutCoreValues")}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((v) => {
               const Icon = v.icon;

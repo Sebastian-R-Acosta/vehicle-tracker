@@ -109,6 +109,7 @@ export const en: Translations = {
     aboutMissionText: "To empower every vehicle owner, dealer, and insurer with transparent, accessible, and reliable vehicle history data — making the automotive ecosystem more trustworthy for everyone.",
     aboutVision: "Our Vision",
     aboutVisionText: "A world where every vehicle has a complete, verifiable history — eliminating fraud, simplifying maintenance, and building trust across the entire industry.",
+    aboutCoreValues: "Core Values",
     aboutValueTransparency: "Transparency",
     aboutValueTransparencyDesc: "We believe open data builds trust. Every record is immutable and verifiable.",
     aboutValueSimplicity: "Simplicity",

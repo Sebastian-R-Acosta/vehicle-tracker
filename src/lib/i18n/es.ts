@@ -107,6 +107,7 @@ export const es = {
     aboutMissionText: "Empoderar a cada dueño de vehículo, concesionario y aseguradora con datos de historial vehicular transparentes, accesibles y confiables — haciendo el ecosistema automotriz más confiable para todos.",
     aboutVision: "Nuestra Visión",
     aboutVisionText: "Un mundo donde cada vehículo tenga un historial completo y verificable — eliminando fraudes, simplificando el mantenimiento y construyendo confianza en toda la industria.",
+    aboutCoreValues: "Valores Fundamentales",
     aboutValueTransparency: "Transparencia",
     aboutValueTransparencyDesc: "Creemos que los datos abiertos generan confianza. Cada registro es inmutable y verificable.",
     aboutValueSimplicity: "Simplicidad",
