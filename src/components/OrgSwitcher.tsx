@@ -6,6 +6,7 @@ import { Building2, User, ChevronDown, LogOut, Settings, Plus } from "lucide-rea
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import CreateOrgModal from "./CreateOrgModal";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface Org {
   id: string;
@@ -18,6 +19,7 @@ interface Org {
 export default function OrgSwitcher() {
   const { data: session, update } = useSession();
   const router = useRouter();
+  const { t } = useLanguage();
   const [orgs, setOrgs] = useState<Org[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -79,7 +81,7 @@ export default function OrgSwitcher() {
           ) : (
             <>
               <User className="w-4 h-4 text-primary" />
-              <span className="font-medium text-foreground">Personal</span>
+              <span className="font-medium text-foreground">{t("orgSwitcher.personal")}</span>
             </>
           )}
           <ChevronDown className="w-3 h-3 text-muted-foreground" />
@@ -88,7 +90,7 @@ export default function OrgSwitcher() {
         {open && (
           <div className="absolute bottom-full left-0 mb-1 w-64 bg-card border border-border rounded-lg shadow-lg z-50 py-1">
             <div className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Switch account
+              {t("orgSwitcher.switchAccount")}
             </div>
 
             <button
@@ -96,7 +98,7 @@ export default function OrgSwitcher() {
               className={`w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-accent transition-colors ${!currentOrgId ? "bg-accent" : ""}`}
             >
               <User className="w-4 h-4" />
-              <span>Personal</span>
+              <span>{t("orgSwitcher.personal")}</span>
             </button>
 
             {orgs.map((org) => (
@@ -119,7 +121,7 @@ export default function OrgSwitcher() {
                 className="w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-accent transition-colors"
               >
                 <Plus className="w-4 h-4" />
-                <span>Create Organization</span>
+                <span>{t("orgSwitcher.createOrg")}</span>
               </button>
               <Link
                 href="/dashboard/settings"
@@ -127,14 +129,14 @@ export default function OrgSwitcher() {
                 className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-accent transition-colors"
               >
                 <Settings className="w-4 h-4" />
-                <span>Settings</span>
+                <span>{t("orgSwitcher.settings")}</span>
               </Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/login" })}
                 className="w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-accent transition-colors text-destructive"
               >
                 <LogOut className="w-4 h-4" />
-                <span>Sign out</span>
+                <span>{t("orgSwitcher.signOut")}</span>
               </button>
             </div>
           </div>

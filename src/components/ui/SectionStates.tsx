@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface SectionLoaderProps {
   message?: string;
@@ -22,6 +23,7 @@ interface SectionErrorProps {
 }
 
 export function SectionError({ title, message, onRetry }: SectionErrorProps) {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col items-center justify-center py-12 gap-3 text-center">
       <AlertCircle className="w-8 h-8 text-destructive" />
@@ -33,7 +35,7 @@ export function SectionError({ title, message, onRetry }: SectionErrorProps) {
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 rounded-lg transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
-          Retry
+          {t("common.retry")}
         </button>
       )}
     </div>

@@ -74,6 +74,7 @@ export const en: Translations = {
     selectFile: "Select file",
     upload: "Upload",
     tryAgain: "Try again",
+    retry: "Retry",
     noOrgHeading: "Create an organization first",
     createOrganization: "Create Organization",
     orgName: "Organization name",
@@ -1373,5 +1374,24 @@ export const en: Translations = {
       vehicles: { heading: "Fleet", subtitle: "Manage your fleet", action: "Add Vehicle", newHeading: "Add Vehicle", saveAction: "Add Vehicle" },
       tasks: { heading: "Vehicle Tasks", subtitle: "Repairs and upgrades prioritized", action: "Add Task", newHeading: "Add Task", saveAction: "Add Task" },
     },
+  },
+  orgSwitcher: {
+    personal: "Personal",
+    switchAccount: "Switch account",
+    createOrg: "Create Organization",
+    settings: "Settings",
+    signOut: "Sign out",
+  },
+  industryBanner: {
+    setTo: "Your organization is set to",
+    changeIndustry: "Change industry",
+    customizeHint: "to customize labels and navigation.",
+    dismiss: "Dismiss",
+  },
+  pwa: {
+    installTitle: "Install Bitácora",
+    installDescription: "Add to your home screen for quick access",
+    installButton: "Install App",
+    notNowButton: "Not Now",
   },
 };

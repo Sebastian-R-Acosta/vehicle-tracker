@@ -72,6 +72,7 @@ export const es = {
     selectFile: "Seleccionar archivo",
     upload: "Subir",
     tryAgain: "Intentar de nuevo",
+    retry: "Reintentar",
     noOrgHeading: "Crea una organización primero",
     createOrganization: "Crear Organización",
     orgName: "Nombre de la organización",
@@ -1371,6 +1372,25 @@ export const es = {
       vehicles: { heading: "Flota", subtitle: "Gestiona tu flota", action: "Agregar Vehículo", newHeading: "Agregar Vehículo", saveAction: "Agregar Vehículo" },
       tasks: { heading: "Tareas de Vehículos", subtitle: "Reparaciones y mejoras priorizadas", action: "Agregar Tarea", newHeading: "Agregar Tarea", saveAction: "Agregar Tarea" },
     },
+  },
+  orgSwitcher: {
+    personal: "Personal",
+    switchAccount: "Cambiar cuenta",
+    createOrg: "Crear Organización",
+    settings: "Configuración",
+    signOut: "Cerrar sesión",
+  },
+  industryBanner: {
+    setTo: "Tu organización está configurada como",
+    changeIndustry: "Cambiar industria",
+    customizeHint: "para personalizar etiquetas y navegación.",
+    dismiss: "Ocultar",
+  },
+  pwa: {
+    installTitle: "Instalar Bitácora",
+    installDescription: "Agrega a tu pantalla de inicio para acceso rápido",
+    installButton: "Instalar App",
+    notNowButton: "Ahora No",
   },
 };
 

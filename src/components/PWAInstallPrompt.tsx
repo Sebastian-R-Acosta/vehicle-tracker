@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -13,6 +14,7 @@ const DISMISSED_KEY = "pwa-install-dismissed";
 export function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [dismissed, setDismissed] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const stored = localStorage.getItem(DISMISSED_KEY);
@@ -55,8 +57,8 @@ export function PWAInstallPrompt() {
     <div className="fixed bottom-4 right-4 z-50 bg-card border border-border rounded-xl shadow-lg p-4 max-w-xs">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-sm font-semibold text-foreground">Install Bitácora</p>
-          <p className="text-xs text-muted-foreground mt-1">Add to your home screen for quick access</p>
+          <p className="text-sm font-semibold text-foreground">{t("pwa.installTitle")}</p>
+          <p className="text-xs text-muted-foreground mt-1">{t("pwa.installDescription")}</p>
         </div>
         <button onClick={handleDismiss} className="p-1 text-muted-foreground hover:text-foreground rounded">
           <X className="w-4 h-4" />
@@ -67,13 +69,13 @@ export function PWAInstallPrompt() {
           onClick={handleInstall}
           className="flex-1 px-3 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
         >
-          Install App
+          {t("pwa.installButton")}
         </button>
         <button
           onClick={handleDismiss}
           className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground border border-border rounded-lg"
         >
-          Not Now
+          {t("pwa.notNowButton")}
         </button>
       </div>
     </div>

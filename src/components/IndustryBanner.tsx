@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { X, Building2 } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export function IndustryBanner() {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const [dismissed, setDismissed] = useState(true);
 
   useEffect(() => {
@@ -24,11 +26,11 @@ export function IndustryBanner() {
         <div className="flex items-center gap-2 text-sm">
           <Building2 className="w-4 h-4 text-primary shrink-0" />
           <span>
-            Your organization is set to <strong>Construction</strong>.{" "}
+            {t("industryBanner.setTo")} <strong>Construction</strong>.{" "}
             <Link href="/dashboard/settings" className="text-primary hover:underline font-medium">
-              Change industry
+              {t("industryBanner.changeIndustry")}
             </Link>{" "}
-            to customize labels and navigation.
+            {t("industryBanner.customizeHint")}
           </span>
         </div>
         <button
@@ -37,7 +39,7 @@ export function IndustryBanner() {
             setDismissed(true);
           }}
           className="shrink-0 p-1 text-muted-foreground hover:text-foreground rounded"
-          aria-label="Dismiss"
+          aria-label={t("industryBanner.dismiss")}
         >
           <X className="w-4 h-4" />
         </button>
