@@ -128,7 +128,7 @@ export function VehicleDocumentsSection({ vehicleId, isPro }: Props) {
       <div className="bg-card rounded-lg border border-border p-6">
         <SectionError
           title={t("dashboard.vehicleDetail.digitalGlovebox")}
-          message="Could not load documents."
+          message={t("dashboard.vehicleDetail.failedLoadDocuments")}
           onRetry={() => refetch()}
         />
       </div>
@@ -154,7 +154,7 @@ export function VehicleDocumentsSection({ vehicleId, isPro }: Props) {
       </div>
 
       {isLoading ? (
-        <SectionLoader message="Loading documents..." />
+        <SectionLoader message={t("common.loading")} />
       ) : documents.length === 0 ? (
         <SectionEmpty
           icon={FolderOpen}
@@ -195,7 +195,7 @@ export function VehicleDocumentsSection({ vehicleId, isPro }: Props) {
                 </div>
                 {doc.expiryDate && (
                   <p className={`text-xs mt-2 ${isExpired ? "text-red-600" : "text-muted-foreground"}`}>
-                    {isExpired ? "Expired" : "Expires"} {new Date(doc.expiryDate).toLocaleDateString()}
+                    {isExpired ? t("dashboard.vehicleDetail.expired") : t("dashboard.vehicleDetail.expires")} {new Date(doc.expiryDate).toLocaleDateString()}
                   </p>
                 )}
               </div>
@@ -217,7 +217,7 @@ export function VehicleDocumentsSection({ vehicleId, isPro }: Props) {
               />
               <input
                 type="text"
-                placeholder="Document name"
+                placeholder={t("dashboard.vehicleDetail.documentName")}
                 value={docName}
                 onChange={(e) => setDocName(e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg text-sm"
@@ -227,16 +227,16 @@ export function VehicleDocumentsSection({ vehicleId, isPro }: Props) {
                 onChange={(e) => setDocCategory(e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg text-sm"
               >
-                <option value="registration">Registration</option>
-                <option value="insurance">Insurance</option>
-                <option value="warranty">Warranty</option>
-                <option value="inspection">Inspection</option>
-                <option value="receipt">Receipt</option>
-                <option value="other">Other</option>
+                <option value="registration">{t("dashboard.vehicleDetail.docCategories.registration")}</option>
+                <option value="insurance">{t("dashboard.vehicleDetail.docCategories.insurance")}</option>
+                <option value="warranty">{t("dashboard.vehicleDetail.docCategories.warranty")}</option>
+                <option value="inspection">{t("dashboard.vehicleDetail.docCategories.inspection")}</option>
+                <option value="receipt">{t("dashboard.vehicleDetail.docCategories.receipt")}</option>
+                <option value="other">{t("dashboard.vehicleDetail.docCategories.other")}</option>
               </select>
               <input
                 type="date"
-                placeholder="Expiry date"
+                placeholder={t("dashboard.vehicleDetail.expiryDate")}
                 value={docExpiry}
                 onChange={(e) => setDocExpiry(e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg text-sm"
@@ -248,13 +248,13 @@ export function VehicleDocumentsSection({ vehicleId, isPro }: Props) {
                   disabled={!docFile || uploading}
                   className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-50"
                 >
-                  {uploading ? "Uploading..." : "Upload"}
+                  {uploading ? t("dashboard.vehicleDetail.uploading") : t("common.upload")}
                 </button>
                 <button
                   onClick={() => setShowForm(false)}
                   className="px-4 py-2 text-muted-foreground hover:text-foreground"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
               </div>
             </div>

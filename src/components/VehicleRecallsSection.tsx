@@ -71,11 +71,11 @@ export function VehicleRecallsSection({ vehicleId, vin }: Props) {
           <AlertTriangle className="w-5 h-5 text-amber-500" />
           {t("dashboard.vehicleDetail.recallAlerts")}
         </h2>
-        {loading && <span className="text-xs text-muted-foreground">Checking...</span>}
+        {loading && <span className="text-xs text-muted-foreground">{t("common.loading")}</span>}
       </div>
 
       {loading ? (
-        <SectionLoader message="Checking for recalls..." />
+        <SectionLoader message={t("dashboard.vehicleDetail.checkingRecalls")} />
       ) : recalls.length === 0 ? (
         <SectionEmpty
           icon={CheckCircle}
@@ -97,7 +97,7 @@ export function VehicleRecallsSection({ vehicleId, vin }: Props) {
                     <p className="text-sm text-red-600 mt-1">{recall.safetyRisk}</p>
                   )}
                   <p className="text-xs text-muted-foreground mt-2">
-                    Reported {new Date(recall.reportReceivedDate).toLocaleDateString()}
+                    {t("dashboard.vehicleDetail.reported")} {new Date(recall.reportReceivedDate).toLocaleDateString()}
                   </p>
                 </div>
               </div>

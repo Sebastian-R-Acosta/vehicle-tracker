@@ -80,6 +80,14 @@ export default function VehicleDetailPage() {
     { enabled: status === "authenticated" && !!vehicleId }
   );
 
+  const { data: plan } = useFetch<{ tier: string }>(
+    ["plan"],
+    "/api/user/plan",
+    { enabled: status === "authenticated" }
+  );
+
+  const isPro = plan?.tier === "pro" || plan?.tier === "business";
+
   if (status === "unauthenticated") {
     router.push("/login");
     return null;
@@ -474,7 +482,7 @@ export default function VehicleDetailPage() {
 
             <VehicleTaskSection vehicleId={vehicle.id} />
 
-            <VehicleDocumentsSection vehicleId={vehicle.id} isPro={true} />
+            <VehicleDocumentsSection vehicleId={vehicle.id} isPro={isPro ?? false} />
           </div>
 
           <div className="space-y-6">

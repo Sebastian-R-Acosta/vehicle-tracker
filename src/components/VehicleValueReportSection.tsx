@@ -38,10 +38,10 @@ export function VehicleValueReportSection({ vehicleId }: Props) {
       if (res.ok) {
         setReport(await res.json());
       } else {
-        setError("Could not load value report.");
+        setError(t("dashboard.vehicleDetail.failedLoadValue"));
       }
     } catch {
-      setError("Could not load value report.");
+      setError(t("dashboard.vehicleDetail.failedLoadValue"));
     } finally {
       setLoading(false);
     }
@@ -51,7 +51,7 @@ export function VehicleValueReportSection({ vehicleId }: Props) {
     return (
       <div className="bg-card rounded-lg border border-border p-6">
         <SectionError
-          title="Vehicle Value"
+          title={t("dashboard.vehicleDetail.vehicleValue")}
           message={error}
           onRetry={fetchReport}
         />
@@ -64,20 +64,20 @@ export function VehicleValueReportSection({ vehicleId }: Props) {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <DollarSign className="w-5 h-5" />
-          Vehicle Value
+          {t("dashboard.vehicleDetail.vehicleValue")}
         </h2>
         {!report && !loading && (
           <button
             onClick={fetchReport}
             className="text-sm text-primary hover:underline font-medium"
           >
-            Estimate Value
+            {t("dashboard.vehicleDetail.estimateValue")}
           </button>
         )}
       </div>
 
       {loading ? (
-        <SectionLoader message="Estimating value..." />
+        <SectionLoader message={t("dashboard.vehicleDetail.estimatingValue")} />
       ) : report ? (
         <div className="space-y-4">
           <div className="text-center py-4">
@@ -86,7 +86,7 @@ export function VehicleValueReportSection({ vehicleId }: Props) {
             </p>
             <p className="text-sm text-muted-foreground mt-1">{report.marketRating}</p>
             <p className="text-xs text-muted-foreground">
-              Range: RD${report.valueRange.low.toLocaleString()} - RD${report.valueRange.high.toLocaleString()}
+              {t("dashboard.vehicleDetail.valueRange")} RD${report.valueRange.low.toLocaleString()} - RD${report.valueRange.high.toLocaleString()}
             </p>
           </div>
           <div className="grid gap-2">
