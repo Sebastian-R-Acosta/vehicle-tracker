@@ -134,6 +134,7 @@ export default function NewVehiclePage() {
   };
 
   const onSubmit = async (data: VehicleFormData) => {
+    if (step < TOTAL_STEPS) return;
     setError("");
     setLoading(true);
 
