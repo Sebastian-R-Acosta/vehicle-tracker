@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,23 +10,25 @@ import { ArrowLeft, Loader2, Car, Truck, Bike, Zap, Drill, Tractor, Hammer, Buil
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-const vehicleSchema = z.object({
-  make: z.string().min(1, "Make is required").max(100),
-  model: z.string().min(1, "Model is required").max(100),
-  year: z.number().min(1886).max(new Date().getFullYear() + 1),
-  vin: z.string().length(17).optional().or(z.literal("")),
-  licensePlate: z.string().max(20).optional().or(z.literal("")),
-  nickname: z.string().max(100).optional(),
-  vehicleType: z.enum(["car", "truck", "motorcycle", "excavator", "bulldozer", "dump_truck", "crane", "loader", "grader", "other"]).default("car"),
-  status: z.enum(["active", "maintenance", "inactive", "sold"]).default("active"),
-  currentMileage: z.number().min(0),
-  hoursMeter: z.number().min(0).optional(),
-  serialNumber: z.string().max(100).optional(),
-  weightCapacity: z.number().min(0).optional(),
-  constructionSiteId: z.string().optional(),
-});
+function createVehicleSchema(t: (key: string) => string) {
+  return z.object({
+    make: z.string().min(1, t("validation.makeRequired")).max(100),
+    model: z.string().min(1, t("validation.modelRequired")).max(100),
+    year: z.number().min(1886).max(new Date().getFullYear() + 1),
+    vin: z.string().length(17).optional().or(z.literal("")),
+    licensePlate: z.string().max(20).optional().or(z.literal("")),
+    nickname: z.string().max(100).optional(),
+    vehicleType: z.enum(["car", "truck", "motorcycle", "excavator", "bulldozer", "dump_truck", "crane", "loader", "grader", "other"]).default("car"),
+    status: z.enum(["active", "maintenance", "inactive", "sold"]).default("active"),
+    currentMileage: z.number().min(0),
+    hoursMeter: z.number().min(0).optional(),
+    serialNumber: z.string().max(100).optional(),
+    weightCapacity: z.number().min(0).optional(),
+    constructionSiteId: z.string().optional(),
+  });
+}
 
-type VehicleFormData = z.infer<typeof vehicleSchema>;
+type VehicleFormData = z.infer<ReturnType<typeof createVehicleSchema>>;
 
 const iconMap: Record<string, React.ElementType> = {
   car: Car, truck: Truck, motorcycle: Bike, excavator: Drill,
@@ -48,6 +50,8 @@ export default function EditVehiclePage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
   const [constructionSites, setConstructionSites] = useState<{ id: string; name: string }[]>([]);
+
+  const vehicleSchema = useMemo(() => createVehicleSchema(t), [t]);
 
   const {
     register,

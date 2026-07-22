@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -11,14 +11,16 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { getIndustryPageLabels, IndustryType } from "@/lib/industry-labels";
 
-const siteSchema = z.object({
-  name: z.string().min(1, "Site name is required").max(200),
-  address: z.string().max(300).optional(),
-  city: z.string().max(100).optional(),
-  state: z.string().max(100).optional(),
-});
+function createSiteSchema(t: (key: string) => string) {
+  return z.object({
+    name: z.string().min(1, t("validation.siteNameRequired")).max(200),
+    address: z.string().max(300).optional(),
+    city: z.string().max(100).optional(),
+    state: z.string().max(100).optional(),
+  });
+}
 
-type SiteFormData = z.infer<typeof siteSchema>;
+type SiteFormData = z.infer<ReturnType<typeof createSiteSchema>>;
 
 export default function NewConstructionSitePage() {
   const { data: session, status } = useSession();
@@ -27,6 +29,8 @@ export default function NewConstructionSitePage() {
   const labels = getIndustryPageLabels((session?.user?.industryType as IndustryType) ?? "default", "construction-sites");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const siteSchema = useMemo(() => createSiteSchema(t), [t]);
 
   const {
     register,

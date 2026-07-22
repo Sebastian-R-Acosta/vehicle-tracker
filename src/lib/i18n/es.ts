@@ -1392,6 +1392,26 @@ export const es = {
     installButton: "Instalar App",
     notNowButton: "Ahora No",
   },
+  validation: {
+    makeRequired: "La marca es obligatoria",
+    modelRequired: "El modelo es obligatorio",
+    nameRequired: "El nombre es obligatorio",
+    siteNameRequired: "El nombre del sitio es obligatorio",
+    dateRequired: "La fecha es obligatoria",
+    serviceTypeRequired: "El tipo de servicio es obligatorio",
+    mileagePositive: "El kilometraje debe ser positivo",
+  },
+  serviceTypes: {
+    oilChange: "Cambio de Aceite",
+    tireRotation: "Rotación de Llantas",
+    brakeService: "Servicio de Frenos",
+    airFilter: "Filtro de Aire",
+    transmissionService: "Servicio de Transmisión",
+    batteryReplacement: "Reemplazo de Batería",
+    inspection: "Inspección",
+    repair: "Reparación",
+    other: "Otro",
+  },
 };
 
 export type Translations = typeof es;

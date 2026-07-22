@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,9 +12,7 @@ import toast from "react-hot-toast";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { getIndustryPageLabels, IndustryType } from "@/lib/industry-labels";
 
-const vehicleSchema = z.object({
-  make: z.string().min(1, "Make is required").max(100),
-  model: z.string().min(1, "Model is required").max(100),
+const vehicleBaseFields = {
   year: z.number().min(1886).max(new Date().getFullYear() + 1),
   vin: z.string().length(17).optional().or(z.literal("")),
   licensePlate: z.string().max(20).optional().or(z.literal("")),
@@ -26,9 +24,17 @@ const vehicleSchema = z.object({
   serialNumber: z.string().max(100).optional(),
   weightCapacity: z.number().min(0).optional(),
   constructionSiteId: z.string().optional(),
-});
+};
 
-type VehicleFormData = z.infer<typeof vehicleSchema>;
+type VehicleFormData = z.infer<ReturnType<typeof createVehicleSchema>>;
+
+function createVehicleSchema(t: (key: string) => string) {
+  return z.object({
+    make: z.string().min(1, t("validation.makeRequired")).max(100),
+    model: z.string().min(1, t("validation.modelRequired")).max(100),
+    ...vehicleBaseFields,
+  });
+}
 
 const iconMap: Record<string, React.ElementType> = {
   car: Car, truck: Truck, motorcycle: Bike, excavator: Drill,
@@ -61,6 +67,8 @@ export default function NewVehiclePage() {
       setStep(3);
     }
   }, []);
+
+  const vehicleSchema = useMemo(() => createVehicleSchema(t), [t]);
 
   const {
     register,

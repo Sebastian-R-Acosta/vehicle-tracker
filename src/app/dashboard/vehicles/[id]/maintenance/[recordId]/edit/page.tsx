@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,21 +10,35 @@ import { ArrowLeft, Loader2, Wrench, Upload, X, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-const maintenanceSchema = z.object({
-  date: z.string().min(1, "Date is required"),
-  serviceType: z.string().min(1, "Service type is required"),
-  mileage: z.number().min(0, "Mileage must be positive"),
-  notes: z.string().optional(),
-  cost: z.number().optional(),
-  imageUrl: z.string().optional(),
-});
+function createMaintenanceSchema(t: (key: string) => string) {
+  return z.object({
+    date: z.string().min(1, t("validation.dateRequired")),
+    serviceType: z.string().min(1, t("validation.serviceTypeRequired")),
+    mileage: z.number().min(0, t("validation.mileagePositive")),
+    notes: z.string().optional(),
+    cost: z.number().optional(),
+    imageUrl: z.string().optional(),
+  });
+}
 
-type MaintenanceFormData = z.infer<typeof maintenanceSchema>;
+type MaintenanceFormData = z.infer<ReturnType<typeof createMaintenanceSchema>>;
 
 const serviceTypeValues = [
   "Oil Change", "Tire Rotation", "Brake Service", "Air Filter",
   "Transmission Service", "Battery Replacement", "Inspection", "Repair", "Other",
 ];
+
+const serviceTypeTranslationKeys: Record<string, string> = {
+  "Oil Change": "serviceTypes.oilChange",
+  "Tire Rotation": "serviceTypes.tireRotation",
+  "Brake Service": "serviceTypes.brakeService",
+  "Air Filter": "serviceTypes.airFilter",
+  "Transmission Service": "serviceTypes.transmissionService",
+  "Battery Replacement": "serviceTypes.batteryReplacement",
+  "Inspection": "serviceTypes.inspection",
+  "Repair": "serviceTypes.repair",
+  "Other": "serviceTypes.other",
+};
 
 export default function EditMaintenancePage() {
   const { data: session, status } = useSession();
@@ -39,6 +53,8 @@ export default function EditMaintenancePage() {
   const [imageKey, setImageKey] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const maintenanceSchema = useMemo(() => createMaintenanceSchema(t), [t]);
 
   const {
     register,
@@ -285,7 +301,7 @@ export default function EditMaintenancePage() {
                 <option value="">{t("dashboard.maintenanceEdit.selectServiceType")}</option>
                 {serviceTypeValues.map((type) => (
                   <option key={type} value={type}>
-                    {type}
+                    {t(serviceTypeTranslationKeys[type] || type)}
                   </option>
                 ))}
               </select>

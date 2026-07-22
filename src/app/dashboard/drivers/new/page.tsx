@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,17 +10,19 @@ import { Loader2, User } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { getIndustryPageLabels, IndustryType } from "@/lib/industry-labels";
 
-const driverSchema = z.object({
-  name: z.string().min(1, "Name is required").max(200),
-  email: z.string().email().optional().or(z.literal("")),
-  phone: z.string().max(20).optional().or(z.literal("")),
-  licenseNumber: z.string().max(50).optional().or(z.literal("")),
-  licenseExpiry: z.string().optional().or(z.literal("")),
-  licenseState: z.string().max(100).optional().or(z.literal("")),
-  notes: z.string().optional().or(z.literal("")),
-});
+function createDriverSchema(t: (key: string) => string) {
+  return z.object({
+    name: z.string().min(1, t("validation.nameRequired")).max(200),
+    email: z.string().email().optional().or(z.literal("")),
+    phone: z.string().max(20).optional().or(z.literal("")),
+    licenseNumber: z.string().max(50).optional().or(z.literal("")),
+    licenseExpiry: z.string().optional().or(z.literal("")),
+    licenseState: z.string().max(100).optional().or(z.literal("")),
+    notes: z.string().optional().or(z.literal("")),
+  });
+}
 
-type DriverFormData = z.infer<typeof driverSchema>;
+type DriverFormData = z.infer<ReturnType<typeof createDriverSchema>>;
 
 export default function NewDriverPage() {
   const { data: session, status } = useSession();
@@ -29,6 +31,8 @@ export default function NewDriverPage() {
   const labels = getIndustryPageLabels((session?.user?.industryType as IndustryType) ?? "default", "drivers");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const driverSchema = useMemo(() => createDriverSchema(t), [t]);
 
   const {
     register,

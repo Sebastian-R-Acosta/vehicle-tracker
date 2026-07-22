@@ -119,6 +119,18 @@ export default function VehicleDetailPage() {
     "Transmission Service", "Battery Replacement", "Inspection", "Repair", "Other",
   ];
 
+  const serviceTypeTranslationKeys: Record<string, string> = {
+    "Oil Change": "serviceTypes.oilChange",
+    "Tire Rotation": "serviceTypes.tireRotation",
+    "Brake Service": "serviceTypes.brakeService",
+    "Air Filter": "serviceTypes.airFilter",
+    "Transmission Service": "serviceTypes.transmissionService",
+    "Battery Replacement": "serviceTypes.batteryReplacement",
+    "Inspection": "serviceTypes.inspection",
+    "Repair": "serviceTypes.repair",
+    "Other": "serviceTypes.other",
+  };
+
   const getNextDueDate = (lastDate: string | null, mileage: number, serviceType: string): { date: string | null; mileage: number } => {
     const lastServiceDate = lastDate ? new Date(lastDate) : null;
     const intervals: { [key: string]: { months: number; miles: number } } = {
@@ -250,7 +262,7 @@ export default function VehicleDetailPage() {
           doc.setFont("helvetica", "normal");
           doc.setFontSize(10);
           doc.setTextColor(30, 41, 59);
-          doc.text(serviceType, margin + 5, ySummary + 10);
+          doc.text(t(serviceTypeTranslationKeys[serviceType] || serviceType), margin + 5, ySummary + 10);
 
           doc.setTextColor(37, 99, 235);
           doc.text(count > 0 ? String(count) : "\u2014", margin + colWidth + 5, ySummary + 10);
