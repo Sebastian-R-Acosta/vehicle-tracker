@@ -31,69 +31,69 @@ export default function ContactPage() {
       <section className="pt-32 pb-24">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">{t("common.talkToSales")}</h1>
-            <p className="text-lg text-gray-500">
+            <h1 className="text-4xl font-bold text-foreground mb-4">{t("common.talkToSales")}</h1>
+            <p className="text-lg text-muted-foreground">
               {t("common.tellUsAbout")}
             </p>
           </div>
 
           {sent ? (
             <div className="text-center py-16">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-950/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("common.thanksReachingOut")}</h2>
-              <p className="text-gray-500">{t("common.willBeInTouch")}</p>
+              <h2 className="text-2xl font-bold text-foreground mb-2">{t("common.thanksReachingOut")}</h2>
+              <p className="text-muted-foreground">{t("common.willBeInTouch")}</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.name")} *</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">{t("common.name")} *</label>
                   <input
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.email")} *</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">{t("common.email")} *</label>
                   <input
                     required
                     type="email"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
                   />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.company")}</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">{t("common.company")}</label>
                   <input
                     value={form.company}
                     onChange={(e) => setForm({ ...form, company: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.phone")}</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">{t("common.phone")}</label>
                   <input
                     type="tel"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t("common.message")}</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{t("common.message")}</label>
                 <textarea
                   rows={5}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
                 />
               </div>
               <button

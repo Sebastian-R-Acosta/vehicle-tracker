@@ -17,18 +17,18 @@ export default function InsurersPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
             <div className="order-2 lg:order-1">
-              <div className="bg-gray-200 rounded-2xl overflow-hidden shadow-inner">
+              <div className="bg-secondary rounded-2xl overflow-hidden shadow-inner">
                 <img src="/screenshots/dashboard-preview.png" alt="Insurance Dashboard Preview" className="w-full h-auto" />
               </div>
             </div>
             <div className="order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 text-sm font-medium rounded-full mb-6">
                 {t("solutions.insurers.badge")}
               </div>
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+              <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">
                 {t("solutions.insurers.heading")}
               </h1>
-              <p className="text-lg text-gray-500 mb-8 leading-relaxed">
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 {t("solutions.insurers.description")}
               </p>
               <div className="flex flex-wrap gap-4">
@@ -40,7 +40,7 @@ export default function InsurersPage() {
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-indigo-600 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 transition-all"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-indigo-600 dark:text-indigo-400 border-2 border-indigo-200 dark:border-indigo-800/30 rounded-xl hover:border-indigo-400 transition-all"
                 >
                   {t("solutions.insurers.talkToSales")}
                 </Link>
@@ -50,13 +50,13 @@ export default function InsurersPage() {
         </div>
       </section>
 
-      <section className="py-16 lg:py-24 bg-gray-50">
+      <section className="py-16 lg:py-24 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
               {t("solutions.insurers.sectionHeading")}
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               {t("solutions.insurers.sectionDesc")}
             </p>
           </div>
@@ -64,12 +64,12 @@ export default function InsurersPage() {
             {benefits.map((b: { title: string; description: string }, i: number) => {
               const Icon = icons[i];
               return (
-                <div key={b.title} className="p-6 bg-white rounded-xl border border-gray-200">
-                  <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center mb-4">
-                    <Icon className="w-5 h-5 text-indigo-600" />
+                <div key={b.title} className="p-6 bg-card rounded-xl border border-border">
+                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-950/30 rounded-lg flex items-center justify-center mb-4">
+                    <Icon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-1">{b.title}</h3>
-                  <p className="text-sm text-gray-500">{b.description}</p>
+                  <h3 className="font-semibold text-foreground mb-1">{b.title}</h3>
+                  <p className="text-sm text-muted-foreground">{b.description}</p>
                 </div>
               );
             })}
@@ -77,10 +77,10 @@ export default function InsurersPage() {
         </div>
       </section>
 
-      <section className="py-16 lg:py-24 bg-white">
+      <section className="py-16 lg:py-24 bg-background">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">{t("solutions.insurers.ctaHeading")}</h2>
-          <p className="text-gray-500 mb-8">{t("solutions.insurers.ctaDesc")}</p>
+          <h2 className="text-3xl font-bold text-foreground mb-6">{t("solutions.insurers.ctaHeading")}</h2>
+          <p className="text-muted-foreground mb-8">{t("solutions.insurers.ctaDesc")}</p>
           <Link
             href="/register"
             className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-500 transition-all"

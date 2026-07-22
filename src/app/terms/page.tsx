@@ -274,7 +274,7 @@ export default function TermsPage() {
       <section className="pt-32 pb-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-gray dark:prose-invert">
           <h1>{t.title}</h1>
-          <p className="text-gray-500">{t.updated}</p>
+          <p className="text-muted-foreground">{t.updated}</p>
 
           {t.intro.map((p, i) => (
             <p key={i}>{p}</p>
