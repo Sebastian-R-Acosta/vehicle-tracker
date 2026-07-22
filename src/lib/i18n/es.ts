@@ -142,7 +142,7 @@ export const es = {
     signOut: "Cerrar Sesión",
   },
   landing: {
-    heroTitle: "Tu Vehículo, su historia.",
+    heroTitle: "Bitácora — Tu Vehículo, Su Historia.",
     heroSubtitle: "Registra mantenimiento, historial de servicio, recordatorios inteligentes y más. Gratis para dueños de autos. Soluciones de marca blanca para concesionarios y aseguradoras.",
     heroCta: "Empieza Gratis",
     heroDemo: "Agenda una Demo",

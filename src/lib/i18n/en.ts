@@ -144,7 +144,7 @@ export const en: Translations = {
     signOut: "Sign out",
   },
   landing: {
-    heroTitle: "Your Vehicle, its story.",
+    heroTitle: "Bitácora — Your Vehicle, Its Story.",
     heroSubtitle: "Track maintenance, service history, smart reminders, and more. Free for car owners. White-label for dealerships and insurers.",
     heroCta: "Get Started Free",
     heroDemo: "Book a Demo",
