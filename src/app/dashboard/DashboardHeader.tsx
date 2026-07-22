@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Menu } from "lucide-react";
+import { LogOut, Menu, Home } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -29,6 +29,13 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
       <div className="flex-1" />
       <div className="flex items-center gap-2">
         <LanguageToggle />
+        <Link
+          href="/"
+          className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
+          title={t("nav.dashboard")}
+        >
+          <Home className="w-5 h-5" />
+        </Link>
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg"
