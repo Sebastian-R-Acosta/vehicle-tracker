@@ -20,5 +20,10 @@ dev-server*.log
 
 # Except tracked scripts in scripts/
 !scripts/
-
 .vercel
+
+# Office documents
+*.docx
+*.xlsx
+*.pptx
+
