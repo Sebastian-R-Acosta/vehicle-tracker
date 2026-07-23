@@ -109,7 +109,7 @@ export default function DocumentWallet({
       id: "license",
       type: "license",
       title: t("license.cardTitle"),
-      subtitle: "Class " + (license.licenseClass || "—"),
+      subtitle: `${t("wallet.className")} ${license.licenseClass || "—"}`,
       gradient: "linear-gradient(145deg, #f1f8e9 0%, #dcedc8 40%, #c5e1a5 100%)",
       gradientHover: "linear-gradient(145deg, #f9fbe7 0%, #e6ee9c 40%, #dce775 100%)",
       accentColor: "#33691e",
@@ -149,7 +149,7 @@ export default function DocumentWallet({
               )}
             </div>
             <div className="flex-1 min-w-0 space-y-1">
-              <p className="text-[10px] uppercase tracking-wider text-[#33691e]/60 font-medium">NAME</p>
+              <p className="text-[10px] uppercase tracking-wider text-[#33691e]/60 font-medium">{t("wallet.name")}</p>
               <p className="text-base font-bold text-[#1b5e20] truncate">{license.name || "—"}</p>
               <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2">
                 <div>
@@ -195,7 +195,7 @@ export default function DocumentWallet({
             <div className="flex items-center gap-2">
               <QrPlaceholder color="#33691e" />
               <div className="text-[8px] text-[#33691e]/50 leading-tight max-w-[80px]">
-                Scan to verify license
+                {t("wallet.scanToVerify")}
               </div>
             </div>
             <div className="flex-1" />
@@ -217,8 +217,8 @@ export default function DocumentWallet({
     {
       id: "insurance",
       type: "insurance",
-      title: "Auto Insurance",
-      subtitle: "Full Coverage",
+      title: t("wallet.autoInsurance"),
+      subtitle: t("wallet.fullCoverage"),
       gradient: "linear-gradient(145deg, #e8eaf6 0%, #c5cae9 40%, #9fa8da 100%)",
       gradientHover: "linear-gradient(145deg, #eef0ff 0%, #d5d8f0 40%, #b0b8e0 100%)",
       accentColor: "#283593",
@@ -233,8 +233,8 @@ export default function DocumentWallet({
             <Shield className="w-4 h-4 text-[#283593]" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-[#283593] uppercase tracking-wider truncate">Auto Insurance</p>
-            <p className="text-[10px] text-[#5c6bc0] truncate">Tap to add policy</p>
+            <p className="text-xs font-bold text-[#283593] uppercase tracking-wider truncate">{t("wallet.autoInsurance")}</p>
+            <p className="text-[10px] text-[#5c6bc0] truncate">{t("wallet.tapToAddPolicy")}</p>
           </div>
           <Plus className="w-4 h-4 text-[#5c6bc0] shrink-0" />
         </div>
@@ -244,13 +244,13 @@ export default function DocumentWallet({
           <div className="w-16 h-16 rounded-2xl bg-white/40 flex items-center justify-center mb-3">
             <Shield className="w-8 h-8 text-[#283593]/50" />
           </div>
-          <p className="text-sm font-bold text-[#1a237e]">No Insurance Policy Added</p>
+          <p className="text-sm font-bold text-[#1a237e]">{t("wallet.noInsurancePolicy")}</p>
           <p className="text-xs text-[#5c6bc0] mt-1 text-center max-w-[200px]">
-            Upload your insurance card to keep it in your digital wallet
+            {t("wallet.uploadInsuranceDesc")}
           </p>
           <label className="mt-4 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/50 hover:bg-white/70 transition-colors cursor-pointer text-xs font-semibold text-[#1a237e]">
             <Upload className="w-4 h-4" />
-            Upload Insurance Card
+            {t("wallet.uploadInsuranceCard")}
             <input type="file" accept="image/*" className="hidden" />
           </label>
         </div>
@@ -259,8 +259,8 @@ export default function DocumentWallet({
     {
       id: "registration",
       type: "registration",
-      title: "Vehicle Registration",
-      subtitle: vehicles[0] ? `${vehicles[0].make} ${vehicles[0].model}` : "No vehicle",
+      title: t("wallet.vehicleRegistration"),
+      subtitle: vehicles[0] ? `${vehicles[0].make} ${vehicles[0].model}` : t("wallet.noVehicle"),
       gradient: "linear-gradient(145deg, #e0f2f1 0%, #b2dfdb 40%, #80cbc4 100%)",
       gradientHover: "linear-gradient(145deg, #e8f5f4 0%, #c5e8e3 40%, #96d5cc 100%)",
       accentColor: "#00695c",
@@ -275,9 +275,9 @@ export default function DocumentWallet({
             <Car className="w-4 h-4 text-[#00695c]" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-[#00695c] uppercase tracking-wider truncate">Vehicle Registration</p>
+            <p className="text-xs font-bold text-[#00695c] uppercase tracking-wider truncate">{t("wallet.vehicleRegistration")}</p>
             <p className="text-[10px] text-[#4db6ac] truncate">
-              {vehicles[0] ? `${vehicles[0].licensePlate || vehicles[0].vin || vehicles[0].make}` : "No vehicles"}
+              {vehicles[0] ? `${vehicles[0].licensePlate || vehicles[0].vin || vehicles[0].make}` : t("wallet.noVehicles")}
             </p>
           </div>
           <ChevronRight className="w-4 h-4 text-[#4db6ac] shrink-0" />
@@ -296,11 +296,11 @@ export default function DocumentWallet({
           </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3">
             <div>
-              <p className="text-[9px] uppercase tracking-wider text-[#00695c]/60 font-medium">VIN</p>
+              <p className="text-[9px] uppercase tracking-wider text-[#00695c]/60 font-medium">{t("wallet.vin")}</p>
               <p className="text-sm font-mono font-bold text-[#004d40]">{vehicles[0].vin || "—"}</p>
             </div>
             <div>
-              <p className="text-[9px] uppercase tracking-wider text-[#00695c]/60 font-medium">Plate</p>
+              <p className="text-[9px] uppercase tracking-wider text-[#00695c]/60 font-medium">{t("wallet.plate")}</p>
               <p className="text-sm font-bold text-[#004d40]">{vehicles[0].licensePlate || "—"}</p>
             </div>
           </div>
@@ -321,16 +321,16 @@ export default function DocumentWallet({
           <div className="w-16 h-16 rounded-2xl bg-white/40 flex items-center justify-center mb-3">
             <Car className="w-8 h-8 text-[#00695c]/50" />
           </div>
-          <p className="text-sm font-bold text-[#004d40]">No Vehicles Registered</p>
-          <p className="text-xs text-[#4db6ac] mt-1">Add a vehicle to see registration details</p>
+          <p className="text-sm font-bold text-[#004d40]">{t("wallet.noVehiclesRegistered")}</p>
+          <p className="text-xs text-[#4db6ac] mt-1">{t("wallet.addVehicleForRegistration")}</p>
         </div>
       ),
     },
     {
       id: "roadside",
       type: "roadside",
-      title: "Roadside Assistance",
-      subtitle: "24/7 Emergency",
+      title: t("wallet.roadsideAssistance"),
+      subtitle: t("wallet.emergency247"),
       gradient: "linear-gradient(145deg, #bbdefb 0%, #90caf9 40%, #42a5f5 100%)",
       gradientHover: "linear-gradient(145deg, #c5e0fa 0%, #9ecff5 40%, #5cb0f5 100%)",
       accentColor: "#1565c0",
@@ -345,8 +345,8 @@ export default function DocumentWallet({
             <Phone className="w-4 h-4 text-[#1565c0]" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-white uppercase tracking-wider truncate">Roadside Assistance</p>
-            <p className="text-[10px] text-white/70 truncate">Tap to set up</p>
+            <p className="text-xs font-bold text-white uppercase tracking-wider truncate">{t("wallet.roadsideAssistance")}</p>
+            <p className="text-[10px] text-white/70 truncate">{t("wallet.tapToSetup")}</p>
           </div>
           <Plus className="w-4 h-4 text-white/70 shrink-0" />
         </div>
@@ -356,13 +356,13 @@ export default function DocumentWallet({
           <div className="w-16 h-16 rounded-2xl bg-white/30 flex items-center justify-center mb-3">
             <Phone className="w-8 h-8 text-white/60" />
           </div>
-          <p className="text-sm font-bold text-white">No Roadside Coverage</p>
+          <p className="text-sm font-bold text-white">{t("wallet.noRoadsideCoverage")}</p>
           <p className="text-xs text-white/70 mt-1 text-center max-w-[200px]">
-            Add your roadside assistance membership for quick access in emergencies
+            {t("wallet.addRoadsideMembership")}
           </p>
           <button className="mt-4 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/30 hover:bg-white/40 transition-colors text-xs font-semibold text-white">
             <Plus className="w-4 h-4" />
-            Set Up Coverage
+            {t("wallet.setUpCoverage")}
           </button>
         </div>
       ),
@@ -478,12 +478,12 @@ export default function DocumentWallet({
                 {/* Expired banner */}
                 {!isExpanded && card.expired && (
                   <div className="absolute top-0 right-0 bg-red-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">
-                    Expired
+                    {t("wallet.expired")}
                   </div>
                 )}
                 {!isExpanded && card.expiringSoon && (
                   <div className="absolute top-0 right-0 bg-amber-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">
-                    Expiring
+                    {t("wallet.expiring")}
                   </div>
                 )}
               </motion.div>
@@ -517,11 +517,11 @@ export default function DocumentWallet({
               <AlertTriangle className="w-5 h-5 text-red-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-bold text-red-700">Action Required</p>
+              <p className="text-sm font-bold text-red-700">{t("wallet.actionRequired")}</p>
               <p className="text-xs text-red-500">
                 {expiredCount > 0
-                  ? `${expiredCount} document${expiredCount > 1 ? "s" : ""} expired — renew now`
-                  : "Some documents expiring soon"}
+                  ? t("wallet.expiredDocsRenew")(expiredCount)
+                  : t("wallet.someExpiringSoon")}
               </p>
             </div>
           </div>
@@ -531,9 +531,9 @@ export default function DocumentWallet({
               <Shield className="w-5 h-5 text-emerald-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-bold text-emerald-700">All Documents Valid</p>
+              <p className="text-sm font-bold text-emerald-700">{t("wallet.allDocumentsValid")}</p>
               <p className="text-xs text-emerald-500">
-                {presentCount} of {cards.length} documents in wallet
+                {t("wallet.docsInWallet")(presentCount, cards.length)}
               </p>
             </div>
           </div>
