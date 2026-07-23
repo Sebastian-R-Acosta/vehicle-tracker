@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { DollarSign, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { SectionLoader, SectionError, SectionEmpty } from "@/components/ui/SectionStates";
+import { SectionLoader, SectionError } from "@/components/ui/SectionStates";
 
 interface ValueReport {
   estimatedValue: number;
+  estimatedValueUSD: number;
   valueRange: { low: number; high: number };
   marketRating: string;
-  depreciation: { annualRate: number; age: number; milesDiscount: number };
+  depreciation: { annualRate: number; age: number; kmDiscount: number };
   maintenance: { totalRecords: number; bonus: number };
   factors: { name: string; impact: string; detail: string }[];
 }
@@ -83,6 +84,9 @@ export function VehicleValueReportSection({ vehicleId }: Props) {
           <div className="text-center py-4">
             <p className="text-3xl font-bold text-foreground">
               RD${report.estimatedValue.toLocaleString()}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              ~US${report.estimatedValueUSD.toLocaleString()}
             </p>
             <p className="text-sm text-muted-foreground mt-1">{report.marketRating}</p>
             <p className="text-xs text-muted-foreground">
