@@ -7,6 +7,71 @@ import {
   Image,
 } from "@react-pdf/renderer";
 
+const pdfStrings = {
+  en: {
+    reportTitle: "Bitácora Vehicle History Report",
+    vehicleInfo: "Vehicle Information",
+    make: "Make",
+    model: "Model",
+    year: "Year",
+    currentMileage: "Current Mileage",
+    miles: "miles",
+    vin: "VIN",
+    notProvided: "Not provided",
+    licensePlate: "License Plate",
+    notSet: "Not set",
+    nickname: "Nickname",
+    reportSummary: "Report Summary",
+    lastMaintenance: "Last Maintenance",
+    noMaintenanceAvailable: "No maintenance records available",
+    at: "at",
+    nextDue: "Next Due",
+    on: "on",
+    totalCost: "Total Maintenance Cost",
+    maintenanceHistory: "Maintenance History",
+    noRecords: "No maintenance records",
+    date: "Date",
+    serviceType: "Service Type",
+    mileage: "Mileage",
+    notes: "Notes",
+    mi: "mi",
+    footerBrand: "Bitácora | Professional Fleet & Vehicle Management System",
+    confidential: "CONFIDENTIAL: This report is intended solely for the use of the individual or entity to whom it is addressed.",
+    reportGenerated: "Report generated:",
+  },
+  es: {
+    reportTitle: "Bitácora — Informe de Historial del Vehículo",
+    vehicleInfo: "Información del Vehículo",
+    make: "Marca",
+    model: "Modelo",
+    year: "Año",
+    currentMileage: "Kilometraje Actual",
+    miles: "km",
+    vin: "VIN",
+    notProvided: "No proporcionado",
+    licensePlate: "Placa",
+    notSet: "No establecido",
+    nickname: "Apodo",
+    reportSummary: "Resumen del Informe",
+    lastMaintenance: "Último Mantenimiento",
+    noMaintenanceAvailable: "No hay registros de mantenimiento disponibles",
+    at: "a",
+    nextDue: "Próximo Vencimiento",
+    on: "el",
+    totalCost: "Costo Total de Mantenimiento",
+    maintenanceHistory: "Historial de Mantenimiento",
+    noRecords: "No hay registros de mantenimiento",
+    date: "Fecha",
+    serviceType: "Tipo de Servicio",
+    mileage: "Kilometraje",
+    notes: "Notas",
+    mi: "km",
+    footerBrand: "Bitácora | Sistema Profesional de Gestión de Flotas y Vehículos",
+    confidential: "CONFIDENCIAL: Este informe está destinado únicamente para el uso de la persona o entidad a la que se dirige.",
+    reportGenerated: "Informe generado:",
+  },
+} as const;
+
 const styles = StyleSheet.create({
   page: {
     padding: 40,
@@ -203,11 +268,14 @@ interface VehicleData {
 interface VehiclePDFProps {
   data: VehicleData;
   logoUrl?: string;
+  locale?: "en" | "es";
 }
 
-export default function VehicleReportPDF({ data, logoUrl }: VehiclePDFProps) {
+export default function VehicleReportPDF({ data, logoUrl, locale = "en" }: VehiclePDFProps) {
   const { vehicle, summary, maintenanceHistory } = data;
-  const generatedDate = new Date().toLocaleString("en-US", {
+  const s = pdfStrings[locale];
+  const dateLocale = locale === "es" ? "es-DO" : "en-US";
+  const generatedDate = new Date().toLocaleString(dateLocale, {
     dateStyle: "full",
     timeStyle: "short",
   });
@@ -217,97 +285,97 @@ export default function VehicleReportPDF({ data, logoUrl }: VehiclePDFProps) {
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           {logoUrl && <Image src={logoUrl} style={styles.logo} />}
-          <Text style={styles.headerTitle}>Bitácora Vehicle History Report</Text>
+          <Text style={styles.headerTitle}>{s.reportTitle}</Text>
           <Text style={styles.headerSubtitle}>
             {vehicle.year} {vehicle.make} {vehicle.model}
           </Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Vehicle Information</Text>
+          <Text style={styles.sectionTitle}>{s.vehicleInfo}</Text>
           <View style={styles.vehicleInfoGrid}>
             <View style={styles.vehicleInfoItem}>
-              <Text style={styles.vehicleInfoLabel}>Make</Text>
+              <Text style={styles.vehicleInfoLabel}>{s.make}</Text>
               <Text style={styles.vehicleInfoValue}>{vehicle.make}</Text>
             </View>
             <View style={styles.vehicleInfoItem}>
-              <Text style={styles.vehicleInfoLabel}>Model</Text>
+              <Text style={styles.vehicleInfoLabel}>{s.model}</Text>
               <Text style={styles.vehicleInfoValue}>{vehicle.model}</Text>
             </View>
             <View style={styles.vehicleInfoItem}>
-              <Text style={styles.vehicleInfoLabel}>Year</Text>
+              <Text style={styles.vehicleInfoLabel}>{s.year}</Text>
               <Text style={styles.vehicleInfoValue}>{vehicle.year}</Text>
             </View>
             <View style={styles.vehicleInfoItem}>
-              <Text style={styles.vehicleInfoLabel}>Current Mileage</Text>
+              <Text style={styles.vehicleInfoLabel}>{s.currentMileage}</Text>
               <Text style={styles.vehicleInfoValue}>
-                {vehicle.currentMileage.toLocaleString()} miles
+                {vehicle.currentMileage.toLocaleString()} {s.miles}
               </Text>
             </View>
             <View style={styles.vehicleInfoItem}>
-              <Text style={styles.vehicleInfoLabel}>VIN</Text>
+              <Text style={styles.vehicleInfoLabel}>{s.vin}</Text>
               <Text style={styles.vehicleInfoValue}>
-                {vehicle.vin || "Not provided"}
+                {vehicle.vin || s.notProvided}
               </Text>
             </View>
             <View style={styles.vehicleInfoItem}>
-              <Text style={styles.vehicleInfoLabel}>License Plate</Text>
+              <Text style={styles.vehicleInfoLabel}>{s.licensePlate}</Text>
               <Text style={styles.vehicleInfoValue}>
-                {vehicle.licensePlate || "Not set"}
+                {vehicle.licensePlate || s.notSet}
               </Text>
             </View>
             <View style={styles.vehicleInfoItem}>
-              <Text style={styles.vehicleInfoLabel}>Nickname</Text>
+              <Text style={styles.vehicleInfoLabel}>{s.nickname}</Text>
               <Text style={styles.vehicleInfoValue}>
-                {vehicle.nickname || "Not set"}
+                {vehicle.nickname || s.notSet}
               </Text>
             </View>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Report Summary</Text>
+          <Text style={styles.sectionTitle}>{s.reportSummary}</Text>
           {summary.lastMaintenance ? (
             <Text style={styles.summaryText}>
-              Last Maintenance:{" "}
-              {new Date(summary.lastMaintenance.date).toLocaleDateString()} -{" "}
-              {summary.lastMaintenance.serviceType} at{" "}
-              {summary.lastMaintenance.mileage.toLocaleString()} miles
+              {s.lastMaintenance}:{" "}
+              {new Date(summary.lastMaintenance.date).toLocaleDateString(dateLocale)} -{" "}
+              {summary.lastMaintenance.serviceType} {s.at}{" "}
+              {summary.lastMaintenance.mileage.toLocaleString()} {s.miles}
             </Text>
           ) : (
-            <Text style={styles.summaryText}>No maintenance records available</Text>
+            <Text style={styles.summaryText}>{s.noMaintenanceAvailable}</Text>
           )}
           {summary.nextReminder && (
             <Text style={styles.summaryText}>
-              Next Due: {summary.nextReminder.title}
+              {s.nextDue}: {summary.nextReminder.title}
               {summary.nextReminder.dueDate &&
-                ` on ${new Date(summary.nextReminder.dueDate).toLocaleDateString()}`}
+                ` ${s.on} ${new Date(summary.nextReminder.dueDate).toLocaleDateString(dateLocale)}`}
               {summary.nextReminder.dueMileage &&
-                ` at ${summary.nextReminder.dueMileage.toLocaleString()} miles`}
+                ` ${s.at} ${summary.nextReminder.dueMileage.toLocaleString()} ${s.miles}`}
             </Text>
           )}
           {summary.totalCost !== null && summary.totalCost !== undefined && (
             <Text style={styles.summaryText}>
-              Total Maintenance Cost: ${summary.totalCost.toLocaleString()}
+              {s.totalCost}: ${summary.totalCost.toLocaleString()}
             </Text>
           )}
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Maintenance History</Text>
+          <Text style={styles.sectionTitle}>{s.maintenanceHistory}</Text>
           {maintenanceHistory.length === 0 ? (
-            <Text style={styles.noData}>No maintenance records</Text>
+            <Text style={styles.noData}>{s.noRecords}</Text>
           ) : (
             <View style={styles.table}>
               <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderCell, styles.colDate]}>Date</Text>
+                <Text style={[styles.tableHeaderCell, styles.colDate]}>{s.date}</Text>
                 <Text style={[styles.tableHeaderCell, styles.colService]}>
-                  Service Type
+                  {s.serviceType}
                 </Text>
                 <Text style={[styles.tableHeaderCell, styles.colMileage]}>
-                  Mileage
+                  {s.mileage}
                 </Text>
-                <Text style={[styles.tableHeaderCell, styles.colNotes]}>Notes</Text>
+                <Text style={[styles.tableHeaderCell, styles.colNotes]}>{s.notes}</Text>
               </View>
               {maintenanceHistory.map((record, index) => (
                 <View
@@ -315,13 +383,13 @@ export default function VehicleReportPDF({ data, logoUrl }: VehiclePDFProps) {
                   style={index % 2 === 0 ? styles.tableRow : styles.tableRowAlt}
                 >
                   <Text style={[styles.tableCell, styles.colDate]}>
-                    {new Date(record.date).toLocaleDateString()}
+                    {new Date(record.date).toLocaleDateString(dateLocale)}
                   </Text>
                   <Text style={[styles.tableCell, styles.colService]}>
                     {record.serviceType}
                   </Text>
                   <Text style={[styles.tableCell, styles.colMileage]}>
-                    {record.mileage.toLocaleString()} mi
+                    {record.mileage.toLocaleString()} {s.mi}
                   </Text>
                   <Text style={[styles.tableCell, styles.colNotes]}>
                     {record.notes || "-"}
@@ -334,14 +402,13 @@ export default function VehicleReportPDF({ data, logoUrl }: VehiclePDFProps) {
 
         <View style={styles.footer}>
           <Text style={styles.footerBrand}>
-            Bitácora | Professional Fleet & Vehicle Management System
+            {s.footerBrand}
           </Text>
           <Text style={styles.footerText}>
-            CONFIDENTIAL: This report is intended solely for the use of the
-            individual or entity to whom it is addressed.
+            {s.confidential}
           </Text>
           <Text style={styles.footerText}>
-            Report generated: {generatedDate}
+            {s.reportGenerated} {generatedDate}
           </Text>
         </View>
       </Page>

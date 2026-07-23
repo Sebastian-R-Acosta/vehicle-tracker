@@ -84,7 +84,7 @@ export async function GET(
       : undefined,
   };
 
-  const stream = await renderToStream(<VehicleReportPDF data={data} />);
+  const stream = await renderToStream(<VehicleReportPDF data={data} locale={request.headers.get("accept-language")?.startsWith("es") ? "es" : "en"} />);
   const chunks: Buffer[] = [];
   for await (const chunk of stream) {
     chunks.push(Buffer.from(chunk));
