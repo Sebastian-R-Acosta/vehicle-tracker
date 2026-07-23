@@ -1,86 +1,37 @@
 # Bitácora
 
-> Multi-segment vehicle management platform — from personal owners to fleet operators, dealerships, and insurers.
+A modern, bilingual vehicle management platform for individuals, fleets, dealers, and construction companies — built in the Dominican Republic.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![CI](https://github.com/yourusername/bitacora/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/bitacora/actions)
-[![Vercel](https://img.shields.io/badge/deployed%20on-Vercel-black)](https://vercel.com)
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Market Segments](#market-segments)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Pricing Tiers](#pricing-tiers)
-- [Quick Start](#quick-start)
-- [Project Structure](#project-structure)
-- [API Endpoints](#api-endpoints)
-- [Testing](#testing)
-- [CI / CD](#ci--cd)
-- [Deployment](#deployment)
-- [Environment Variables](#environment-variables)
-- [Roadmap](#roadmap)
-- [License](#license)
+**Live:** [bitacora.vercel.app](https://bitacora.vercel.app) · **Repo:** [GitHub](https://github.com/Sebastian-R-Acosta/vehicle-tracker) · **License:** MIT
 
 ---
 
 ## Overview
 
-Bitácora is a full-stack SaaS that lets users log maintenance, store documents, set reminders, generate PDF reports, transfer ownership, and manage fleets — all in one place. It serves **four distinct markets** from a single codebase.
-
-Built with Next.js 14, Prisma + PostgreSQL, Stripe billing, AWS S3 file storage, and deployed on Vercel.
-
----
-
-## Market Segments
-
-| Segment | Problem | Solution |
-|---|---|---|
-| **Individual Owners** | Scattered paper records, missed oil changes, forgotten inspections | Digital glovebox, mileage-based reminders, vehicle history PDF |
-| **Car Dealerships** | No service history on trade-ins, manual paperwork | White-label reports, ownership transfer codes, customer portal |
-| **Insurance Companies** | Missing claim documentation, no inspection trail | Document auditing, driver assignments, value reports |
-| **Construction Fleets** | Heavy equipment not tracked, hours-meter ignored, no parts inventory | Equipment types (excavator, bulldozer, crane), hours tracking, site assignments, parts inventory |
+Bitácora is a full-stack Progressive Web App that lets you track vehicles, log maintenance, manage documents, generate PDF reports, monitor recalls, transfer ownership, and manage multi-user fleets — all with a bilingual English/Spanish interface and a polished dark mode experience.
 
 ---
 
 ## Features
 
-### Core
-- **Vehicle CRUD** — Make, model, year, VIN, nickname, type (car/truck/motorcycle/excavator/etc.)
-- **Maintenance Records** — Date, service type, mileage, cost, notes, receipt image uploads
-- **Reminders** — Date-based or mileage/hours-based, with email notifications and dashboard badges
-- **Digital Glovebox** — Upload & organize documents (registration, insurance, warranty, inspection, receipts) with expiry tracking and S3 presigned-url access
-- **PDF Reports** — Full vehicle history reports via `@react-pdf/renderer`
-- **Vehicle Transfer** — 8-character one-time codes (24 h expiry) preserving maintenance history
-- **Value Reports** — Estimated market value based on age, mileage, service history
-- **Recall Alerts** — NHTSA recall lookup by VIN
-
-### Multi-Tenant & Organizations
-- Organization accounts with roles: **owner**, **admin**, **technician**, **customer**
-- Invitation system, org switcher, per-org vehicle pools
-- White-label branding for Business tier
-
-### Fleet & Construction
-- Heavy equipment types (excavator, bulldozer, crane, loader, grader, dump truck)
-- Hours-meter tracking and serial number tracking
-- Construction site assignments and driver management
-- Parts inventory and service provider reviews
-
-### Billing
-- Stripe subscriptions: **Free** (2 vehicles), **Pro** ($9.99/mo), **Business** ($99/mo)
-- Metered billing, plan upgrades/downgrades, cancellations
-
-### Notifications
-- 7 email types via **Resend**: welcome, maintenance confirmed, reminder created, reminder due/overdue, password reset, demo request, digest
-- Cron job for daily notification dispatch
-
-### Analytics & Monitoring
-- **PostHog** — Product analytics and feature tracking
-- **Sentry** — Error tracking and performance monitoring
-- **Plausible** — Privacy-friendly page analytics
+- **Vehicle CRUD** — 15+ vehicle types (car, truck, motorcycle, excavator, bulldozer, crane, loader, grader, dump truck, etc.)
+- **Maintenance Records** — Service types, cost, mileage, notes, and image uploads
+- **Service Reminders** — Date-based and mileage/hours-based with email notifications
+- **Digital Glovebox** — Document wallet for licenses, insurance, registration, roadside assistance cards
+- **PDF Vehicle History Reports** — Bilingual (EN/ES) with @react-pdf/renderer
+- **Vehicle Transfer** — 12-character one-time codes with 24-hour expiry
+- **DR-Market Valuation** — Vehicle value reports in RD$ pricing
+- **NHTSA Recall Alerts** — VIN-based recall lookups
+- **Multi-Tenant Organizations** — Owner, admin, and member roles
+- **Fleet Management** — Driver assignments, construction site assignments, parts inventory, service provider reviews
+- **Task Management** — AI-powered priority scoring
+- **PayPal Billing** — Free (2 vehicles), Pro ($9.99/mo), Business ($99/mo)
+- **Full i18n** — Complete English and Latin American Spanish (~1400 keys each)
+- **Dark Mode** — System-aware theme toggle
+- **Progressive Web App** — Installable with offline-aware service worker
+- **Admin Panel** — User, vehicle, record, document, and organization management
+- **Analytics & Monitoring** — PostHog, Sentry, Plausible
+- **Rate Limiting** — On authentication endpoints
 
 ---
 
@@ -88,27 +39,24 @@ Built with Next.js 14, Prisma + PostgreSQL, Stripe billing, AWS S3 file storage,
 
 | Layer | Technology |
 |---|---|
-| **Framework** | Next.js 14 (App Router) |
-| **Language** | TypeScript 5.3 |
-| **UI** | React 18, Tailwind CSS 3.4, Lucide icons |
-| **State / Data** | TanStack React Query 5, React Context |
-| **Forms** | React Hook Form 7 + Zod 3.22 |
-| **Auth** | NextAuth.js v5 (Credentials + Google OAuth, JWT sessions) |
-| **ORM** | Prisma 5.10 |
-| **Database** | PostgreSQL (Neon serverless) |
-| **File Storage** | AWS S3 (presigned URLs, server-side upload) |
-| **PDF** | @react-pdf/renderer 3.4 |
-| **Payments** | Stripe 22.1 |
-| **Email** | Resend 6.12 |
-| **Monitoring** | Sentry 10.52, PostHog JS, Plausible |
-| **PWA** | Web app manifest, install prompt |
-| **Testing** | Jest 30 + ts-jest + Testing Library |
-| **CI / CD** | GitHub Actions → Vercel |
-| **Linting** | ESLint + TypeScript strict mode |
+| Framework | Next.js 14 (App Router), TypeScript 5.3 |
+| UI | React 18, Tailwind CSS 3.4, Lucide icons |
+| State | TanStack React Query 5, React Context |
+| Forms | React Hook Form + Zod 3.22 |
+| Auth | NextAuth.js v5 (Credentials + Google OAuth, JWT sessions) |
+| Database | Prisma 5.10, PostgreSQL (Neon serverless) |
+| Storage | AWS S3 (presigned URLs) |
+| PDF | @react-pdf/renderer 3.4 |
+| Billing | PayPal (checkout + webhooks) |
+| Email | Resend |
+| Monitoring | Sentry, PostHog, Plausible |
+| PWA | Service worker, manifest, install prompt |
+| Testing | Jest + Testing Library |
+| CI/CD | GitHub Actions → Vercel |
 
 ---
 
-## Pricing Tiers
+## Pricing
 
 | Feature | Free | Pro ($9.99/mo) | Business ($99/mo) |
 |---|---|---|---|
@@ -130,32 +78,12 @@ Built with Next.js 14, Prisma + PostgreSQL, Stripe billing, AWS S3 file storage,
 
 ## Quick Start
 
-### Prerequisites
-- Node.js 18+
-- PostgreSQL database (local or remote)
-- AWS S3 bucket
-- Google OAuth credentials (optional)
-- Stripe account (optional, for billing)
-
-### Setup
-
 ```bash
-# 1. Clone
-git clone https://github.com/yourusername/bitacora.git
-cd bitacora
-
-# 2. Install
+git clone https://github.com/Sebastian-R-Acosta/vehicle-tracker.git
+cd vehicle-tracker
 npm install
-
-# 3. Environment
-cp .env.example .env
-# Fill in: DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL, AWS_*,
-# GOOGLE_CLIENT_*, STRIPE_*, RESEND_API_KEY, SENTRY_DSN, etc.
-
-# 4. Database
+cp .env.example .env  # Fill in required env vars
 npx prisma db push
-
-# 5. Dev server
 npm run dev
 ```
 
@@ -169,270 +97,185 @@ Open [http://localhost:3000](http://localhost:3000).
 src/
 ├── app/
 │   ├── api/
-│   │   ├── auth/               # [...nextauth], register, forgot/reset password
-│   │   ├── cron/notifications   # Daily reminder/expiry email dispatch
-│   │   ├── health/              # Health check
-│   │   ├── contact/             # Contact form
-│   │   ├── upload/              # S3 upload (base64 + presigned)
-│   │   ├── vehicles/            # CRUD, export, documents, transfer, report
-│   │   ├── maintenance/         # Service records (by vehicle)
-│   │   ├── reminders/           # Reminder CRUD
-│   │   ├── organizations/       # Multi-tenant orgs, members, invites
-│   │   ├── construction-sites/  # Site CRUD
-│   │   ├── drivers/             # Driver CRUD
-│   │   ├── parts/               # Parts inventory
-│   │   ├── service-providers/   # Provider reviews
-│   │   ├── stripe/              # Billing portal, webhooks
-│   │   ├── user/                # Profile, settings
-│   │   └── user/role            # Admin role check endpoint
-│   ├── dashboard/
-│   │   ├── admin/               # Admin panel (users, vehicles, records, docs, orgs)
-│   ├── login/                   # Auth pages
-│   ├── register/
-│   ├── forgot-password/
-│   ├── reset-password/
-│   ├── pricing/                 # Pricing page with A/B testing
-│   ├── join/                    # Organization invitation join
-│   ├── solutions/               # Marketing: individuals, dealers, insurers, construction
-│   ├── contact/
-│   ├── privacy/                 # Privacy policy
-│   ├── terms/                   # Terms of service
-│   ├── page.tsx                 # Landing page (Hero, Features, TrustBar, etc.)
-│   └── layout.tsx               # Root layout (providers, fonts)
+│   │   ├── auth/              # NextAuth, register, password reset
+│   │   ├── cron/notifications # Daily email dispatch
+│   │   ├── vehicles/          # CRUD, documents, transfer, reports, recalls
+│   │   ├── maintenance/       # Service records
+│   │   ├── reminders/         # Reminder CRUD
+│   │   ├── organizations/     # Multi-tenant orgs, members, invites
+│   │   ├── construction-sites/
+│   │   ├── drivers/
+│   │   ├── parts/
+│   │   ├── service-providers/
+│   │   ├── admin/             # Admin stats, users, vehicles, records, docs, orgs
+│   │   ├── paypal/            # Checkout + webhooks
+│   │   ├── upload/            # S3 upload
+│   │   ├── user/              # Profile, settings, plan
+│   │   └── vehicles/[id]/     # Transfer, report-pdf, value-report, recall, wallet-pass
+│   ├── dashboard/             # Main dashboard, vehicles, drivers, organizations, admin, settings, transfer, scan
+│   ├── solutions/             # Marketing: individuals, dealers, insurers, construction, workshops
+│   ├── login/ register/ forgot-password/ reset-password/
+│   ├── pricing/ contact/ privacy/ terms/ about/
+│   └── page.tsx               # Landing page
 ├── components/
-│   ├── landing/                 # Nav, Hero, TrustBar, Features, ForIndividuals,
-│   │                            # ForDealers, ForInsurers, ForConstruction,
-│   │                            # Testimonials, CTA, Footer, DemoModal
-│   ├── ui/                      # ConfirmDialog, reusable UI primitives
-│   ├── OrgSwitcher.tsx          # Multi-tenant org dropdown
-│   ├── PostHogProvider.tsx      # Analytics provider
-│   ├── PWAInstallPrompt.tsx     # Progressive web app install
-│   ├── ThemeProvider.tsx        # Dark/light theme
-│   ├── ThemeToggle.tsx          # Theme toggle button
-│   └── VehicleReportPDF.tsx     # PDF report component
+│   ├── landing/               # Nav, Hero, Features, Testimonials, CTA, Footer, etc.
+│   ├── ui/                    # ConfirmDialog, SectionStates
+│   ├── DocumentWallet.tsx     # Digital glovebox cards
+│   ├── VehicleReportPDF.tsx   # PDF generation (bilingual)
+│   └── OrgSwitcher.tsx        # Multi-tenant org dropdown
 ├── lib/
-│   ├── ab-test.ts               # A/B test variant logic
-│   ├── billing.ts               # Stripe billing helpers
-│   ├── db.ts                    # Prisma client singleton
-│   ├── email.ts                 # Resend email templates
-│   ├── org.ts                   # Org helpers
-│   ├── queries.ts               # React Query hooks
-│   ├── rate-limit.ts            # Rate limiter
-│   └── stripe.ts                # Stripe client
-├── __tests__/
-│   ├── api-auth-register.test.ts
-│   ├── billing.test.ts
-│   ├── rate-limit.test.ts
-│   └── stripe.test.ts
-├── auth.ts                      # NextAuth configuration
-└── middleware.ts                 # Route protection
+│   ├── i18n/                  # LanguageContext, en.ts, es.ts (~1400 keys each)
+│   ├── billing.ts             # PayPal billing helpers
+│   ├── db.ts                  # Prisma singleton
+│   ├── email.ts               # Resend templates
+│   ├── queries.ts             # React Query hooks
+│   ├── vehicle-access.ts      # Shared vehicle access helper
+│   └── industry-labels.ts     # Industry i18n keys
+├── auth.ts                    # NextAuth config
+└── middleware.ts              # Route protection
 ```
 
 ---
 
 ## API Endpoints
 
-| Method | Path | Description |
-|---|---|---|
-| **Auth** | | |
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/forgot-password` | Send reset email |
-| POST | `/api/auth/reset-password` | Reset password with token |
-| **Vehicles** | | |
-| GET | `/api/vehicles` | List user's vehicles |
-| POST | `/api/vehicles` | Create vehicle |
-| GET | `/api/vehicles/[id]` | Vehicle details (with records, reminders) |
-| PUT | `/api/vehicles/[id]` | Update vehicle |
-| DELETE | `/api/vehicles/[id]` | Delete vehicle |
-| GET | `/api/vehicles/export` | Export vehicles as CSV |
-| **Documents** (Digital Glovebox) | | |
-| GET | `/api/vehicles/[id]/documents` | List documents (with presigned URLs) |
-| POST | `/api/vehicles/[id]/documents` | Add document metadata |
-| GET | `/api/vehicles/[id]/documents/[docId]` | Stream file from S3 |
-| DELETE | `/api/vehicles/[id]/documents/[docId]` | Delete document |
-| **Maintenance** | | |
-| GET | `/api/vehicles/[id]/maintenance` | List maintenance records |
-| POST | `/api/vehicles/[id]/maintenance` | Add record |
-| **Transfer** | | |
-| POST | `/api/vehicles/[id]/transfer` | Generate transfer code |
-| POST | `/api/transfer/claim` | Claim vehicle with code |
-| **Reminders** | | |
-| GET | `/api/reminders` | List reminders |
-| POST | `/api/reminders` | Create reminder |
-| PUT | `/api/reminders/[id]` | Update reminder |
-| DELETE | `/api/reminders/[id]` | Delete reminder |
-| **Organizations** | | |
-| GET | `/api/organizations` | List user's orgs |
-| POST | `/api/organizations` | Create org |
-| GET | `/api/organizations/[id]/members` | List members |
-| POST | `/api/organizations/[id]/members` | Invite member |
-| **Upload** | | |
-| POST | `/api/upload` | Upload file to S3 (base64) |
-| POST | `/api/upload/presigned` | Get presigned PUT URL |
-| **Billing** | | |
-| GET | `/api/stripe/portal` | Customer portal link |
-| POST | `/api/stripe/webhook` | Stripe event handler |
-| **Other** | | |
-| GET | `/api/health` | Health check |
-| POST | `/api/contact` | Contact form |
-| GET | `/api/user/profile` | User profile |
-| PUT | `/api/user/profile` | Update profile |
-| GET | `/api/user/role` | Get current user role |
-| GET | `/api/user/plan` | Get user subscription plan |
-| GET | `/api/cron/notifications` | Daily digest (Vercel cron) |
+### Auth
+`POST /api/auth/register` · `POST /api/auth/login` · `POST /api/auth/forgot-password` · `POST /api/auth/reset-password`
+
+### Vehicles
+`GET/POST /api/vehicles` · `GET/PUT/DELETE /api/vehicles/[id]` · `GET /api/vehicles/export/csv`
+
+### Documents
+`GET/POST /api/vehicles/[id]/documents` · `GET/DELETE /api/vehicles/[id]/documents/[docId]`
+
+### Maintenance
+`GET/POST /api/maintenance?vehicleId=` · `GET/PUT/DELETE /api/maintenance/[id]`
+
+### Transfer
+`POST /api/vehicles/transfer/generate` · `POST /api/vehicles/transfer/claim`
+
+### Reminders
+`GET/POST /api/reminders?vehicleId=` · `GET/PUT/DELETE /api/reminders/[id]`
+
+### Reports
+`GET /api/vehicles/[id]/report-pdf` · `GET /api/vehicles/[id]/value-report` · `GET /api/vehicles/[id]/recall`
+
+### Organizations
+`GET/POST /api/organizations` · `GET/PUT/DELETE /api/organizations/[id]` · `GET/POST /api/organizations/[id]/members` · `POST /api/organizations/[id]/invitations`
+
+### Construction Sites
+`GET/POST /api/construction-sites` · `GET/PUT/DELETE /api/construction-sites/[id]`
+
+### Drivers
+`GET/POST /api/drivers` · `GET/PUT/DELETE /api/drivers/[id]` · `POST /api/drivers/[id]/assign`
+
+### Parts
+`GET/POST /api/parts` · `GET/PUT/DELETE /api/parts/[id]`
+
+### Service Providers
+`GET/POST /api/service-providers` · `GET/PUT/DELETE /api/service-providers/[id]` · `GET/POST /api/service-providers/[id]/reviews`
+
+### Billing
+`POST /api/paypal/checkout` · `POST /api/paypal/webhook`
+
+### Upload
+`POST /api/upload/base64` · `POST /api/upload/presigned-url`
+
+### Admin
+`GET /api/admin/stats` · `GET /api/admin/users` · `GET /api/admin/vehicles` · `GET /api/admin/records` · `GET /api/admin/documents` · `GET /api/admin/organizations`
+
+### User
+`GET/PUT /api/user/profile` · `GET/PUT /api/user/settings` · `GET /api/user/plan` · `PUT /api/user/role`
+
+### Cron
+`POST /api/cron/notifications`
+
+### Misc
+`POST /api/contact` · `GET /api/health`
+
+---
+
+## Environment Variables
+
+```env
+DATABASE_URL=
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=
+AWS_S3_BUCKET=
+PAYPAL_CLIENT_ID=
+PAYPAL_CLIENT_SECRET=
+RESEND_API_KEY=
+NEXT_PUBLIC_POSTHOG_KEY=
+NEXT_PUBLIC_POSTHOG_HOST=
+SENTRY_DSN=
+NEXT_PUBLIC_PLAUSIBLE_DOMAIN=
+```
 
 ---
 
 ## Testing
 
 ```bash
-# Run all tests
-npm test
-
-# Watch mode
-npm run test:watch
-
-# Coverage report
-npm run test:coverage
-
-# Type checking
-npm run typecheck
-
-# Linting
-npm run lint
+npm test           # Run all tests
+npm run test:watch # Watch mode
+npm run typecheck  # TypeScript check
+npm run lint       # ESLint
 ```
 
-Test files cover: auth registration, rate limiting, billing tier logic, Stripe price ID mapping.
-
 ---
 
-## CI / CD
+## CI/CD & Deployment
 
-**GitHub Actions** (`.github/workflows/ci.yml`):
-- Trigger: push / PR to `main`
-- Jobs: quality (lint → typecheck → test) → build
-- Deploys to Vercel on merge
+- **CI:** GitHub Actions runs lint, typecheck, and tests on every push and PR.
+- **CD:** Merges to `main` auto-deploy to [Vercel](https://bitacora.vercel.app).
+- **Database:** Neon serverless PostgreSQL — no manual migrations needed with `prisma db push`.
+- **Storage:** AWS S3 with presigned URLs for direct browser uploads.
 
-**Vercel**: Framework preset `nextjs`, cron job configured for daily notifications at 08:00 UTC.
-
----
-
-## Deployment
-
-This project is connected to Vercel via GitHub. Every push to `main` triggers an automatic deployment — **no manual steps needed**.
+### Production Deployment
 
 ```bash
-# Make changes, then:
-git add .
-git commit -m "describe your change"
-git push
+npx prisma db push          # Apply schema to production DB
+npx prisma generate         # Generate Prisma client
+npm run build               # Next.js production build
 ```
 
-Vercel will automatically build and deploy the new version.
-
-> Alternatively, deploy manually:
-> ```bash
-> npm run build
-> vercel --prod
-> ```
-
-All 25+ environment variables must be configured in Vercel project settings (see [Environment Variables](#environment-variables)).
-
----
-
-## Environment Variables
-
-```
-# Database
-DATABASE_URL=postgresql://...
-
-# Auth
-NEXTAUTH_SECRET=openssl rand -base64 32
-NEXTAUTH_URL=https://your-domain.vercel.app
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-
-# AWS S3
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-AWS_REGION=us-east-2
-AWS_S3_BUCKET=vehicle-tracker-uploads
-
-# Stripe
-STRIPE_SECRET_KEY=sk_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_...
-
-# Email (Resend)
-RESEND_API_KEY=re_...
-
-# Monitoring
-NEXT_PUBLIC_POSTHOG_KEY=phc_...
-NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
-SENTRY_DSN=https://...
-NEXT_PUBLIC_PLAUSIBLE_DOMAIN=your-domain.com
-
-# Optional
-VERCEL_OIDC_TOKEN=...   # auto-populated by Vercel
-```
+Set all environment variables in your hosting provider's dashboard.
 
 ---
 
 ## Admin Panel
 
-The app includes an admin dashboard for super-administrators, accessible at `/dashboard/admin`.
-
-### Access
-
-Users with `role: "admin"` in the database see a yellow shield badge in the navbar linking to the admin panel.
-
-To promote a user to admin:
-
-```sql
-UPDATE "User" SET role = 'admin' WHERE email = 'user@example.com';
-```
-
-Or via Prisma Studio:
-
-```bash
-npx prisma studio
-```
-
-### Admin Pages
-
-| Page | Route | Description |
-|---|---|---|
-| **Dashboard** | `/dashboard/admin` | Stats cards (users, vehicles, records, docs, orgs) + recent users |
-| **Users** | `/dashboard/admin/users` | All users with email, name, role, registration date |
-| **User Detail** | `/dashboard/admin/users/[id]` | User info, plan, vehicle/service/reminder counts, vehicle list |
-| **Vehicles** | `/dashboard/admin/vehicles` | All vehicles with owner, VIN, mileage, services, reminders |
-| **Service Records** | `/dashboard/admin/records` | All maintenance records with vehicle, owner, type, date, cost |
-| **Documents** | `/dashboard/admin/documents` | All uploaded documents with vehicle, owner, type, expiry |
-| **Organizations** | `/dashboard/admin/organizations` | All orgs with name, slug, members, vehicles |
-
-### Admin Bypass
-
-Admins automatically bypass all subscription limits (unlimited vehicles, documents, PDF reports, etc.). The check is in `lib/billing.ts` via `isAdmin(userId)`.
+Accessible at `/dashboard/admin`. Users with `role="admin"` see a shield badge in the navigation. Super admins can manage all users, vehicles, records, documents, and organizations across the platform.
 
 ---
 
 ## Roadmap
 
 - [x] Core CRUD + maintenance + reminders
-- [x] Digital Glovebox (S3 document storage)
-- [x] PDF vehicle history reports
+- [x] Digital Glovebox (document wallet)
+- [x] PDF vehicle history reports (bilingual)
 - [x] Vehicle transfer system
 - [x] Multi-tenant organizations
-- [x] Subscription billing (Stripe)
+- [x] Subscription billing (PayPal)
 - [x] Fleet & construction equipment
-- [ ] Apple Wallet / Google Wallet passes for documents
+- [x] Bilingual support (EN/ES)
+- [x] Dark mode
+- [x] PWA support
+- [x] Admin panel
+- [x] DR-market vehicle valuation
+- [x] NHTSA recall alerts
+- [ ] Apple Wallet / Google Wallet passes
 - [ ] Mobile native app (React Native)
 - [ ] OBD-II / telematics integration
 - [ ] Mechanic marketplace
-- [ ] Multi-language support
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT
