@@ -401,14 +401,14 @@ export default function DriverDetailPage() {
           <h2 className="text-lg font-semibold text-foreground">{t("dashboard.drivers.detail.assignedVehicles")}</h2>
         </div>
 
-        {driver.vehicles.length === 0 ? (
+        {(driver.vehicles ?? []).length === 0 ? (
           <div className="p-12 text-center">
             <Car className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
             <p className="text-muted-foreground">{t("dashboard.drivers.detail.noVehiclesAssigned")}</p>
           </div>
         ) : (
           <div className="divide-y divide-border">
-            {driver.vehicles.map((vehicle) => {
+            {(driver.vehicles ?? []).map((vehicle) => {
               const Icon = vehicleIcons[vehicle.vehicleType] || Car;
               return (
                 <Link

@@ -75,7 +75,7 @@ export default function NewDriverPage() {
         throw new Error(result.error || t("dashboard.driversNew.failedCreate"));
       }
 
-      router.push("/dashboard/drivers");
+      router.push(`/dashboard/drivers/${result.id}`);
     } catch (err: any) {
       setError(err.message || t("dashboard.driversNew.somethingWentWrong"));
     } finally {

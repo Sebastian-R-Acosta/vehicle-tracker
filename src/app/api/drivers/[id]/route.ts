@@ -6,6 +6,24 @@ import { getUserRole } from "@/lib/org";
 async function getDriver(userId: string, driverId: string) {
   const driver = await prisma.driver.findUnique({
     where: { id: driverId },
+    include: {
+      assignments: {
+        where: { endDate: null },
+        include: {
+          vehicle: {
+            select: {
+              id: true,
+              make: true,
+              model: true,
+              year: true,
+              nickname: true,
+              vehicleType: true,
+              licensePlate: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!driver) return null;
@@ -13,7 +31,10 @@ async function getDriver(userId: string, driverId: string) {
   const role = await getUserRole(driver.organizationId, userId);
   if (!role) return null;
 
-  return driver;
+  return {
+    ...driver,
+    vehicles: driver.assignments.map((a) => a.vehicle),
+  };
 }
 
 export async function GET(
@@ -36,6 +57,20 @@ export async function GET(
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
+) {
+  return handleUpdate(request, params);
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  return handleUpdate(request, params);
+}
+
+async function handleUpdate(
+  request: Request,
+  params: { id: string }
 ) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -62,9 +97,30 @@ export async function PUT(
       ...(notes !== undefined && { notes: notes || null }),
       ...(isActive !== undefined && { isActive }),
     },
+    include: {
+      assignments: {
+        where: { endDate: null },
+        include: {
+          vehicle: {
+            select: {
+              id: true,
+              make: true,
+              model: true,
+              year: true,
+              nickname: true,
+              vehicleType: true,
+              licensePlate: true,
+            },
+          },
+        },
+      },
+    },
   });
 
-  return NextResponse.json(updated);
+  return NextResponse.json({
+    ...updated,
+    vehicles: updated.assignments.map((a) => a.vehicle),
+  });
 }
 
 export async function DELETE(
