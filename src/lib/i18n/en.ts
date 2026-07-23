@@ -536,7 +536,7 @@ export const en: Translations = {
       "Custom integrations",
     ],
     compareRows: [
-      { name: "Vehicles", free: "1", pro: "Unlimited", enterprise: "Unlimited" },
+      { name: "Vehicles", free: "2", pro: "Unlimited", enterprise: "Unlimited" },
       { name: "Maintenance Logs", free: true, pro: true, enterprise: true },
       { name: "Service Reminders", free: "Manual", pro: "Smart", enterprise: "Smart" },
       { name: "PDF Reports", free: false, pro: true, enterprise: true },
