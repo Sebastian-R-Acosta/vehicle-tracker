@@ -1,24 +1,53 @@
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
-import { prisma } from "@/lib/db";
+"use client";
+
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Users, Shield } from "lucide-react";
 import AdminUserActions from "@/components/admin/AdminUserActions";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-export default async function AdminUsersPage() {
-  const session = await auth();
-  if (session?.user?.role !== "admin") redirect("/dashboard");
+interface User {
+  id: string;
+  email: string;
+  name: string | null;
+  role: string;
+  superAdmin: boolean;
+  createdAt: string;
+}
 
-  const currentUser = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { superAdmin: true },
-  });
-  const isSuperAdmin = currentUser?.superAdmin ?? false;
+export default function AdminUsersPage() {
+  const { t } = useLanguage();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [users, setUsers] = useState<User[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const [users, total] = await Promise.all([
-    prisma.user.findMany({ orderBy: { createdAt: "desc" } }),
-    prisma.user.count(),
-  ]);
+  useEffect(() => {
+    if (status === "unauthenticated") router.push("/login");
+  }, [status, router]);
+
+  useEffect(() => {
+    if (session?.user?.role !== "admin") return;
+    fetch("/api/admin/users")
+      .then((r) => r.json())
+      .then((data) => { setUsers(data.users); setTotal(data.total); })
+      .finally(() => setLoading(false));
+  }, [session]);
+
+  if (status === "loading" || loading) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto flex items-center justify-center min-h-[50vh]">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  if (session?.user?.role !== "admin") return null;
+
+  const isSuperAdmin = (session?.user as any)?.superAdmin ?? false;
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -27,11 +56,11 @@ export default async function AdminUsersPage() {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <Users className="w-6 h-6 text-yellow-600" />
-        <h1 className="text-2xl font-bold">Usuarios ({total})</h1>
+        <h1 className="text-2xl font-bold">{t("admin.users")} ({total})</h1>
         {isSuperAdmin && (
           <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-950/40">
             <Shield className="w-3 h-3" />
-            Super Admin
+            {t("admin.superAdmin")}
           </span>
         )}
       </div>
@@ -39,11 +68,11 @@ export default async function AdminUsersPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-muted-foreground border-b border-border bg-muted/30">
-              <th className="p-4 font-medium">Email</th>
-              <th className="p-4 font-medium">Nombre</th>
-              <th className="p-4 font-medium">Rol</th>
-              <th className="p-4 font-medium">Registro</th>
-              {isSuperAdmin && <th className="p-4 font-medium">Acciones</th>}
+              <th className="p-4 font-medium">{t("admin.email")}</th>
+              <th className="p-4 font-medium">{t("admin.name")}</th>
+              <th className="p-4 font-medium">{t("admin.role")}</th>
+              <th className="p-4 font-medium">{t("admin.registered")}</th>
+              {isSuperAdmin && <th className="p-4 font-medium">{t("admin.actions")}</th>}
             </tr>
           </thead>
           <tbody>
@@ -71,7 +100,7 @@ export default async function AdminUsersPage() {
                     </span>
                   )}
                 </td>
-                <td className="p-4 text-muted-foreground">{u.createdAt.toLocaleDateString()}</td>
+                <td className="p-4 text-muted-foreground">{new Date(u.createdAt).toLocaleDateString()}</td>
                 {isSuperAdmin && (
                   <td className="p-4">
                     <AdminUserActions userId={u.id} currentRole={u.role} isSuperAdmin={u.superAdmin} />
