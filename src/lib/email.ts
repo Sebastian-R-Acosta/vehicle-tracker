@@ -1,63 +1,39 @@
 import { Resend } from "resend";
 
+let resendWarned = false;
+
 function getResend() {
-  if (!process.env.RESEND_API_KEY) return null;
+  if (!process.env.RESEND_API_KEY) {
+    if (!resendWarned) {
+      console.warn("[email] RESEND_API_KEY is not set — emails will not be sent");
+      resendWarned = true;
+    }
+    return null;
+  }
   return new Resend(process.env.RESEND_API_KEY);
 }
-const fromEmail = "Bitácora <onboarding@resend.dev>";
+
+const fromEmail = process.env.FROM_EMAIL_ADDRESS
+  ? `Bitácora <${process.env.FROM_EMAIL_ADDRESS}>`
+  : "Bitácora <onboarding@resend.dev>";
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-interface VehicleReminder {
-  id: string;
-  title: string;
-  description: string | null;
-  dueDate: Date | null;
-  dueMileage: number | null;
-  dueHours: number | null;
-  vehicle: {
-    nickname: string | null;
-    make: string;
-    model: string;
-    year: number;
-    currentMileage: number;
-  };
-}
-
-export async function sendReminderEmail(
-  to: string,
-  reminders: VehicleReminder[]
-) {
-  const overdueReminders = reminders.filter(
-    (r) => r.dueDate && new Date(r.dueDate) <= new Date()
-  );
-  const upcomingReminders = reminders.filter(
-    (r) => r.dueDate && new Date(r.dueDate) > new Date()
-  );
-  const mileageReminders = reminders.filter(
-    (r) => r.dueMileage && r.dueMileage <= r.vehicle.currentMileage + 1000
-  );
-
-  const html = generateReminderEmailHtml(overdueReminders, upcomingReminders, mileageReminders);
-
-  if (overdueReminders.length === 0 && upcomingReminders.length === 0 && mileageReminders.length === 0) {
-    return { success: false, message: "No reminders to send" };
-  }
-
+async function sendViaResend(to: string, subject: string, html: string) {
   const r = getResend();
   if (!r) return { success: false, error: new Error("Resend not configured") };
 
   const { data, error } = await r.emails.send({
     from: fromEmail,
     to: [to],
-    subject: `Vehicle Reminders Update - ${new Date().toLocaleDateString()}`,
+    subject,
     html,
   });
 
   if (error) {
-    console.error("Resend error:", error);
+    console.error("[email] Resend error:", error);
     return { success: false, error };
   }
 
@@ -118,22 +94,7 @@ export async function sendMaintenanceConfirmation(
     </html>
   `;
 
-  const r = getResend();
-  if (!r) return { success: false, error: new Error("Resend not configured") };
-
-  const { data, error } = await r.emails.send({
-    from: fromEmail,
-    to: [to],
-    subject: `Maintenance Logged: ${maintenance.serviceType} - ${vehicle.make} ${vehicle.model}`,
-    html,
-  });
-
-  if (error) {
-    console.error("Resend error:", error);
-    return { success: false, error };
-  }
-
-  return { success: true, data };
+  return sendViaResend(to, `Maintenance Logged: ${maintenance.serviceType} - ${vehicle.make} ${vehicle.model}`, html);
 }
 
 export async function sendReminderCreatedEmail(
@@ -198,22 +159,7 @@ export async function sendReminderCreatedEmail(
     </html>
   `;
 
-  const r = getResend();
-  if (!r) return { success: false, error: new Error("Resend not configured") };
-
-  const { data, error } = await r.emails.send({
-    from: fromEmail,
-    to: [to],
-    subject: `Reminder Created: ${reminder.title}`,
-    html,
-  });
-
-  if (error) {
-    console.error("Resend error:", error);
-    return { success: false, error };
-  }
-
-  return { success: true, data };
+  return sendViaResend(to, `Reminder Created: ${reminder.title}`, html);
 }
 
 export async function sendReminderDueEmail(
@@ -286,94 +232,7 @@ export async function sendReminderDueEmail(
     </html>
   `;
 
-  const r = getResend();
-  if (!r) return { success: false, error: new Error("Resend not configured") };
-
-  const { data, error } = await r.emails.send({
-    from: fromEmail,
-    to: [to],
-    subject: `${isOverdue ? "OVERDUE: " : "Reminder: "}${reminder.title}`,
-    html,
-  });
-
-  if (error) {
-    console.error("Resend error:", error);
-    return { success: false, error };
-  }
-
-  return { success: true, data };
-}
-
-function generateReminderEmailHtml(
-  overdue: VehicleReminder[],
-  upcoming: VehicleReminder[],
-  mileage: VehicleReminder[]
-) {
-  const reminderSection = (title: string, items: VehicleReminder[], icon: string) => {
-    if (items.length === 0) return "";
-
-    return `
-      <div style="margin-bottom: 25px;">
-        <h3 style="color: #1f2937; border-bottom: 2px solid #2563eb; padding-bottom: 8px;">
-          ${icon} ${title}
-        </h3>
-        ${items.map((r) => `
-          <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #ef4444;">
-            <strong>${r.title}</strong>
-            <p style="margin: 5px 0 0 0; color: #6b7280;">
-              ${r.vehicle.year} ${r.vehicle.make} ${r.vehicle.model}
-              ${r.vehicle.nickname ? `(${r.vehicle.nickname})` : ""}
-            </p>
-            ${r.description ? `<p style="margin: 5px 0; font-size: 14px;">${escapeHtml(r.description)}</p>` : ""}
-            <p style="margin: 5px 0 0 0; font-size: 14px; color: #374151;">
-              ${r.dueDate ? `Due: ${new Date(r.dueDate).toLocaleDateString()}` : ""}
-              ${r.dueMileage ? `Due at: ${r.dueMileage.toLocaleString()} mi` : ""}
-            </p>
-          </div>
-        `).join("")}
-      </div>
-    `;
-  };
-
-  const hasContent = overdue.length > 0 || upcoming.length > 0 || mileage.length > 0;
-
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-        .summary { background: white; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center; }
-        .summary-number { font-size: 36px; font-weight: bold; color: #2563eb; }
-        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>Vehicle Reminders</h1>
-          <p style="margin: 0; opacity: 0.9;">${new Date().toLocaleDateString()}</p>
-        </div>
-        <div class="content">
-          <div class="summary">
-            <div class="summary-number">${overdue.length + mileage.length}</div>
-            <div>reminders need your attention</div>
-          </div>
-          ${overdue.length > 0 ? reminderSection("Overdue", overdue, "⚠️") : ""}
-          ${mileage.length > 0 ? reminderSection("Due by Mileage", mileage, "📏") : ""}
-          ${upcoming.length > 0 ? reminderSection("Upcoming This Week", upcoming, "📅") : ""}
-          ${!hasContent ? "<p>No reminders at this time. Your vehicles are in good shape!</p>" : ""}
-        </div>
-        <div class="footer">
-          Bitácora - Keep your vehicles in top shape
-        </div>
-      </div>
-    </body>
-    </html>
-  `;
+  return sendViaResend(to, `${isOverdue ? "OVERDUE: " : "Reminder: "}${reminder.title}`, html);
 }
 
 export async function sendWelcomeEmail(to: string, name?: string) {
@@ -420,18 +279,7 @@ export async function sendWelcomeEmail(to: string, name?: string) {
     </html>
   `;
 
-  const r = getResend();
-  if (!r) return { success: false };
-
-  const { data, error } = await r.emails.send({
-    from: fromEmail,
-    to: [to],
-    subject: "Welcome to Bitácora",
-    html,
-  });
-
-  if (error) console.error("Resend error:", error);
-  return { success: !error, data };
+  return sendViaResend(to, "Welcome to Bitácora", html);
 }
 
 export async function sendPasswordResetEmail(
@@ -479,22 +327,7 @@ export async function sendPasswordResetEmail(
     </html>
   `;
 
-  const r = getResend();
-  if (!r) return { success: false, error: new Error("Resend not configured") };
-
-  const { data: result, error } = await r.emails.send({
-    from: fromEmail,
-    to: [to],
-    subject: "Reset Your Password - Bitácora",
-    html,
-  });
-
-  if (error) {
-    console.error("Resend error:", error);
-    return { success: false, error };
-  }
-
-  return { success: true, data: result };
+  return sendViaResend(to, "Reset Your Password - Bitácora", html);
 }
 
 export async function sendDemoRequestEmail(
@@ -550,20 +383,5 @@ export async function sendDemoRequestEmail(
     </html>
   `;
 
-  const r = getResend();
-  if (!r) return { success: false, error: new Error("Resend not configured") };
-
-  const { data: result, error } = await r.emails.send({
-    from: fromEmail,
-    to: [to],
-    subject: `New Demo Request from ${data.name} at ${data.company}`.replace(/<[^>]*>/g, ""),
-    html,
-  });
-
-  if (error) {
-    console.error("Resend error:", error);
-    return { success: false, error };
-  }
-
-  return { success: true, data: result };
+  return sendViaResend(to, `New Demo Request from ${data.name} at ${data.company}`.replace(/<[^>]*>/g, ""), html);
 }

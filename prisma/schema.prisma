@@ -222,10 +222,11 @@ model Reminder {
   dueDate    DateTime?
   dueMileage Int?
   dueHours   Int?
-  isCompleted Boolean  @default(false)
-  completedAt DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  isCompleted     Boolean  @default(false)
+  completedAt     DateTime?
+  lastNotifiedAt  DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -261,9 +262,10 @@ model VehicleDocument {
   type      String   @default("other")
   fileUrl   String
   fileSize  Int?
-  expiryDate DateTime?
-  notes     String?
-  createdAt DateTime @default(now())
+  expiryDate   DateTime?
+  notes        String?
+  lastNotifiedAt DateTime?
+  createdAt    DateTime @default(now())
 
   vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
 

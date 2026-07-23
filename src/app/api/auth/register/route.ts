@@ -61,7 +61,7 @@ export async function POST(request: Request) {
         });
       }
 
-      sendWelcomeEmail(user.email!, user.name || undefined).catch(() => {});
+      sendWelcomeEmail(user.email!, user.name || undefined).catch((e) => console.error("[email] Welcome email failed:", e));
 
       return NextResponse.json({
         id: user.id,
