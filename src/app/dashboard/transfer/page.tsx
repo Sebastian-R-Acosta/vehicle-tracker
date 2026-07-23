@@ -281,8 +281,8 @@ function ClaimForm() {
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
           className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono text-lg tracking-wider"
-          placeholder="XXXXXXXX"
-          maxLength={8}
+          placeholder="XXXXXXXXXXXX"
+          maxLength={12}
         />
       </div>
 
