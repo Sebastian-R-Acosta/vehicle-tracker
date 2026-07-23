@@ -332,14 +332,14 @@ function StepTypeSelection({
       <label className="block text-sm font-medium text-foreground mb-3">
         {t("dashboard.vehicleNew.vehicleType")} <span className="text-destructive">*</span>
       </label>
-      <div className="grid grid-cols-5 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
         {vehicleTypeValues.map((typeValue) => {
           const Icon = iconMap[typeValue];
           const isSelected = selectedType === typeValue;
           return (
             <label
               key={typeValue}
-              className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+              className={`flex flex-col items-center gap-1.5 p-3 sm:p-4 rounded-lg border-2 cursor-pointer transition-all ${
                 isSelected
                   ? "border-primary bg-primary/10"
                   : "border-border hover:border-primary/50"
@@ -351,8 +351,8 @@ function StepTypeSelection({
                 {...register("vehicleType")}
                 className="sr-only"
               />
-              <Icon className={`w-6 h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-              <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
+              <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+              <span className={`text-xs sm:text-sm font-medium leading-tight text-center ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
                 {t(`dashboard.home.vehicleTypes.${typeValue}`)}
               </span>
             </label>

@@ -630,6 +630,7 @@ export const es = {
         motorcycle: "Motocicleta",
         excavator: "Excavadora",
         bulldozer: "Buldócer",
+        dump_truck: "Camión Volquete",
         dumpTruck: "Camión Volquete",
         crane: "Grúa",
         loader: "Cargadora",

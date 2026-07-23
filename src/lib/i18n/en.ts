@@ -632,6 +632,7 @@ export const en: Translations = {
         motorcycle: "Motorcycle",
         excavator: "Excavator",
         bulldozer: "Bulldozer",
+        dump_truck: "Dump Truck",
         dumpTruck: "Dump Truck",
         crane: "Crane",
         loader: "Loader",
