@@ -21,6 +21,8 @@ const modelBonusDR: Record<string, number> = {
   "santa fe": 1.05, "tucson": 1.04, "sportage": 1.04,
   "sentra": 1.02, "versa": 1.01, "march": 0.98,
   "maverick": 1.12, "bronco": 1.15, "wrangler": 1.18,
+  "gx": 1.18, "gx470": 1.18, "rx": 1.12, "lx": 1.30, "ls": 1.10,
+  "is": 1.05, "es": 1.03, "nx": 1.10, "tx": 1.10,
 };
 
 const makeBasePriceDR: Record<string, number> = {
@@ -38,7 +40,20 @@ const modelBasePriceOverride: Record<string, number> = {
   "tacoma": 40000, "tundra": 48000, "civic": 26000, "cr-v": 30000,
   "pajero": 35000, "montero": 35000, "l200": 32000, "d-max": 30000,
   "maverick": 32000, "bronco": 40000, "wrangler": 42000,
+  "gx": 45000, "gx470": 45000, "rx": 38000, "lx": 60000, "ls": 52000,
 };
+
+function normalizeModel(model: string): string {
+  return model.toLowerCase().replace(/[\s\-_.]/g, "");
+}
+
+function findModelMatch(modelKey: string, table: Record<string, number>): number | undefined {
+  if (modelKey in table) return table[modelKey];
+  for (const key of Object.keys(table)) {
+    if (normalizeModel(key) === modelKey) return table[key];
+  }
+  return undefined;
+}
 
 function estimateValueDR(
   make: string,
@@ -49,10 +64,12 @@ function estimateValueDR(
   status: string
 ) {
   const makeKey = make.toLowerCase();
-  const modelKey = model.toLowerCase();
+  const modelKey = normalizeModel(model);
 
-  const basePriceUSD = modelBasePriceOverride[modelKey]
-    || (makeBasePriceDR[makeKey] || 28000) * (modelBonusDR[modelKey] || 1.0);
+  const basePriceOverride = findModelMatch(modelKey, modelBasePriceOverride);
+  const modelBonus = findModelMatch(modelKey, modelBonusDR) || 1.0;
+  const basePriceUSD = basePriceOverride
+    || (makeBasePriceDR[makeKey] || 28000) * modelBonus;
 
   const age = new Date().getFullYear() - year;
   const depRate = makeDepreciationDR[makeKey] || 0.15;
@@ -75,7 +92,7 @@ function estimateValueDR(
     maintenanceBonus,
     conditionFactor: condMult,
     basePriceUSD,
-    modelMultiplier: modelBonusDR[modelKey] || 1.0,
+    modelMultiplier: modelBonus,
   };
 }
 
