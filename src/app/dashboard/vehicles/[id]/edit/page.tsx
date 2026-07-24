@@ -20,7 +20,7 @@ function createVehicleSchema(t: (key: string) => string) {
     nickname: z.string().max(100).optional(),
     vehicleType: z.enum(["car", "truck", "motorcycle", "excavator", "bulldozer", "dump_truck", "crane", "loader", "grader", "other"]).default("car"),
     status: z.enum(["active", "maintenance", "inactive", "sold"]).default("active"),
-    currentMileage: z.number().min(0),
+    currentMileage: z.number().min(0).default(0),
     hoursMeter: z.number().min(0).optional(),
     serialNumber: z.string().max(100).optional(),
     weightCapacity: z.number().min(0).optional(),
@@ -104,7 +104,7 @@ export default function EditVehiclePage() {
           vin: data.vin || "",
           licensePlate: data.licensePlate || "",
           nickname: data.nickname || "",
-          currentMileage: data.currentMileage,
+          currentMileage: data.currentMileage ?? 0,
           vehicleType: data.vehicleType || "car",
           status: data.status || "active",
           hoursMeter: data.hoursMeter ?? undefined,
@@ -312,34 +312,54 @@ export default function EditVehiclePage() {
                 />
               </div>
 
-              {isConstruction ? (
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">
-                    {t("dashboard.vehicleEdit.hoursMeter")}
-                  </label>
-                  <input
-                    type="number"
-                    {...register("hoursMeter", { valueAsNumber: true })}
-                    className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  />
-                </div>
-              ) : (
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">
-                    {t("dashboard.vehicleEdit.currentMileage")}
-                  </label>
-                  <input
-                    type="number"
-                    {...register("currentMileage", { valueAsNumber: true })}
-                    className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                  />
-                </div>
-              )}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  {t("dashboard.vehicleEdit.currentMileage")}
+                </label>
+                <input
+                  type="number"
+                  {...register("currentMileage", { valueAsNumber: true })}
+                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  {t("vehicle.licensePlate")}
+                </label>
+                <input
+                  {...register("licensePlate")}
+                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                  maxLength={20}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  {t("dashboard.vehicleEdit.vinOptional")}
+                </label>
+                <input
+                  {...register("vin")}
+                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono"
+                  maxLength={17}
+                />
+              </div>
             </div>
 
             {isConstruction && (
               <>
                 <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">
+                      {t("dashboard.vehicleEdit.hoursMeter")}
+                    </label>
+                    <input
+                      type="number"
+                      {...register("hoursMeter", { valueAsNumber: true })}
+                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                    />
+                  </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
                       {t("dashboard.vehicleEdit.serialNumber")}
@@ -349,6 +369,8 @@ export default function EditVehiclePage() {
                       className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                     />
                   </div>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
                       {t("dashboard.vehicleEdit.weightCapacity")}
@@ -359,51 +381,24 @@ export default function EditVehiclePage() {
                       className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                     />
                   </div>
-                </div>
-                {constructionSites.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">
-                      {t("dashboard.vehicleEdit.constructionSite")}
-                    </label>
-                    <select
-                      {...register("constructionSiteId")}
-                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                    >
-                      <option value="">{t("dashboard.vehicleEdit.noSiteAssignment")}</option>
-                      {constructionSites.map((site) => (
-                        <option key={site.id} value={site.id}>
-                          {site.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </>
-            )}
-
-            {!isConstruction && (
-              <>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">
-                      {t("vehicle.licensePlate")}
-                    </label>
-                    <input
-                      {...register("licensePlate")}
-                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-                      maxLength={20}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">
-                      {t("dashboard.vehicleEdit.vinOptional")}
-                    </label>
-                    <input
-                      {...register("vin")}
-                      className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground font-mono"
-                      maxLength={17}
-                    />
-                  </div>
+                  {constructionSites.length > 0 && (
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-1">
+                        {t("dashboard.vehicleEdit.constructionSite")}
+                      </label>
+                      <select
+                        {...register("constructionSiteId")}
+                        className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                      >
+                        <option value="">{t("dashboard.vehicleEdit.noSiteAssignment")}</option>
+                        {constructionSites.map((site) => (
+                          <option key={site.id} value={site.id}>
+                            {site.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
               </>
             )}

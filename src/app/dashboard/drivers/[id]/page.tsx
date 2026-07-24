@@ -171,10 +171,23 @@ export default function DriverDetailPage() {
     }
   };
 
-  if (status === "loading" || loading || !driver) {
+  if (status === "loading" || loading) {
     return (
       <div className="flex items-center justify-center py-32">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!driver) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <div className="text-center">
+          <p className="text-muted-foreground mb-4">{t("errors.generic")}</p>
+          <button onClick={() => router.push("/dashboard/drivers")} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90">
+            {t("common.back")}
+          </button>
+        </div>
       </div>
     );
   }

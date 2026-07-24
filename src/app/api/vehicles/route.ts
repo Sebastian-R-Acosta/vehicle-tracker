@@ -68,7 +68,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const vehicleYear = parseInt(year, 10);
+  const vehicleYear = typeof year === "number" ? year : parseInt(year, 10);
   if (isNaN(vehicleYear)) {
     return new NextResponse(JSON.stringify({ error: "Invalid year" }), {
       status: 400,
@@ -101,12 +101,12 @@ export async function POST(request: Request) {
       vin: vin || null,
       licensePlate: licensePlate || null,
       nickname: nickname || null,
-      currentMileage: parseInt(currentMileage, 10) || 0,
+      currentMileage: currentMileage != null ? (typeof currentMileage === "number" ? currentMileage : parseInt(currentMileage, 10)) || 0 : 0,
       vehicleType: vehicleType || "car",
       status: status || "active",
-      hoursMeter: hoursMeter != null ? parseInt(hoursMeter, 10) : null,
+      hoursMeter: hoursMeter != null ? (typeof hoursMeter === "number" ? hoursMeter : parseInt(hoursMeter, 10)) || null : null,
       serialNumber: serialNumber || null,
-      weightCapacity: weightCapacity != null ? parseFloat(weightCapacity) : null,
+      weightCapacity: weightCapacity != null ? (typeof weightCapacity === "number" ? weightCapacity : parseFloat(weightCapacity)) || null : null,
       constructionSiteId: constructionSiteId || null,
     },
   });

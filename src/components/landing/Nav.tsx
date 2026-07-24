@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Menu, X, LogIn, ChevronDown } from "lucide-react";
+import { Menu, X, LogIn, ChevronDown, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -40,6 +41,8 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
   const [solutionsOpen, setSolutionsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -113,30 +116,51 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
           <div className="hidden md:flex items-center gap-3">
             <LanguageToggle className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg" />
             <ThemeToggle className="text-gray-300 hover:text-white hover:bg-white/10 rounded-full" />
-            <Link
-              href="/login"
-              className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white border border-white/30 rounded-lg hover:bg-white/10 transition-all"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              {t("nav.login")}
-            </Link>
-            <Link
-              href="/register"
-              className="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-all"
-            >
-              {t("nav.getStarted")}
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white border border-white/30 rounded-lg hover:bg-white/10 transition-all"
+              >
+                <LayoutDashboard className="w-3.5 h-3.5" />
+                {t("nav.dashboard")}
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white border border-white/30 rounded-lg hover:bg-white/10 transition-all"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  {t("nav.login")}
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-all"
+                >
+                  {t("nav.getStarted")}
+                </Link>
+              </>
+            )}
           </div>
 
           <div className="flex md:hidden items-center gap-1">
             <LanguageToggle className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg" />
             <ThemeToggle className="text-gray-300 hover:text-white hover:bg-white/10 rounded-full" />
-            <Link
-              href="/login"
-              className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg"
-            >
-              <LogIn className="w-4 h-4" />
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href="/dashboard"
+                className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg"
+              >
+                <LogIn className="w-4 h-4" />
+              </Link>
+            )}
             <button
               onClick={() => setOpen(!open)}
               className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg"
@@ -178,13 +202,23 @@ export default function Nav({ onBookDemo }: { onBookDemo?: () => void }) {
               );
             })}
           </div>
-          <Link
-            href="/register"
-            className="block w-full px-5 py-2.5 text-sm font-semibold text-center text-white bg-blue-600 rounded-lg hover:bg-blue-500 mt-3"
-            onClick={() => setOpen(false)}
-          >
-            {t("nav.getStarted")}
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href="/dashboard"
+              className="block w-full px-5 py-2.5 text-sm font-semibold text-center text-white bg-blue-600 rounded-lg hover:bg-blue-500 mt-3"
+              onClick={() => setOpen(false)}
+            >
+              {t("nav.dashboard")}
+            </Link>
+          ) : (
+            <Link
+              href="/register"
+              className="block w-full px-5 py-2.5 text-sm font-semibold text-center text-white bg-blue-600 rounded-lg hover:bg-blue-500 mt-3"
+              onClick={() => setOpen(false)}
+            >
+              {t("nav.getStarted")}
+            </Link>
+          )}
         </div>
       )}
     </nav>

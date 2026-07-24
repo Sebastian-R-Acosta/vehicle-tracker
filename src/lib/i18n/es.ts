@@ -26,7 +26,7 @@ const solutionsWorkshopsBenefits = [
 ];
 
 const solutionsConstructionBenefits = [
-  { title: "Rastreo de Equipo Pesado", description: "Rastrea excavadoras, buldóceres, camiones volquete, grúas, cargadoras y motoniveladoras con soporte para números de serie y capacidad de peso." },
+  { title: "Rastreo de Equipo Pesado", description: "Rastrea excavadoras, buldóceres, camiones volquete, grúas, cargadoras y niveladoras con soporte para números de serie y capacidad de peso." },
   { title: "Organización por Sitio", description: "Agrupa equipos por sitio de construcción. Ve todas las máquinas asignadas a un proyecto en un panel." },
   { title: "Intervalos Basados en Horas", description: "Configura recordatorios según lecturas del horómetro — aceite de motor cada 250 horas, fluido hidráulico cada 500 horas y más." },
   { title: "Tablero de Estado", description: "Estado en tiempo real por máquina: Operativa, Inactiva, Averiada o En Mantenimiento. Conoce la salud de tu flota al instante." },
@@ -634,7 +634,7 @@ export const es = {
         dumpTruck: "Camión Volquete",
         crane: "Grúa",
         loader: "Cargadora",
-        grader: "Motoniveladora",
+        grader: "Niveladora",
         other: "Otro",
       },
       statusLabels: {

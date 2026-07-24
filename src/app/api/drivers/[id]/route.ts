@@ -46,12 +46,55 @@ export async function GET(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const driver = await getDriver(session.user.id, params.id);
+  const driver = await prisma.driver.findUnique({
+    where: { id: params.id },
+    include: {
+      assignments: {
+        where: { endDate: null },
+        include: {
+          vehicle: {
+            select: {
+              id: true,
+              make: true,
+              model: true,
+              year: true,
+              nickname: true,
+              vehicleType: true,
+              licensePlate: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
   if (!driver) {
     return new NextResponse("Not found", { status: 404 });
   }
 
-  return NextResponse.json(driver);
+  if (!driver.organizationId) {
+    return NextResponse.json({
+      ...driver,
+      vehicles: driver.assignments.map((a) => a.vehicle),
+    });
+  }
+
+  if (session.user.superAdmin) {
+    return NextResponse.json({
+      ...driver,
+      vehicles: driver.assignments.map((a) => a.vehicle),
+    });
+  }
+
+  const role = await getUserRole(driver.organizationId, session.user.id);
+  if (!role) {
+    return new NextResponse("Not found", { status: 404 });
+  }
+
+  return NextResponse.json({
+    ...driver,
+    vehicles: driver.assignments.map((a) => a.vehicle),
+  });
 }
 
 export async function PUT(
@@ -77,9 +120,18 @@ async function handleUpdate(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const driver = await getDriver(session.user.id, params.id);
+  const driver = await prisma.driver.findUnique({
+    where: { id: params.id },
+  });
   if (!driver) {
     return new NextResponse("Not found", { status: 404 });
+  }
+
+  if (driver.organizationId && !session.user.superAdmin) {
+    const role = await getUserRole(driver.organizationId, session.user.id);
+    if (!role) {
+      return new NextResponse("Not found", { status: 404 });
+    }
   }
 
   const body = await request.json();
@@ -132,9 +184,18 @@ export async function DELETE(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const driver = await getDriver(session.user.id, params.id);
+  const driver = await prisma.driver.findUnique({
+    where: { id: params.id },
+  });
   if (!driver) {
     return new NextResponse("Not found", { status: 404 });
+  }
+
+  if (driver.organizationId && !session.user.superAdmin) {
+    const role = await getUserRole(driver.organizationId, session.user.id);
+    if (!role) {
+      return new NextResponse("Not found", { status: 404 });
+    }
   }
 
   await prisma.driver.delete({

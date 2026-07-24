@@ -469,68 +469,6 @@ function StepDetails({
 }) {
   const { t } = useLanguage();
 
-  if (isConstruction) {
-    return (
-      <>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              {t("dashboard.vehicleNew.hoursMeter")}
-            </label>
-            <input
-              type="number"
-              {...register("hoursMeter", { valueAsNumber: true })}
-              className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-              placeholder={t("dashboard.vehicleNew.placeholderMileage")}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              {t("dashboard.vehicleNew.serialNumber")}
-            </label>
-            <input
-              {...register("serialNumber")}
-              className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-              placeholder={t("dashboard.vehicleNew.placeholderSerial")}
-            />
-          </div>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              {t("dashboard.vehicleNew.weightCapacity")}
-            </label>
-            <input
-              type="number"
-              {...register("weightCapacity", { valueAsNumber: true })}
-              className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-              placeholder={t("dashboard.vehicleNew.placeholderWeight")}
-            />
-          </div>
-          {constructionSites.length > 0 && (
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                {t("dashboard.vehicleNew.constructionSite")}
-              </label>
-              <select
-                {...register("constructionSiteId")}
-                className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
-              >
-                <option value="">{t("dashboard.vehicleNew.noSiteAssignment")}</option>
-                {constructionSites.map((site) => (
-                  <option key={site.id} value={site.id}>
-                    {site.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
-      </>
-    );
-  }
-
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -572,6 +510,66 @@ function StepDetails({
           <p className="mt-1 text-sm text-destructive">{errors.vin.message}</p>
         )}
       </div>
+
+      {isConstruction && (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                {t("dashboard.vehicleNew.hoursMeter")}
+              </label>
+              <input
+                type="number"
+                {...register("hoursMeter", { valueAsNumber: true })}
+                className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                placeholder={t("dashboard.vehicleNew.placeholderMileage")}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                {t("dashboard.vehicleNew.serialNumber")}
+              </label>
+              <input
+                {...register("serialNumber")}
+                className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                placeholder={t("dashboard.vehicleNew.placeholderSerial")}
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                {t("dashboard.vehicleNew.weightCapacity")}
+              </label>
+              <input
+                type="number"
+                {...register("weightCapacity", { valueAsNumber: true })}
+                className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                placeholder={t("dashboard.vehicleNew.placeholderWeight")}
+              />
+            </div>
+            {constructionSites.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  {t("dashboard.vehicleNew.constructionSite")}
+                </label>
+                <select
+                  {...register("constructionSiteId")}
+                  className="w-full p-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                >
+                  <option value="">{t("dashboard.vehicleNew.noSiteAssignment")}</option>
+                  {constructionSites.map((site) => (
+                    <option key={site.id} value={site.id}>
+                      {site.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </>
   );
 }
