@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { verifyPayPalWebhook, getTierFromPayPalPlanId, subscriptionsController } from "@/lib/paypal";
+import {
+  sendSubscriptionActivatedEmail,
+  sendSubscriptionCanceledEmail,
+  sendSubscriptionSuspendedEmail,
+  sendSubscriptionReactivatedEmail,
+} from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +76,11 @@ export async function POST(request: Request) {
             currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
           },
         });
+
+        const activatedUser = await prisma.user.findUnique({ where: { id: customId }, select: { email: true, name: true } });
+        if (activatedUser?.email) {
+          sendSubscriptionActivatedEmail(activatedUser.email, activatedUser.name || "there", plan.name).catch(() => {});
+        }
         break;
       }
 
@@ -88,6 +99,16 @@ export async function POST(request: Request) {
           where: { id: existing.id },
           data: { status: newStatus },
         });
+
+        const subUser = await prisma.user.findUnique({ where: { id: existing.userId }, select: { email: true, name: true } });
+        const subPlan = await prisma.subscriptionPlan.findUnique({ where: { id: existing.planId }, select: { name: true } });
+        if (subUser?.email && subPlan) {
+          if (newStatus === "canceled") {
+            sendSubscriptionCanceledEmail(subUser.email, subUser.name || "there", subPlan.name).catch(() => {});
+          } else {
+            sendSubscriptionSuspendedEmail(subUser.email, subUser.name || "there", subPlan.name).catch(() => {});
+          }
+        }
         break;
       }
 
@@ -104,6 +125,12 @@ export async function POST(request: Request) {
           where: { id: existing.id },
           data: { status: "active" },
         });
+
+        const reactUser = await prisma.user.findUnique({ where: { id: existing.userId }, select: { email: true, name: true } });
+        const reactPlan = await prisma.subscriptionPlan.findUnique({ where: { id: existing.planId }, select: { name: true } });
+        if (reactUser?.email && reactPlan) {
+          sendSubscriptionReactivatedEmail(reactUser.email, reactUser.name || "there", reactPlan.name).catch(() => {});
+        }
         break;
       }
     }

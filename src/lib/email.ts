@@ -385,3 +385,266 @@ export async function sendDemoRequestEmail(
 
   return sendViaResend(to, `New Demo Request from ${data.name} at ${data.company}`.replace(/<[^>]*>/g, ""), html);
 }
+
+export async function sendPasswordChangedEmail(to: string, userName: string) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #059669; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .warning { background: #fef3c7; padding: 12px; border-radius: 6px; margin-top: 20px; font-size: 14px; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Password Changed</h1>
+        </div>
+        <div class="content">
+          <p>Hi ${escapeHtml(userName)},</p>
+          <p>Your password has been successfully changed. If this was you, no further action is needed.</p>
+          <div class="warning">
+            <strong>If you didn't make this change,</strong> please reset your password immediately or contact support.
+          </div>
+        </div>
+        <div class="footer">
+          Bitácora - Your vehicle management app
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendViaResend(to, "Your Password Was Changed - Bitácora", html);
+}
+
+export async function sendNewLoginEmail(
+  to: string,
+  userName: string,
+  metadata?: { method?: string; timestamp?: string }
+) {
+  const method = metadata?.method || "credentials";
+  const timestamp = metadata?.timestamp || new Date().toLocaleString();
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .detail { background: white; padding: 12px; border-radius: 6px; margin: 15px 0; font-size: 14px; }
+        .warning { background: #fef3c7; padding: 12px; border-radius: 6px; margin-top: 20px; font-size: 14px; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>New Sign-In Detected</h1>
+        </div>
+        <div class="content">
+          <p>Hi ${escapeHtml(userName)},</p>
+          <p>We noticed a new sign-in to your Bitácora account.</p>
+          <div class="detail">
+            <strong>Method:</strong> ${escapeHtml(method)}<br />
+            <strong>Time:</strong> ${escapeHtml(timestamp)}
+          </div>
+          <div class="warning">
+            If this wasn't you, please change your password immediately.
+          </div>
+        </div>
+        <div class="footer">
+          Bitácora - Your vehicle management app
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendViaResend(to, "New Sign-In to Your Bitácora Account", html);
+}
+
+export async function sendSubscriptionActivatedEmail(
+  to: string,
+  userName: string,
+  planName: string
+) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #7c3aed; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .plan-badge { display: inline-block; background: #ede9fe; color: #7c3aed; padding: 6px 16px; border-radius: 9999px; font-weight: 600; margin: 15px 0; }
+        .features { margin: 20px 0; }
+        .feature { padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Welcome to ${escapeHtml(planName)}!</h1>
+        </div>
+        <div class="content">
+          <p>Hi ${escapeHtml(userName)},</p>
+          <p>Your subscription is now active. Here's what you've unlocked:</p>
+          <div style="text-align: center;">
+            <span class="plan-badge">${escapeHtml(planName)} Plan</span>
+          </div>
+          <div class="features">
+            <div class="feature">Unlimited vehicles</div>
+            <div class="feature">Advanced maintenance tracking</div>
+            <div class="feature">Priority support</div>
+          </div>
+          <p style="font-size: 14px; color: #6b7280;">
+            You can manage your subscription from your billing settings at any time.
+          </p>
+        </div>
+        <div class="footer">
+          Bitácora - Your vehicle management app
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendViaResend(to, `Welcome to ${planName} - Bitácora`, html);
+}
+
+export async function sendSubscriptionCanceledEmail(
+  to: string,
+  userName: string,
+  planName: string
+) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #6b7280; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .info { background: #eff6ff; padding: 12px; border-radius: 6px; margin: 15px 0; font-size: 14px; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Subscription Canceled</h1>
+        </div>
+        <div class="content">
+          <p>Hi ${escapeHtml(userName)},</p>
+          <p>Your <strong>${escapeHtml(planName)}</strong> subscription has been canceled.</p>
+          <div class="info">
+            Your account will revert to the free tier at the end of your current billing period. You'll keep access to your current features until then.
+          </div>
+          <p>You can resubscribe anytime from your billing settings.</p>
+        </div>
+        <div class="footer">
+          Bitácora - Your vehicle management app
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendViaResend(to, "Subscription Canceled - Bitácora", html);
+}
+
+export async function sendSubscriptionSuspendedEmail(
+  to: string,
+  userName: string,
+  planName: string
+) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #dc2626; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .warning { background: #fef2f2; padding: 12px; border-radius: 6px; margin: 15px 0; font-size: 14px; border-left: 4px solid #dc2626; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Payment Failed</h1>
+        </div>
+        <div class="content">
+          <p>Hi ${escapeHtml(userName)},</p>
+          <p>We couldn't process the payment for your <strong>${escapeHtml(planName)}</strong> subscription.</p>
+          <div class="warning">
+            <strong>Action required:</strong> Please update your payment method to avoid losing access to premium features.
+          </div>
+          <p>Log in to your Bitácora account and visit Billing Settings to update your payment information.</p>
+        </div>
+        <div class="footer">
+          Bitácora - Your vehicle management app
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendViaResend(to, "Payment Failed - Action Required - Bitácora", html);
+}
+
+export async function sendSubscriptionReactivatedEmail(
+  to: string,
+  userName: string,
+  planName: string
+) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #059669; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .badge { display: inline-block; background: #d1fae5; color: #059669; padding: 6px 16px; border-radius: 9999px; font-weight: 600; margin: 15px 0; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Welcome Back!</h1>
+        </div>
+        <div class="content">
+          <p>Hi ${escapeHtml(userName)},</p>
+          <p>Your <strong>${escapeHtml(planName)}</strong> subscription has been reactivated.</p>
+          <div style="text-align: center;">
+            <span class="badge">Active</span>
+          </div>
+          <p>You have full access to all your premium features again. Thank you for being a Bitácora subscriber!</p>
+        </div>
+        <div class="footer">
+          Bitácora - Your vehicle management app
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendViaResend(to, "Subscription Reactivated - Bitácora", html);
+}

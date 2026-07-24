@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { rateLimit } from "@/lib/rate-limit";
 import { headers } from "next/headers";
+import { sendPasswordChangedEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
@@ -59,6 +60,8 @@ export async function POST(request: Request) {
         resetTokenExpiry: null,
       },
     });
+
+    sendPasswordChangedEmail(user.email, user.name || "there").catch(() => {});
 
     return NextResponse.json({ message: "Password updated successfully" });
   } catch (error) {

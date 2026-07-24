@@ -5,6 +5,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { sendNewLoginEmail } from "@/lib/email";
 
 declare module "next-auth/jwt" {
   interface JWT {
@@ -82,6 +83,16 @@ export const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      if (user?.email) {
+        const method = account?.provider === "google" ? "Google" : "email & password";
+        sendNewLoginEmail(user.email, user.name || "there", {
+          method,
+          timestamp: new Date().toLocaleString(),
+        }).catch(() => {});
+      }
+      return true;
+    },
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
