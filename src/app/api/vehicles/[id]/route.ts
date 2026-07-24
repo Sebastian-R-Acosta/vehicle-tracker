@@ -82,27 +82,37 @@ export async function PUT(
     return new NextResponse("Forbidden", { status: 403 });
   }
 
-  const updated = await prisma.vehicle.update({
-    where: { id: params.id },
-    data: {
-      make,
-      model,
-      year,
-      vin,
-      licensePlate,
-      nickname,
-      currentMileage,
-      vehicleType: vehicleType || "car",
-      status: status || "active",
-      hoursMeter: hoursMeter != null ? (typeof hoursMeter === "number" ? hoursMeter : parseInt(hoursMeter, 10)) || null : null,
-      serialNumber: serialNumber || null,
-      weightCapacity: weightCapacity != null ? (typeof weightCapacity === "number" ? weightCapacity : parseFloat(weightCapacity)) || null : null,
-      constructionSiteId: constructionSiteId || null,
-      equipmentStatus: equipmentStatus || null,
-    },
-  });
+  try {
+    const mileage = typeof currentMileage === "number" && !isNaN(currentMileage) ? Math.max(0, Math.floor(currentMileage)) : 0;
 
-  return NextResponse.json(updated);
+    const updated = await prisma.vehicle.update({
+      where: { id: params.id },
+      data: {
+        make,
+        model,
+        year,
+        vin: vin || null,
+        licensePlate: licensePlate || null,
+        nickname: nickname || null,
+        currentMileage: mileage,
+        vehicleType: vehicleType || "car",
+        status: status || "active",
+        hoursMeter: hoursMeter != null ? (typeof hoursMeter === "number" ? hoursMeter : parseInt(hoursMeter, 10)) || null : null,
+        serialNumber: serialNumber || null,
+        weightCapacity: weightCapacity != null ? (typeof weightCapacity === "number" ? weightCapacity : parseFloat(weightCapacity)) || null : null,
+        constructionSiteId: constructionSiteId || null,
+        equipmentStatus: equipmentStatus || null,
+      },
+    });
+
+    return NextResponse.json(updated);
+  } catch (err: any) {
+    console.error("Failed to update vehicle:", err);
+    return new NextResponse(
+      JSON.stringify({ error: err.message || "Failed to update vehicle" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
 }
 
 export async function DELETE(

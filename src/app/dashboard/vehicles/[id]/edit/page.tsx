@@ -127,7 +127,12 @@ export default function EditVehiclePage() {
     setLoading(true);
 
     try {
-      const payload: any = { ...data };
+      const payload: any = {
+        ...data,
+        vin: data.vin || null,
+        licensePlate: data.licensePlate || null,
+        nickname: data.nickname || null,
+      };
       if (!isConstruction) {
         delete payload.hoursMeter;
         delete payload.serialNumber;
@@ -142,12 +147,13 @@ export default function EditVehiclePage() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to update vehicle");
+        const result = await res.json().catch(() => null);
+        throw new Error(result?.error || t("dashboard.vehicleEdit.somethingWentWrong"));
       }
 
       router.push(`/dashboard/vehicles/${params.id}`);
-    } catch (err) {
-      setError(t("dashboard.vehicleEdit.somethingWentWrong"));
+    } catch (err: any) {
+      setError(err.message || t("dashboard.vehicleEdit.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
