@@ -539,7 +539,7 @@ export default function VehicleDetailPage() {
             <div className="bg-card rounded-lg border border-border p-6">
               <div className="space-y-2">
                 <Link
-                  href={`/dashboard/vehicles/${vehicle.id}/transfer`}
+                  href={`/dashboard/transfer?vehicle=${vehicle.id}`}
                   className="flex items-center gap-2 p-3 text-muted-foreground hover:bg-accent rounded-lg"
                 >
                   <Car className="w-4 h-4" />
