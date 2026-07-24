@@ -1,60 +1,45 @@
-import { Resend } from "resend";
+import sgMail from "@sendgrid/mail";
 
-let resendWarned = false;
+let sgWarned = false;
 
-function getResend() {
-  if (!process.env.RESEND_API_KEY) {
-    if (!resendWarned) {
-      console.warn("[email] RESEND_API_KEY is not set — emails will not be sent");
-      resendWarned = true;
+function getSendGrid() {
+  if (!process.env.SENDGRID_API_KEY) {
+    if (!sgWarned) {
+      console.warn("[email] SENDGRID_API_KEY is not set — emails will not be sent");
+      sgWarned = true;
     }
-    return null;
+    return false;
   }
-  return new Resend(process.env.RESEND_API_KEY);
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  return true;
 }
 
-const FREE_EMAIL_PROVIDERS = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "aol.com", "icloud.com", "mail.com", "protonmail.com", "proton.me", "zoho.com", "yandex.com"];
-
-function getFromEmail(): string {
-  const raw = process.env.FROM_EMAIL_ADDRESS;
-  if (!raw) return "Bitácora <onboarding@resend.dev>";
-
-  const domain = raw.includes("@") ? raw.split("@")[1].toLowerCase() : "";
-  if (FREE_EMAIL_PROVIDERS.includes(domain)) {
-    console.warn(`[email] FROM_EMAIL_ADDRESS "${raw}" uses a free email provider — Resend requires a verified domain. Falling back to onboarding@resend.dev`);
-    return "Bitácora <onboarding@resend.dev>";
-  }
-
-  return `Bitácora <${raw}>`;
-}
-
-const fromEmail = getFromEmail();
+const fromEmail = process.env.FROM_EMAIL_ADDRESS || "noreply@resend.dev";
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-async function sendViaResend(to: string, subject: string, html: string) {
-  const r = getResend();
-  if (!r) {
-    console.error("[email] Cannot send — RESEND_API_KEY is not configured");
-    return { success: false, error: new Error("Resend not configured") };
+async function sendViaEmail(to: string, subject: string, html: string) {
+  if (!getSendGrid()) {
+    console.error("[email] Cannot send — SENDGRID_API_KEY is not configured");
+    return { success: false, error: new Error("SendGrid not configured") };
   }
 
-  const { data, error } = await r.emails.send({
-    from: fromEmail,
-    to: [to],
-    subject,
-    html,
-  });
-
-  if (error) {
-    console.error(`[email] FAILED to send "${subject}" to ${to}:`, JSON.stringify(error));
-    return { success: false, error };
+  try {
+    await sgMail.send({
+      from: `Bitácora <${fromEmail}>`,
+      to,
+      subject,
+      html,
+    });
+    console.log(`[email] Sent "${subject}" to ${to}`);
+    return { success: true, data: null };
+  } catch (err: any) {
+    const msg = err?.response?.body?.errors?.[0]?.message || err.message || String(err);
+    console.error(`[email] FAILED to send "${subject}" to ${to}:`, msg);
+    return { success: false, error: new Error(msg) };
   }
-
-  console.log(`[email] Sent "${subject}" to ${to}`);
-  return { success: true, data };
 }
 
 export async function sendMaintenanceConfirmation(
@@ -111,7 +96,7 @@ export async function sendMaintenanceConfirmation(
     </html>
   `;
 
-  return sendViaResend(to, `Maintenance Logged: ${maintenance.serviceType} - ${vehicle.make} ${vehicle.model}`, html);
+  return sendViaEmail(to, `Maintenance Logged: ${maintenance.serviceType} - ${vehicle.make} ${vehicle.model}`, html);
 }
 
 export async function sendReminderCreatedEmail(
@@ -176,7 +161,7 @@ export async function sendReminderCreatedEmail(
     </html>
   `;
 
-  return sendViaResend(to, `Reminder Created: ${reminder.title}`, html);
+  return sendViaEmail(to, `Reminder Created: ${reminder.title}`, html);
 }
 
 export async function sendReminderDueEmail(
@@ -249,7 +234,7 @@ export async function sendReminderDueEmail(
     </html>
   `;
 
-  return sendViaResend(to, `${isOverdue ? "OVERDUE: " : "Reminder: "}${reminder.title}`, html);
+  return sendViaEmail(to, `${isOverdue ? "OVERDUE: " : "Reminder: "}${reminder.title}`, html);
 }
 
 export async function sendWelcomeEmail(to: string, name?: string) {
@@ -296,7 +281,7 @@ export async function sendWelcomeEmail(to: string, name?: string) {
     </html>
   `;
 
-  return sendViaResend(to, "Welcome to Bitácora", html);
+  return sendViaEmail(to, "Welcome to Bitácora", html);
 }
 
 export async function sendPasswordResetEmail(
@@ -344,7 +329,7 @@ export async function sendPasswordResetEmail(
     </html>
   `;
 
-  return sendViaResend(to, "Reset Your Password - Bitácora", html);
+  return sendViaEmail(to, "Reset Your Password - Bitácora", html);
 }
 
 export async function sendDemoRequestEmail(
@@ -400,7 +385,7 @@ export async function sendDemoRequestEmail(
     </html>
   `;
 
-  return sendViaResend(to, `New Demo Request from ${data.name} at ${data.company}`.replace(/<[^>]*>/g, ""), html);
+  return sendViaEmail(to, `New Demo Request from ${data.name} at ${data.company}`.replace(/<[^>]*>/g, ""), html);
 }
 
 export async function sendPasswordChangedEmail(to: string, userName: string) {
@@ -437,7 +422,7 @@ export async function sendPasswordChangedEmail(to: string, userName: string) {
     </html>
   `;
 
-  return sendViaResend(to, "Your Password Was Changed - Bitácora", html);
+  return sendViaEmail(to, "Your Password Was Changed - Bitácora", html);
 }
 
 export async function sendNewLoginEmail(
@@ -486,7 +471,7 @@ export async function sendNewLoginEmail(
     </html>
   `;
 
-  return sendViaResend(to, "New Sign-In to Your Bitácora Account", html);
+  return sendViaEmail(to, "New Sign-In to Your Bitácora Account", html);
 }
 
 export async function sendSubscriptionActivatedEmail(
@@ -537,7 +522,7 @@ export async function sendSubscriptionActivatedEmail(
     </html>
   `;
 
-  return sendViaResend(to, `Welcome to ${planName} - Bitácora`, html);
+  return sendViaEmail(to, `Welcome to ${planName} - Bitácora`, html);
 }
 
 export async function sendSubscriptionCanceledEmail(
@@ -579,7 +564,7 @@ export async function sendSubscriptionCanceledEmail(
     </html>
   `;
 
-  return sendViaResend(to, "Subscription Canceled - Bitácora", html);
+  return sendViaEmail(to, "Subscription Canceled - Bitácora", html);
 }
 
 export async function sendSubscriptionSuspendedEmail(
@@ -621,7 +606,7 @@ export async function sendSubscriptionSuspendedEmail(
     </html>
   `;
 
-  return sendViaResend(to, "Payment Failed - Action Required - Bitácora", html);
+  return sendViaEmail(to, "Payment Failed - Action Required - Bitácora", html);
 }
 
 export async function sendSubscriptionReactivatedEmail(
@@ -663,7 +648,7 @@ export async function sendSubscriptionReactivatedEmail(
     </html>
   `;
 
-  return sendViaResend(to, "Subscription Reactivated - Bitácora", html);
+  return sendViaEmail(to, "Subscription Reactivated - Bitácora", html);
 }
 
 export async function sendVehicleCreatedEmail(
@@ -712,5 +697,5 @@ export async function sendVehicleCreatedEmail(
     </html>
   `;
 
-  return sendViaResend(to, `Vehicle Added: ${vehicleName}`, html);
+  return sendViaEmail(to, `Vehicle Added: ${vehicleName}`, html);
 }
