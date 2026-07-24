@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, Loader2, Wrench, Upload, X, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function NewMaintenancePage() {
@@ -15,6 +16,7 @@ export default function NewMaintenancePage() {
   const router = useRouter();
   const params = useParams();
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -163,6 +165,7 @@ export default function NewMaintenancePage() {
         throw new Error("Failed to create record");
       }
 
+      await queryClient.invalidateQueries({ queryKey: ["vehicle", String(params.id)] });
       router.push(`/dashboard/vehicles/${params.id}`);
     } catch (err) {
       setError(t("dashboard.maintenanceNew.somethingWentWrong"));

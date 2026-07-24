@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, Loader2, Wrench, Upload, X, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 function createMaintenanceSchema(t: (key: string) => string) {
@@ -45,6 +46,7 @@ export default function EditMaintenancePage() {
   const router = useRouter();
   const params = useParams();
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -181,6 +183,7 @@ export default function EditMaintenancePage() {
         throw new Error(t("dashboard.maintenanceEdit.failedUpdate"));
       }
 
+      await queryClient.invalidateQueries({ queryKey: ["vehicle", String(params.id)] });
       router.push(`/dashboard/vehicles/${params.id}`);
     } catch (err) {
       setError(t("dashboard.maintenanceEdit.somethingWentWrong"));
@@ -196,6 +199,7 @@ export default function EditMaintenancePage() {
         method: "DELETE",
       });
       if (res.ok) {
+        await queryClient.invalidateQueries({ queryKey: ["vehicle", String(params.id)] });
         router.push(`/dashboard/vehicles/${params.id}`);
       }
     } catch (err) {

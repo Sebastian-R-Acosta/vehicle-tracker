@@ -19,6 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { useFetch } from "@/lib/queries";
+import { useQueryClient } from "@tanstack/react-query";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { VehicleTaskSection } from "@/components/VehicleTaskSection";
 import { VehicleDocumentsSection } from "@/components/VehicleDocumentsSection";
@@ -68,6 +69,7 @@ export default function VehicleDetailPage() {
   const router = useRouter();
   const params = useParams();
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
   const [generatingReport, setGeneratingReport] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -104,6 +106,8 @@ export default function VehicleDetailPage() {
         method: "DELETE",
       });
       if (res.ok) {
+        await queryClient.invalidateQueries({ queryKey: ["vehicle", vehicleId] });
+        await queryClient.invalidateQueries({ queryKey: ["vehicles"] });
         toast.success(t("dashboard.vehicleDetail.vehicleDeleted"));
         router.push("/dashboard");
       } else {

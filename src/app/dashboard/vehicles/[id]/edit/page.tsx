@@ -9,6 +9,7 @@ import { z } from "zod";
 import { ArrowLeft, Loader2, Car, Truck, Bike, Zap, Drill, Tractor, Hammer, Building2 } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 function createVehicleSchema(t: (key: string) => string) {
   return z.object({
@@ -46,6 +47,7 @@ export default function EditVehiclePage() {
   const router = useRouter();
   const params = useParams();
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
@@ -151,6 +153,8 @@ export default function EditVehiclePage() {
         throw new Error(result?.error || t("dashboard.vehicleEdit.somethingWentWrong"));
       }
 
+      await queryClient.invalidateQueries({ queryKey: ["vehicle", String(params.id)] });
+      await queryClient.invalidateQueries({ queryKey: ["vehicles"] });
       router.push(`/dashboard/vehicles/${params.id}`);
     } catch (err: any) {
       setError(err.message || t("dashboard.vehicleEdit.somethingWentWrong"));
