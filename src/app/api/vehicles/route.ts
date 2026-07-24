@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getUserRole } from "@/lib/org";
 import { canAddVehicle } from "@/lib/billing";
+import { sendVehicleCreatedEmail } from "@/lib/email";
 import type { Prisma } from "@prisma/client";
 
 export async function GET(request: Request) {
@@ -110,6 +111,17 @@ export async function POST(request: Request) {
       constructionSiteId: constructionSiteId || null,
     },
   });
+
+  const vehicleUser = await prisma.user.findUnique({ where: { id: session.user.id }, select: { email: true, name: true } });
+  if (vehicleUser?.email) {
+    sendVehicleCreatedEmail(vehicleUser.email, {
+      make: vehicle.make,
+      model: vehicle.model,
+      year: vehicle.year,
+      nickname: vehicle.nickname,
+      vehicleType: vehicle.vehicleType,
+    }).catch((e) => console.error("[email] Vehicle created email failed:", e));
+  }
 
   return NextResponse.json(vehicle);
 }

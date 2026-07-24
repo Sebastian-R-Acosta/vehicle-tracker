@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       },
     });
 
-    sendPasswordChangedEmail(user.email, user.name || "there").catch(() => {});
+    sendPasswordChangedEmail(user.email, user.name || "there").catch((e) => console.error("[email] Password changed notification failed:", e));
 
     return NextResponse.json({ message: "Password updated successfully" });
   } catch (error) {

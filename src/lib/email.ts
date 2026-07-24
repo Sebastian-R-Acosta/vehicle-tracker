@@ -13,9 +13,22 @@ function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
-const fromEmail = process.env.FROM_EMAIL_ADDRESS
-  ? `Bitácora <${process.env.FROM_EMAIL_ADDRESS}>`
-  : "Bitácora <onboarding@resend.dev>";
+const FREE_EMAIL_PROVIDERS = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "aol.com", "icloud.com", "mail.com", "protonmail.com", "proton.me", "zoho.com", "yandex.com"];
+
+function getFromEmail(): string {
+  const raw = process.env.FROM_EMAIL_ADDRESS;
+  if (!raw) return "Bitácora <onboarding@resend.dev>";
+
+  const domain = raw.includes("@") ? raw.split("@")[1].toLowerCase() : "";
+  if (FREE_EMAIL_PROVIDERS.includes(domain)) {
+    console.warn(`[email] FROM_EMAIL_ADDRESS "${raw}" uses a free email provider — Resend requires a verified domain. Falling back to onboarding@resend.dev`);
+    return "Bitácora <onboarding@resend.dev>";
+  }
+
+  return `Bitácora <${raw}>`;
+}
+
+const fromEmail = getFromEmail();
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -23,7 +36,10 @@ function escapeHtml(s: string): string {
 
 async function sendViaResend(to: string, subject: string, html: string) {
   const r = getResend();
-  if (!r) return { success: false, error: new Error("Resend not configured") };
+  if (!r) {
+    console.error("[email] Cannot send — RESEND_API_KEY is not configured");
+    return { success: false, error: new Error("Resend not configured") };
+  }
 
   const { data, error } = await r.emails.send({
     from: fromEmail,
@@ -33,10 +49,11 @@ async function sendViaResend(to: string, subject: string, html: string) {
   });
 
   if (error) {
-    console.error("[email] Resend error:", error);
+    console.error(`[email] FAILED to send "${subject}" to ${to}:`, JSON.stringify(error));
     return { success: false, error };
   }
 
+  console.log(`[email] Sent "${subject}" to ${to}`);
   return { success: true, data };
 }
 
@@ -647,4 +664,53 @@ export async function sendSubscriptionReactivatedEmail(
   `;
 
   return sendViaResend(to, "Subscription Reactivated - Bitácora", html);
+}
+
+export async function sendVehicleCreatedEmail(
+  to: string,
+  vehicle: { make: string; model: string; year: number; nickname: string | null; vehicleType: string }
+) {
+  const vehicleName = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://vehicle-tracker-chi.vercel.app"}/dashboard`;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .vehicle-name { font-size: 18px; font-weight: bold; color: #1f2937; margin: 15px 0; }
+        .detail { background: white; padding: 12px; border-radius: 6px; margin: 10px 0; font-size: 14px; }
+        .button { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Vehicle Added</h1>
+        </div>
+        <div class="content">
+          <p>Your new vehicle has been added to your fleet:</p>
+          <div class="vehicle-name">${escapeHtml(vehicleName)}${vehicle.nickname ? ` (${escapeHtml(vehicle.nickname)})` : ""}</div>
+          <div class="detail">
+            <strong>Type:</strong> ${escapeHtml(vehicle.vehicleType)}<br />
+            <strong>Year:</strong> ${vehicle.year}
+          </div>
+          <div style="text-align: center;">
+            <a href="${dashboardUrl}" class="button">View Dashboard</a>
+          </div>
+        </div>
+        <div class="footer">
+          Bitácora - Your vehicle management app
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendViaResend(to, `Vehicle Added: ${vehicleName}`, html);
 }

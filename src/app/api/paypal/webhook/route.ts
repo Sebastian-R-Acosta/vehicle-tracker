@@ -79,7 +79,7 @@ export async function POST(request: Request) {
 
         const activatedUser = await prisma.user.findUnique({ where: { id: customId }, select: { email: true, name: true } });
         if (activatedUser?.email) {
-          sendSubscriptionActivatedEmail(activatedUser.email, activatedUser.name || "there", plan.name).catch(() => {});
+          sendSubscriptionActivatedEmail(activatedUser.email, activatedUser.name || "there", plan.name).catch((e) => console.error("[email] Subscription activated email failed:", e));
         }
         break;
       }
@@ -104,9 +104,9 @@ export async function POST(request: Request) {
         const subPlan = await prisma.subscriptionPlan.findUnique({ where: { id: existing.planId }, select: { name: true } });
         if (subUser?.email && subPlan) {
           if (newStatus === "canceled") {
-            sendSubscriptionCanceledEmail(subUser.email, subUser.name || "there", subPlan.name).catch(() => {});
+            sendSubscriptionCanceledEmail(subUser.email, subUser.name || "there", subPlan.name).catch((e) => console.error("[email] Subscription canceled email failed:", e));
           } else {
-            sendSubscriptionSuspendedEmail(subUser.email, subUser.name || "there", subPlan.name).catch(() => {});
+            sendSubscriptionSuspendedEmail(subUser.email, subUser.name || "there", subPlan.name).catch((e) => console.error("[email] Subscription suspended email failed:", e));
           }
         }
         break;
@@ -129,7 +129,7 @@ export async function POST(request: Request) {
         const reactUser = await prisma.user.findUnique({ where: { id: existing.userId }, select: { email: true, name: true } });
         const reactPlan = await prisma.subscriptionPlan.findUnique({ where: { id: existing.planId }, select: { name: true } });
         if (reactUser?.email && reactPlan) {
-          sendSubscriptionReactivatedEmail(reactUser.email, reactUser.name || "there", reactPlan.name).catch(() => {});
+          sendSubscriptionReactivatedEmail(reactUser.email, reactUser.name || "there", reactPlan.name).catch((e) => console.error("[email] Subscription reactivated email failed:", e));
         }
         break;
       }

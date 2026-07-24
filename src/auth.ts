@@ -90,7 +90,7 @@ export const authConfig: NextAuthConfig = {
             method,
             timestamp: new Date().toLocaleString(),
           })
-        ).catch(() => {});
+        ).catch((e) => console.error("[email] Login notification failed:", e));
       }
       return true;
     },
