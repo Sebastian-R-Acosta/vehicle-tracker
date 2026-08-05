@@ -13,19 +13,26 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!termsAccepted) {
+      setError(t("errors.termsRequired"));
+      return;
+    }
+
     setLoading(true);
 
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, termsAccepted }),
       });
 
       if (!res.ok) {
@@ -96,6 +103,27 @@ export default function RegisterPage() {
               minLength={8}
             />
             <p className="text-xs text-muted-foreground mt-1">{t("errors.passwordLength")}</p>
+          </div>
+
+          <div className="flex items-start gap-2">
+            <input
+              id="terms"
+              type="checkbox"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-ring"
+              required
+            />
+            <label htmlFor="terms" className="text-sm text-muted-foreground">
+              {t("auth.acceptTerms")}{" "}
+              <Link href="/terms" className="text-primary hover:underline font-medium" target="_blank">
+                {t("auth.termsLink")}
+              </Link>{" "}
+              {t("auth.acceptTermsAnd")}{" "}
+              <Link href="/privacy" className="text-primary hover:underline font-medium" target="_blank">
+                {t("auth.privacyLink")}
+              </Link>
+            </label>
           </div>
 
           <button

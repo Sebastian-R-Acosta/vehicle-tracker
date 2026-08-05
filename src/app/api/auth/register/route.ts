@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, email, password } = body;
+    const { name, email, password, termsAccepted } = body;
 
     if (!email || !password) {
       return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
@@ -23,6 +23,10 @@ export async function POST(request: Request) {
 
     if (password.length < 8) {
       return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
+    }
+
+    if (termsAccepted !== true) {
+      return NextResponse.json({ error: "You must accept the Terms and Conditions" }, { status: 400 });
     }
 
     const emailLower = email.toLowerCase();
@@ -44,6 +48,7 @@ export async function POST(request: Request) {
           email: emailLower,
           passwordHash,
           onboardingCompleted: false,
+          termsAcceptedAt: new Date(),
         },
       });
 

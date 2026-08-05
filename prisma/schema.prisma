@@ -59,6 +59,7 @@ model User {
   updatedAt    DateTime @updatedAt
 
   onboardingCompleted Boolean @default(false)
+  termsAcceptedAt DateTime?
   currentOrganizationId String?
   licenseNumber   String?
   licenseExpiry   DateTime?

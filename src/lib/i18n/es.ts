@@ -582,6 +582,10 @@ export const es = {
     requestNewLink: "Solicitar Nuevo Enlace",
     resetPasswordDesc: "Ingresa tu nueva contraseña a continuación.",
     passwordsDoNotMatch: "Las contraseñas no coinciden",
+    acceptTerms: "He leído y acepto los",
+    acceptTermsAnd: "y la",
+    termsLink: "Términos y Condiciones",
+    privacyLink: "Política de Privacidad",
   },
   errors: {
     generic: "Ocurrió un error",
@@ -593,6 +597,7 @@ export const es = {
     required: "Este campo es requerido",
     invalidEmail: "Correo inválido",
     passwordLength: "Mínimo 8 caracteres",
+    termsRequired: "Debes aceptar los Términos y Condiciones para crear una cuenta",
   },
   dashboard: {
     home: {

@@ -584,6 +584,10 @@ export const en: Translations = {
     requestNewLink: "Request New Link",
     resetPasswordDesc: "Enter your new password below.",
     passwordsDoNotMatch: "Passwords do not match",
+    acceptTerms: "I have read and accept the",
+    acceptTermsAnd: "and the",
+    termsLink: "Terms and Conditions",
+    privacyLink: "Privacy Policy",
   },
   errors: {
     generic: "Something went wrong",
@@ -595,6 +599,7 @@ export const en: Translations = {
     required: "This field is required",
     invalidEmail: "Invalid email",
     passwordLength: "Minimum 8 characters",
+    termsRequired: "You must accept the Terms and Conditions to create an account",
   },
   dashboard: {
     home: {

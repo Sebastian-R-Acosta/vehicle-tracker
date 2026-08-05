@@ -59,15 +59,32 @@ describe("POST /api/auth/register", () => {
     name: "Test User",
     email: "test@example.com",
     password: "Password123!",
+    termsAccepted: true,
   });
 
   it("returns 400 for missing email", async () => {
     const req = new Request("http://localhost/api/auth/register", {
       method: "POST",
-      body: JSON.stringify({ password: "Password123!" }),
+      body: JSON.stringify({ password: "Password123!", termsAccepted: true }),
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
+  });
+
+  it("returns 400 if terms were not accepted", async () => {
+    const req = new Request("http://localhost/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Test User",
+        email: "test@example.com",
+        password: "Password123!",
+        termsAccepted: false,
+      }),
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(400);
+    const data = await res.json();
+    expect(data.error).toContain("Terms");
   });
 
   it("returns 400 if email already exists", async () => {
@@ -105,5 +122,13 @@ describe("POST /api/auth/register", () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.email).toBe("test@example.com");
+    expect(mockPrisma.user.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          email: "test@example.com",
+          termsAcceptedAt: expect.any(Date),
+        }),
+      })
+    );
   });
 });
