@@ -1,4 +1,4 @@
-﻿node_modules/
+node_modules/
 .next/
 .env
 .env.local
@@ -10,18 +10,22 @@
 dev-server*.log
 *.log
 
-# Config files that happen to be .js
-!jest.config.ts
-!next.config.mjs
-!postcss.config.js
-
 # Ignore all .js files by default (legacy scripts in root)
 *.js
+
+# Config files that happen to be .js — re-included after the *.js rule above,
+# because gitignore is last-match-wins.
+!jest.config.js
+!next.config.mjs
+!postcss.config.js
 
 # Except tracked scripts in scripts/
 !scripts/
 !scripts/*.js
 .vercel
+
+# Build artifacts
+tsconfig.tsbuildinfo
 
 # Office documents
 *.docx

@@ -46,7 +46,7 @@ export default function IndividualsPage() {
           <div className="text-center">
             <Link
               href="/register"
-              className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-green-600 rounded-xl hover:bg-green-500 transition-all shadow-lg hover:shadow-xl"
+              className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-green-700 rounded-xl hover:bg-green-600 transition-all shadow-lg hover:shadow-xl"
             >
               {t("solutions.individuals.cta")}
             </Link>
@@ -78,7 +78,7 @@ export default function IndividualsPage() {
           <p className="text-muted-foreground mb-8">{t("solutions.individuals.ctaDesc")}</p>
           <Link
             href="/register"
-            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-green-600 rounded-xl hover:bg-green-500 transition-all"
+            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-green-700 rounded-xl hover:bg-green-600 transition-all"
           >
             {t("solutions.individuals.ctaButton")}
           </Link>

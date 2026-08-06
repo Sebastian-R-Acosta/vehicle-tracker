@@ -11,9 +11,30 @@ const s3Client = new S3Client({
   },
 });
 
+// Mirrors what the upload inputs accept: images (incl. phone camera formats) and PDFs.
+const ALLOWED_CONTENT_TYPES = new Set([
+  "image/jpeg",
+  "image/pjpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/heic",
+  "image/heif",
+  "application/pdf",
+]);
+
+// Strips any directory component and anything that could escape the user's prefix,
+// so `../../other-user/x.jpg` collapses to a harmless flat name.
+function sanitizeFilename(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const base = raw.split(/[\\/]/).pop() ?? "";
+  const cleaned = base.replace(/[^a-zA-Z0-9._-]/g, "_").replace(/^\.+/, "").slice(0, 120);
+  return cleaned.length > 0 ? cleaned : null;
+}
+
 export async function POST(request: Request) {
   const session = await auth();
-  
+
   if (!session?.user?.id) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
@@ -22,9 +43,16 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { filename, contentType } = body;
 
-    console.log("Upload request:", { filename, contentType, bucket: process.env.AWS_S3_BUCKET });
+    const safeName = sanitizeFilename(filename);
+    if (!safeName) {
+      return NextResponse.json({ error: "Invalid filename" }, { status: 400 });
+    }
 
-    const key = `maintenance/${session.user.id}/${Date.now()}-${filename}`;
+    if (typeof contentType !== "string" || !ALLOWED_CONTENT_TYPES.has(contentType)) {
+      return NextResponse.json({ error: "Unsupported file type" }, { status: 400 });
+    }
+
+    const key = `maintenance/${session.user.id}/${Date.now()}-${safeName}`;
 
     const command = new PutObjectCommand({
       Bucket: process.env.AWS_S3_BUCKET,
@@ -33,7 +61,6 @@ export async function POST(request: Request) {
     });
 
     const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-    console.log("Generated presigned URL");
 
     const bucket = process.env.AWS_S3_BUCKET!;
     const region = process.env.AWS_REGION || "us-east-1";
@@ -42,6 +69,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ uploadUrl: url, key, publicUrl });
   } catch (error) {
     console.error("Presigned URL error:", error);
-    return new NextResponse(`Error creating upload URL: ${error}`, { status: 500 });
+    return NextResponse.json({ error: "Could not create upload URL" }, { status: 500 });
   }
 }

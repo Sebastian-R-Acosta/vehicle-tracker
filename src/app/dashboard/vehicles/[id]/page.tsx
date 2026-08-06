@@ -474,7 +474,9 @@ export default function VehicleDetailPage() {
                               onClick={() => setSelectedImage(record.imageUrl)}
                               className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline"
                             >
-                              <Image className="w-4 h-4" />
+                              {/* lucide-react icon, not next/image — decorative next to the label */}
+                              {/* eslint-disable-next-line jsx-a11y/alt-text */}
+                              <Image className="w-4 h-4" aria-hidden="true" />
                               {t("dashboard.vehicleDetail.viewInvoice")}
                             </button>
                           )}

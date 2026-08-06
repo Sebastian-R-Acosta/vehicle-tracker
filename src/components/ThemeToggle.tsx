@@ -2,17 +2,19 @@
 
 import { useTheme, ThemeContext } from "./ThemeProvider";
 import { useContext } from "react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export function ThemeToggle({ className }: { className?: string }) {
   const context = useContext(ThemeContext);
+  const { t } = useLanguage();
   const theme = context?.theme || "light";
   const toggleTheme = context?.toggleTheme || (() => {});
 
   return (
     <button
       onClick={toggleTheme}
-      className={`relative w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-200 ${className || "bg-secondary hover:bg-accent"}`}
-      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+      className={`relative w-11 h-11 flex items-center justify-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${className || "bg-secondary hover:bg-accent"}`}
+      aria-label={theme === "light" ? t("common.switchToDarkMode") : t("common.switchToLightMode")}
     >
       <span className="relative w-5 h-5">
         <span

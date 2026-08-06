@@ -85,7 +85,7 @@ function PricingCards({ variant }: { variant: string }) {
               )}
             </div>
             {isFeatured && (
-              <p className="text-xs text-green-600 dark:text-green-400 font-medium mb-1">
+              <p className="text-xs text-green-700 dark:text-green-400 font-medium mb-1">
                 {t("pricing.annualSavings")}
               </p>
             )}

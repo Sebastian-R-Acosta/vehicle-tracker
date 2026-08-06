@@ -103,6 +103,8 @@ export const en: Translations = {
     message: "Message",
     sendMessage: "Send Message",
     goToHome: "Go to Home",
+    switchToDarkMode: "Switch to dark mode",
+    switchToLightMode: "Switch to light mode",
     aboutTitle: "About Bitácora",
     aboutSubtitle: "We're building the most comprehensive vehicle history and maintenance platform in the region.",
     aboutMission: "Our Mission",

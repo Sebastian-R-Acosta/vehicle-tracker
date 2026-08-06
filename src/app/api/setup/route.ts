@@ -51,6 +51,16 @@ const SUBSCRIPTION_PLANS = [
 
 export async function POST(request: Request) {
   try {
+    // This endpoint mints a superAdmin, so it stays sealed unless SETUP_SECRET is
+    // configured and presented. Without the env var there is no way in at all.
+    const setupSecret = process.env.SETUP_SECRET?.replace(/"/g, "");
+    if (!setupSecret) {
+      return new NextResponse("Not found", { status: 404 });
+    }
+    if (request.headers.get("x-setup-secret") !== setupSecret) {
+      return new NextResponse("Not found", { status: 404 });
+    }
+
     const body = await request.json().catch(() => ({}));
     const { email, password, name } = body as {
       email?: string;

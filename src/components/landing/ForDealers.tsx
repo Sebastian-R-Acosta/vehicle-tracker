@@ -49,7 +49,7 @@ export default function ForDealers() {
                       <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground">{b.title}</h4>
+                      <h3 className="font-semibold text-foreground">{b.title}</h3>
                       <p className="text-sm text-muted-foreground">{b.description}</p>
                     </div>
                   </div>

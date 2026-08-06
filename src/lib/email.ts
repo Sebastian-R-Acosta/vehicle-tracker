@@ -14,7 +14,9 @@ function getSendGrid() {
   return true;
 }
 
-const fromEmail = process.env.FROM_EMAIL_ADDRESS || "noreply@resend.dev";
+// No default sender: the old fallback was a resend.dev address, which SendGrid can
+// never authenticate, so every send failed with a confusing upstream error.
+const fromEmail = process.env.FROM_EMAIL_ADDRESS;
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -24,6 +26,11 @@ async function sendViaEmail(to: string, subject: string, html: string) {
   if (!getSendGrid()) {
     console.error("[email] Cannot send — SENDGRID_API_KEY is not configured");
     return { success: false, error: new Error("SendGrid not configured") };
+  }
+
+  if (!fromEmail) {
+    console.error("[email] Cannot send — FROM_EMAIL_ADDRESS is not configured");
+    return { success: false, error: new Error("FROM_EMAIL_ADDRESS not configured") };
   }
 
   try {

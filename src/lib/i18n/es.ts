@@ -101,6 +101,8 @@ export const es = {
     message: "Mensaje",
     sendMessage: "Enviar Mensaje",
     goToHome: "Ir al Inicio",
+    switchToDarkMode: "Cambiar a modo oscuro",
+    switchToLightMode: "Cambiar a modo claro",
     aboutTitle: "Acerca de Bitácora",
     aboutSubtitle: "Estamos construyendo la plataforma de historial y mantenimiento vehicular más completa de la región.",
     aboutMission: "Nuestra Misión",

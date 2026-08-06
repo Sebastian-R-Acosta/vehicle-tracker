@@ -2,6 +2,9 @@ import { FREE_TIER_MAX_VEHICLES, PRO_TIER, BUSINESS_TIER } from "@/lib/tiers";
 
 jest.mock("@/lib/db", () => ({
   prisma: {
+    user: {
+      findUnique: jest.fn(),
+    },
     subscription: {
       findUnique: jest.fn(),
     },
@@ -20,6 +23,7 @@ jest.mock("@/lib/tiers", () => ({
 import { prisma } from "@/lib/db";
 
 const mockPrisma = prisma as unknown as {
+  user: { findUnique: jest.Mock };
   subscription: { findUnique: jest.Mock };
   vehicle: { count: jest.Mock };
 };
@@ -27,6 +31,9 @@ const mockPrisma = prisma as unknown as {
 describe("billing utilities", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // canAddVehicle short-circuits to unlimited for admins, so every case below
+    // needs a plain user unless it says otherwise.
+    mockPrisma.user.findUnique.mockResolvedValue({ role: "user" });
   });
 
   describe("FREE_TIER_MAX_VEHICLES", () => {
@@ -80,6 +87,16 @@ describe("billing utilities", () => {
       expect(result.allowed).toBe(false);
       expect(result.current).toBe(2);
       expect(result.limit).toBe(2);
+    });
+
+    it("bypasses the limit for admins", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({ role: "admin" });
+
+      const { canAddVehicle } = await import("@/lib/billing");
+      const result = await canAddVehicle("admin-user");
+      expect(result.allowed).toBe(true);
+      expect(result.limit).toBe(Infinity);
+      expect(mockPrisma.subscription.findUnique).not.toHaveBeenCalled();
     });
 
     it("uses pro limits for pro users", async () => {

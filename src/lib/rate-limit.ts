@@ -1,12 +1,16 @@
 const store = new Map<string, { count: number; resetAt: number }>();
 
 const CLEANUP_INTERVAL = 60000;
-setInterval(() => {
+const cleanupTimer = setInterval(() => {
   const now = Date.now();
   for (const [key, record] of Array.from(store.entries())) {
     if (now > record.resetAt) store.delete(key);
   }
-}, CLEANUP_INTERVAL).unref();
+}, CLEANUP_INTERVAL);
+// `unref` is Node-only; in jsdom/browser environments setInterval returns a number.
+if (typeof (cleanupTimer as { unref?: () => void }).unref === "function") {
+  (cleanupTimer as unknown as { unref: () => void }).unref();
+}
 
 let kvClient: import("@vercel/kv").VercelKV | null = null;
 

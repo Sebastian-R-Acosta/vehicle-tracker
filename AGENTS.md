@@ -97,19 +97,58 @@ All issues from a full audit of public-facing pages fixed:
 - `global-error.tsx` reads locale from `localStorage` since it renders outside `<Providers>`
 - Fable 5 behavioral config at `C:\Projects\fable-5-agent.md`
 
+### Audit & Hardening Pass (2026-08-05)
+
+**Security**
+- `POST /api/setup` was unauthenticated and would create *or promote* any account to
+  superAdmin. Now returns 404 unless `SETUP_SECRET` is set **and** sent as the
+  `x-setup-secret` header. `POST /api/admin/promote-self` got the same guard.
+- `/api/cron/notifications` failed **open** when `CRON_SECRET` was unset — now fails
+  closed. **`CRON_SECRET` must be set in Vercel or the daily digest stops running.**
+- `/api/upload/presigned` interpolated the raw `filename` into the S3 key (path
+  traversal) and accepted any content type. Now sanitized + allowlisted (images/PDF).
+- `scripts/restore-db.js` had a hardcoded admin password; reads `ADMIN_EMAIL` /
+  `ADMIN_PASSWORD` from the environment now.
+
+**Auth — Google sign-in was broken**
+There is no NextAuth adapter, so Google logins produced a session whose `user.id` was
+Google's subject id, matching no `User` row: the dashboard came up empty and writes
+failed. `ensureGoogleUser()` in `src/auth.ts` now provisions/links the row on sign-in
+(and assigns the free plan), and the `jwt` callback resolves `token.id` from the
+database by email for every provider.
+
+**Tests** — `npm test` could not start (`jest.config.ts` needs `ts-node`, which is not
+installed); renamed to `jest.config.js`. Fixed 3 stale suites. 9/9 suites, 52 tests pass.
+
+**Accessibility / SEO**
+- Login and register inputs had no `id`/`htmlFor`/`name`/`autocomplete` — fixed.
+- 3 WCAG AA contrast failures fixed: green CTA and "ahorra 17%" (green-600 → green-700,
+  3.30 → 5.02) and the footer copyright (gray-500 → gray-400, 3.67 → 6.99).
+- Heading skips (h2→h4) removed in ForDealers, ForInsurers and Footer.
+- Touch targets: footer links, theme toggle and language toggle now ≥44px.
+- New `src/components/ui/Button.tsx` centralizes focus-visible rings, disabled state and
+  touch targets; adopted on the auth pages so far.
+- `<html lang>` is now `es` server-side (was `en`, only corrected client-side).
+- Metadata was one generic English title for every page; each public route now has its
+  own Spanish `title`/`description` via a per-segment `layout.tsx`.
+
 ## Needs Attention / Next Steps
-- `/logos/logo-*.svg` files don't exist yet — TrustBar shows broken images on production
-- `/about`, `/blog`, `/careers`, `/help`, `/docs`, `/docs/api` pages don't exist — footer links 404
-- "Basic" plan translations exist but no corresponding UI
-- `HowItWorks.tsx` component is dead code (not imported anywhere)
-- Some dashboard pages have pre-existing ESLint warnings (useEffect deps, img→Image, alt text)
-- `src/components/VehicleReportPDF.tsx:218` missing alt text on image
-- OpenGraph metadata is English-only regardless of locale
-- Consider adding `<meta name="description">` per-page in Spanish
-- Vercel deploy: set `NEXT_PUBLIC_APP_URL` to production URL
+- **Set `CRON_SECRET` in Vercel** — the cron endpoint now rejects requests without it.
+- **Set `FROM_EMAIL_ADDRESS`** — the old `noreply@resend.dev` default could never
+  authenticate under SendGrid; email now refuses to send rather than failing obscurely.
+- 28 ESLint warnings remain (20 `no-img-element`, 8 `exhaustive-deps`). Both are
+  behaviour-affecting to fix (layout shifts / refetch loops) and need visual checking.
+- 119 hand-rolled `<button>` elements and 532 raw palette classes are still un-migrated;
+  the `Button` primitive exists now, the sweep does not.
+- `LicenseCard.tsx` / `LicenseViewerModal.tsx` are built but not wired into any page.
+  They are still specced in `docs/DESIGN-BRIEF.md`, so they are pending work, not dead code.
+- The authenticated dashboard has not had a visual accessibility pass.
+- "Basic" plan translations exist but no corresponding UI.
+- Recall lookup queries NHTSA by make/model/year, not by VIN.
+- Vercel deploy: set `NEXT_PUBLIC_APP_URL` to production URL.
 
 ## Build Status
-`next build` passes with 0 errors. ~20 pre-existing ESLint warnings (unrelated to our changes).
+`next build` passes with 0 errors (83 pages). `tsc --noEmit` clean. `npm test`: 52 passing.
 
 ## Build & Deploy Commands
 - Build: `npm run build`

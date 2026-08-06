@@ -284,6 +284,8 @@ export default function VehicleReportPDF({ data, logoUrl, locale = "en" }: Vehic
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
+          {/* @react-pdf/renderer's Image, which has no alt concept */}
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           {logoUrl && <Image src={logoUrl} style={styles.logo} />}
           <Text style={styles.headerTitle}>{s.reportTitle}</Text>
           <Text style={styles.headerSubtitle}>

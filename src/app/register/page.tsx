@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { Button } from "@/components/ui/Button";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -68,36 +68,51 @@ export default function RegisterPage() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">{t("auth.name")}</label>
+            <label htmlFor="register-name" className="block text-sm font-medium text-foreground mb-1">
+              {t("auth.name")}
+            </label>
             <input
+              id="register-name"
+              name="name"
               type="text"
+              autoComplete="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
+              className="w-full px-3 py-2.5 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder="John Doe"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">{t("auth.email")}</label>
+            <label htmlFor="register-email" className="block text-sm font-medium text-foreground mb-1">
+              {t("auth.email")}
+            </label>
             <input
+              id="register-email"
+              name="email"
               type="email"
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
+              className="w-full px-3 py-2.5 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder="you@example.com"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">{t("auth.password")}</label>
+            <label htmlFor="register-password" className="block text-sm font-medium text-foreground mb-1">
+              {t("auth.password")}
+            </label>
             <input
+              id="register-password"
+              name="password"
               type="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
+              className="w-full px-3 py-2.5 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder="••••••••"
               required
               minLength={8}
@@ -126,14 +141,9 @@ export default function RegisterPage() {
             </label>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
-            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+          <Button type="submit" size="lg" fullWidth loading={loading}>
             {t("auth.register")}
-          </button>
+          </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">

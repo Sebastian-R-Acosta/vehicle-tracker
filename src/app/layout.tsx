@@ -13,13 +13,16 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+// Copy is Spanish because "es" is the default locale (see LanguageProvider).
+const SITE_DESCRIPTION =
+  "Lleva el historial de mantenimiento y servicio de tus vehículos con recordatorios inteligentes. Gratis para dueños de vehículos; marca blanca para concesionarios y aseguradoras.";
+
 export const metadata: Metadata = {
   title: {
-    default: "Bitácora — Vehicle History & Maintenance Platform",
+    default: "Bitácora — Historial y Mantenimiento Vehicular",
     template: "%s | Bitácora",
   },
-  description:
-    "Track vehicle maintenance, service history, and get smart reminders. Free for car owners. White-label for dealerships and insurers.",
+  description: SITE_DESCRIPTION,
   icons: {
     icon: [
       { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
@@ -28,17 +31,16 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Bitácora — Vehicle History & Maintenance Platform",
-    description:
-      "Track vehicle maintenance, service history, and get smart reminders. Free for car owners. White-label for dealerships and insurers.",
+    title: "Bitácora — Historial y Mantenimiento Vehicular",
+    description: SITE_DESCRIPTION,
     type: "website",
     siteName: "Bitácora",
+    locale: "es_DO",
   },
   twitter: {
     card: "summary_large_image",
     title: "Bitácora",
-    description:
-      "Track vehicle maintenance, service history, and get smart reminders.",
+    description: SITE_DESCRIPTION,
   },
 };
 
@@ -47,8 +49,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // lang defaults to Spanish (the default locale); LanguageSync rewrites it
+  // client-side when the visitor switches to English.
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
         <link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png" />
@@ -65,7 +69,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} bg-background min-h-screen`}>
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:outline-none">
-          Skip to main content
+          Saltar al contenido principal
         </a>
         <Providers>
           <LanguageSync />

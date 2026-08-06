@@ -55,7 +55,7 @@ export default function ForInsurers() {
                       <Icon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground">{b.title}</h4>
+                      <h3 className="font-semibold text-foreground">{b.title}</h3>
                       <p className="text-sm text-muted-foreground">{b.description}</p>
                     </div>
                   </div>

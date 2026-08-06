@@ -25,8 +25,8 @@ const columns = [
   {
     titleKey: "nav.settings",
     links: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Terms of Service", href: "/terms" },
+      { labelKey: "auth.privacyLink", href: "/privacy" },
+      { labelKey: "auth.termsLink", href: "/terms" },
     ],
   },
   {
@@ -58,13 +58,14 @@ export default function Footer() {
 
           {columns.map((col) => (
             <div key={col.titleKey}>
-              <h4 className="text-sm font-semibold text-white mb-4">{t(col.titleKey)}</h4>
-              <ul className="space-y-3">
+              <h3 className="text-sm font-semibold text-white mb-4">{t(col.titleKey)}</h3>
+              {/* space-y is small because each link carries py-3 for a 44px touch target */}
+              <ul className="space-y-1">
                   {col.links.map((link: any) => (
                   <li key={link.label || link.labelKey}>
                     <Link
                       href={link.href}
-                      className="inline-block py-1.5 text-sm text-gray-400 hover:text-white transition-colors"
+                      className="inline-block py-3 text-sm text-gray-400 hover:text-white transition-colors"
                     >
                       {link.labelKey ? t(link.labelKey) : link.label}
                     </Link>
@@ -76,7 +77,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-400">
             &copy; {new Date().getFullYear()} Bitácora. {t("landing.footerRights")}
           </p>
         </div>

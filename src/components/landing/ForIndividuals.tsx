@@ -63,14 +63,14 @@ export default function ForIndividuals() {
         <div className="text-center">
           <Link
             href="/register"
-            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-green-600 rounded-xl hover:bg-green-500 transition-all shadow-lg hover:shadow-xl"
+            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-green-700 rounded-xl hover:bg-green-600 transition-all shadow-lg hover:shadow-xl"
           >
             {t("landing.forIndividualsSection.cta")}
           </Link>
           <div className="mt-4">
             <Link
               href="/solutions/individuals"
-              className="inline-block py-3 text-sm text-green-600 dark:text-green-400 hover:text-green-500 font-medium"
+              className="inline-block py-3 text-sm text-green-700 dark:text-green-400 hover:text-green-600 font-medium"
             >
               {t("landing.forIndividualsSection.learnMore")}
             </Link>
