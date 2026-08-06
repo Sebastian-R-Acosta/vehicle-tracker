@@ -86,12 +86,16 @@ async function ensureGoogleUser(input: {
   return created.id;
 }
 
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
 export const authConfig: NextAuthConfig = {
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+    // Only register Google when real credentials exist. An empty client_id makes
+    // Google's OAuth endpoint reject the flow with 401 invalid_client.
+    ...(googleClientId && googleClientSecret
+      ? [Google({ clientId: googleClientId, clientSecret: googleClientSecret })]
+      : []),
     Credentials({
       name: "credentials",
       credentials: {
