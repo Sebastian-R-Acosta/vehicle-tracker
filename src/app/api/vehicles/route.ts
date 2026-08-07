@@ -15,6 +15,7 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const organizationId = searchParams.get("organizationId");
+  const includeServiced = searchParams.get("include") === "serviced";
 
   let where: Prisma.VehicleWhereInput;
 
@@ -29,6 +30,25 @@ export async function GET(request: Request) {
     where = effectiveOrgId
       ? { organizationId: effectiveOrgId }
       : { userId: session.user.id, organizationId: null };
+  }
+
+  // Opt-in: a workshop also services customer-owned vehicles, which are not owned by
+  // the organization and so fall outside the filter above. Off by default so every
+  // existing caller keeps the same result set.
+  if (includeServiced) {
+    const scopeOrgId = organizationId || session.user.currentOrganizationId;
+    if (scopeOrgId) {
+      const role = await getUserRole(scopeOrgId, session.user.id);
+      if (role) {
+        const authorized = await prisma.serviceAuthorization.findMany({
+          where: { organizationId: scopeOrgId, status: "active" },
+          select: { vehicleId: true },
+        });
+        if (authorized.length > 0) {
+          where = { OR: [where, { id: { in: authorized.map((a) => a.vehicleId) } }] };
+        }
+      }
+    }
   }
 
   const vehicles = await prisma.vehicle.findMany({
