@@ -658,6 +658,80 @@ export async function sendSubscriptionReactivatedEmail(
   return sendViaEmail(to, "Subscription Reactivated - Bitácora", html);
 }
 
+/**
+ * Tells a customer their workshop logged a service on their vehicle. `confirmUrl`
+ * points at the acknowledgement link so the shop knows the notice landed.
+ */
+export async function sendServiceLoggedEmail(
+  to: string,
+  input: {
+    customerName: string | null;
+    workshopName: string;
+    vehicleName: string;
+    serviceType: string;
+    mileage: number;
+    notes: string | null;
+    cost: number | null;
+    estimatedHours: number | null;
+    status: string;
+    confirmUrl: string;
+  }
+) {
+  const statusLabel =
+    input.status === "ready"
+      ? "Ready for pickup"
+      : input.status === "in_progress"
+        ? "In progress"
+        : "Completed";
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #0d9488; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .vehicle-name { font-size: 18px; font-weight: bold; color: #1f2937; margin: 15px 0; }
+        .detail { background: white; padding: 12px; border-radius: 6px; margin: 10px 0; font-size: 14px; }
+        .status { display: inline-block; padding: 6px 14px; border-radius: 999px; background: #0d9488; color: white; font-size: 13px; font-weight: bold; }
+        .button { display: inline-block; padding: 12px 24px; background: #0d9488; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Service Record</h1>
+        </div>
+        <div class="content">
+          <p>Hi ${escapeHtml(input.customerName || "there")},</p>
+          <p><strong>${escapeHtml(input.workshopName)}</strong> registered a service on your vehicle:</p>
+          <div class="vehicle-name">${escapeHtml(input.vehicleName)}</div>
+          <p><span class="status">${escapeHtml(statusLabel)}</span></p>
+          <div class="detail">
+            <strong>Service:</strong> ${escapeHtml(input.serviceType)}<br />
+            <strong>Mileage:</strong> ${input.mileage.toLocaleString()}<br />
+            ${input.estimatedHours != null ? `<strong>Estimated time:</strong> ${input.estimatedHours} h<br />` : ""}
+            ${input.cost != null ? `<strong>Cost:</strong> ${input.cost.toLocaleString()}<br />` : ""}
+            ${input.notes ? `<strong>Notes:</strong> ${escapeHtml(input.notes)}` : ""}
+          </div>
+          <div style="text-align: center;">
+            <a href="${input.confirmUrl}" class="button">Confirm you received this</a>
+          </div>
+        </div>
+        <div class="footer">
+          Bitácora - Your vehicle management app
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendViaEmail(to, `Service registered on your ${input.vehicleName} - Bitácora`, html);
+}
+
 export async function sendVehicleCreatedEmail(
   to: string,
   vehicle: { make: string; model: string; year: number; nickname: string | null; vehicleType: string }

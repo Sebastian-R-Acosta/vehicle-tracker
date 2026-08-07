@@ -60,6 +60,7 @@ model User {
 
   onboardingCompleted Boolean @default(false)
   termsAcceptedAt DateTime?
+  documentId    String?  @unique   // cedula / national ID - workshops look customers up by this
   currentOrganizationId String?
   licenseNumber   String?
   licenseExpiry   DateTime?
@@ -80,8 +81,11 @@ model User {
   previouslyOwnedVehicles Vehicle[]     @relation("PreviousOwner")
   serviceReviews        ServiceReview[]
   tasks                 VehicleTask[]
+  authorizationsGranted ServiceAuthorization[] @relation("AuthorizationGrantedBy")
 
   @@index([email])
+  @@index([documentId])
+  @@index([phone])
 }
 
 model Organization {
@@ -102,6 +106,8 @@ model Organization {
   drivers     Driver[]
   parts       Part[]
   serviceProviders ServiceProvider[]
+  serviceAuthorizations ServiceAuthorization[]
+  maintenanceRecords    MaintenanceRecord[]
 
   @@index([slug])
 }
@@ -188,12 +194,14 @@ model Vehicle {
   assignments      VehicleAssignment[]
   parts            Part[]
   tasks            VehicleTask[]
+  serviceAuthorizations ServiceAuthorization[]
 
   @@index([userId])
   @@index([organizationId])
   @@index([constructionSiteId])
   @@index([previousOwnerId])
   @@index([vin])
+  @@index([licensePlate])
 }
 
 model MaintenanceRecord {
@@ -208,10 +216,45 @@ model MaintenanceRecord {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  // Workshop flow. Records created by an owner leave these null, which keeps every
+  // existing row valid and every existing query unchanged.
+  organizationId    String?    // the workshop that logged the service
+  serviceProviderId String?    // optional: the specific shop/vendor entry
+  status            String    @default("completed") // in_progress | ready | completed
+  estimatedHours    Float?
+  readyAt           DateTime?  // set when status flips to "ready"
+  acknowledgedAt    DateTime?  // customer confirmed they saw the notification
+
+  vehicle         Vehicle          @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  organization    Organization?    @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  serviceProvider ServiceProvider? @relation(fields: [serviceProviderId], references: [id], onDelete: SetNull)
 
   @@index([vehicleId])
   @@index([date])
+  @@index([organizationId])
+  @@index([status])
+}
+
+/// Lets a workshop service a vehicle it does not own. The customer keeps ownership and
+/// the full history; revoking the authorization stops future writes but leaves past
+/// records intact.
+model ServiceAuthorization {
+  id             String    @id @default(cuid())
+  vehicleId      String
+  organizationId String
+  grantedByUserId String?  // the owner who granted it; null when the workshop created the vehicle
+  status         String    @default("active") // active | revoked
+  createdAt      DateTime  @default(now())
+  revokedAt      DateTime?
+
+  vehicle      Vehicle      @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  grantedBy    User?        @relation("AuthorizationGrantedBy", fields: [grantedByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([vehicleId, organizationId])
+  @@index([vehicleId])
+  @@index([organizationId])
+  @@index([status])
 }
 
 model Reminder {
@@ -352,6 +395,7 @@ model ServiceProvider {
 
   organization Organization? @relation(fields: [organizationId], references: [id])
   reviews      ServiceReview[]
+  maintenanceRecords MaintenanceRecord[]
 
   @@index([organizationId])
   @@index([category])

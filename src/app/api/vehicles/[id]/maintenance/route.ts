@@ -3,20 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendMaintenanceConfirmation } from "@/lib/email";
 import { getAccessibleVehicle } from "@/lib/vehicle-access";
-
-const SERVICE_RECOMMENDATIONS: Record<string, { miles: number; months: number; hours?: number }> = {
-  "Oil Change": { miles: 5000, months: 6, hours: 250 },
-  "Tire Rotation": { miles: 7500, months: 6 },
-  "Brake Service": { miles: 30000, months: 24 },
-  "Air Filter": { miles: 15000, months: 12 },
-  "Transmission Service": { miles: 60000, months: 48 },
-  "Battery Replacement": { miles: 50000, months: 48 },
-  "Inspection": { miles: 12000, months: 12 },
-  "Hydraulic Fluid": { miles: 0, months: 12, hours: 500 },
-  "Track Inspection": { miles: 0, months: 6, hours: 250 },
-  "Engine Service": { miles: 0, months: 6, hours: 250 },
-  "Coolant Flush": { miles: 0, months: 24, hours: 1000 },
-};
+import { SERVICE_INTERVALS as SERVICE_RECOMMENDATIONS } from "@/lib/service-intervals";
 
 export async function GET(
   request: Request,

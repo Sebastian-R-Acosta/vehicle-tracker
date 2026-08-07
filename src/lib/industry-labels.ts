@@ -28,6 +28,7 @@ const INDUSTRY_NAV_ITEMS: Record<IndustryType, NavItemConfig[]> = {
     { label: "industryNav.dealership.salesReps", icon: "Users", href: "/dashboard/drivers" },
   ],
   mechanic: [
+    { label: "industryNav.mechanic.serviceDesk", icon: "Wrench", href: "/dashboard/workshop" },
     { label: "industryNav.mechanic.vehiclesInShop", icon: "Car", href: "/dashboard/vehicles" },
     { label: "industryNav.mechanic.partsInventory", icon: "Package", href: "/dashboard/parts" },
     { label: "industryNav.mechanic.suppliers", icon: "Truck", href: "/dashboard/service-providers" },
