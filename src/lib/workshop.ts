@@ -83,6 +83,66 @@ export async function grantServiceAuthorization(input: {
   });
 }
 
+/**
+ * Asks the owner for access to a vehicle the workshop does not yet service.
+ *
+ * Never downgrades an existing active authorization, and re-requesting after a
+ * revocation is allowed — the owner decides again.
+ */
+export async function requestServiceAuthorization(input: {
+  vehicleId: string;
+  organizationId: string;
+}): Promise<{ status: "active" | "pending"; alreadyExisted: boolean }> {
+  const existing = await prisma.serviceAuthorization.findUnique({
+    where: {
+      vehicleId_organizationId: {
+        vehicleId: input.vehicleId,
+        organizationId: input.organizationId,
+      },
+    },
+    select: { status: true },
+  });
+
+  if (existing?.status === "active") return { status: "active", alreadyExisted: true };
+  if (existing?.status === "pending") return { status: "pending", alreadyExisted: true };
+
+  await prisma.serviceAuthorization.upsert({
+    where: {
+      vehicleId_organizationId: {
+        vehicleId: input.vehicleId,
+        organizationId: input.organizationId,
+      },
+    },
+    update: { status: "pending", revokedAt: null },
+    create: {
+      vehicleId: input.vehicleId,
+      organizationId: input.organizationId,
+      status: "pending",
+    },
+  });
+
+  return { status: "pending", alreadyExisted: false };
+}
+
+/**
+ * Only the person who can revoke access may manage it: the vehicle's owner, or an
+ * owner/admin of the organization that owns the vehicle outright (fleet case).
+ * Returns the vehicle when allowed, null otherwise.
+ */
+export async function canManageAuthorizations(vehicleId: string, userId: string) {
+  const vehicle = await prisma.vehicle.findUnique({
+    where: { id: vehicleId },
+    select: { id: true, userId: true, organizationId: true },
+  });
+  if (!vehicle) return null;
+  if (vehicle.userId === userId) return vehicle;
+  if (vehicle.organizationId) {
+    const role = await getUserRole(vehicle.organizationId, userId);
+    if (role === "owner" || role === "admin") return vehicle;
+  }
+  return null;
+}
+
 export type NextServiceSuggestion = {
   serviceType: string;
   dueDate: Date | null;

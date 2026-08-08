@@ -57,7 +57,9 @@ export default function WorkshopDeskPage() {
   const [plateQuery, setPlateQuery] = useState("");
   const [vehicle, setVehicle] = useState<VehicleRef | null>(null);
   const [vehicleSearched, setVehicleSearched] = useState(false);
-  const [vehicleBlocked, setVehicleBlocked] = useState(false);
+  // Holds the vehicle we found but may not touch yet, so we can ask its owner for access.
+  const [blockedVehicle, setBlockedVehicle] = useState<VehicleRef | null>(null);
+  const [requestState, setRequestState] = useState<"idle" | "sent" | "pending" | "failed">("idle");
   const [newVehicle, setNewVehicle] = useState({ make: "", model: "", year: "", licensePlate: "", vin: "", currentMileage: "" });
 
   // Step 3 — service
@@ -129,6 +131,19 @@ export default function WorkshopDeskPage() {
     if (data?.customer) setCustomer(data.customer);
   };
 
+  const requestAccess = async () => {
+    if (!blockedVehicle) return;
+    const data = await call<{ status: string; alreadyExisted?: boolean }>(
+      "/api/workshop/authorization-requests",
+      { method: "POST", body: JSON.stringify({ vehicleId: blockedVehicle.id }) }
+    );
+    if (!data) {
+      setRequestState("failed");
+      return;
+    }
+    setRequestState(data.alreadyExisted ? "pending" : "sent");
+  };
+
   const searchVehicle = async () => {
     if (!plateQuery.trim()) return;
     const data = await call<{ found: boolean; authorized: boolean; vehicle: VehicleRef | null }>(
@@ -136,7 +151,8 @@ export default function WorkshopDeskPage() {
     );
     if (!data) return;
     setVehicleSearched(true);
-    setVehicleBlocked(data.found && !data.authorized);
+    setRequestState("idle");
+    setBlockedVehicle(data.found && !data.authorized ? data.vehicle : null);
     setVehicle(data.found && data.authorized ? data.vehicle : null);
     if (!data.found) {
       setNewVehicle((prev) => ({ ...prev, licensePlate: plateQuery.trim() }));
@@ -185,7 +201,8 @@ export default function WorkshopDeskPage() {
     setPlateQuery("");
     setVehicle(null);
     setVehicleSearched(false);
-    setVehicleBlocked(false);
+    setBlockedVehicle(null);
+    setRequestState("idle");
     setNewVehicle({ make: "", model: "", year: "", licensePlate: "", vin: "", currentMileage: "" });
     setService({ serviceType: "Oil Change", notes: "", estimatedHours: "", cost: "", mileage: "", status: "in_progress", createReminder: true });
     setResult(null);
@@ -352,9 +369,31 @@ export default function WorkshopDeskPage() {
             </div>
           </div>
 
-          {vehicleBlocked && (
-            <div className="p-4 rounded-xl bg-destructive/10 text-destructive text-sm" role="alert">
-              {t("workshop.vehicleNotAuthorized")}
+          {blockedVehicle && (
+            <div className="p-4 rounded-xl border border-amber-500/40 bg-amber-500/10 space-y-3">
+              <p className="text-sm text-foreground" role="alert">
+                {t("workshop.vehicleNotAuthorized")}
+              </p>
+              <p className="font-medium text-foreground">
+                {blockedVehicle.year} {blockedVehicle.make} {blockedVehicle.model}
+                {blockedVehicle.licensePlate ? ` · ${blockedVehicle.licensePlate}` : ""}
+              </p>
+
+              {requestState === "sent" || requestState === "pending" ? (
+                <p className="text-sm text-muted-foreground">
+                  {requestState === "sent" ? t("workshop.requestSent") : t("workshop.requestPending")}
+                </p>
+              ) : (
+                <Button onClick={requestAccess} loading={busy}>
+                  {t("workshop.requestAuthorization")}
+                </Button>
+              )}
+
+              {requestState === "failed" && (
+                <p className="text-sm text-destructive" role="alert">
+                  {t("workshop.requestFailed")}
+                </p>
+              )}
             </div>
           )}
 
@@ -377,7 +416,7 @@ export default function WorkshopDeskPage() {
             </div>
           )}
 
-          {vehicleSearched && !vehicle && !vehicleBlocked && (
+          {vehicleSearched && !vehicle && !blockedVehicle && (
             <div className="p-4 rounded-xl border border-border bg-card space-y-3">
               <p className="text-sm text-muted-foreground">{t("workshop.vehicleNotFound")}</p>
               <h3 className="font-semibold text-foreground">{t("workshop.newVehicle")}</h3>

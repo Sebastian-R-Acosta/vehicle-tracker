@@ -25,6 +25,7 @@ import { VehicleTaskSection } from "@/components/VehicleTaskSection";
 import { VehicleDocumentsSection } from "@/components/VehicleDocumentsSection";
 import { VehicleRecallsSection } from "@/components/VehicleRecallsSection";
 import { VehicleValueReportSection } from "@/components/VehicleValueReportSection";
+import { VehicleAuthorizationsSection } from "@/components/VehicleAuthorizationsSection";
 import toast from "react-hot-toast";
 
 interface MaintenanceRecord {
@@ -501,6 +502,8 @@ export default function VehicleDetailPage() {
             <VehicleTaskSection vehicleId={vehicle.id} />
 
             <VehicleDocumentsSection vehicleId={vehicle.id} isPro={isPro ?? false} />
+
+            <VehicleAuthorizationsSection vehicleId={vehicle.id} />
           </div>
 
           <div className="space-y-6">

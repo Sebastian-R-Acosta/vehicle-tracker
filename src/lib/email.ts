@@ -732,6 +732,62 @@ export async function sendServiceLoggedEmail(
   return sendViaEmail(to, `Service registered on your ${input.vehicleName} - Bitácora`, html);
 }
 
+export async function sendAuthorizationRequestEmail(
+  to: string,
+  input: {
+    ownerName: string | null;
+    workshopName: string;
+    vehicleName: string;
+    licensePlate: string | null;
+    manageUrl: string;
+  }
+) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #0d9488; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .vehicle-name { font-size: 18px; font-weight: bold; color: #1f2937; margin: 15px 0; }
+        .detail { background: white; padding: 12px; border-radius: 6px; margin: 10px 0; font-size: 14px; }
+        .button { display: inline-block; padding: 12px 24px; background: #0d9488; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+        .note { font-size: 13px; color: #6b7280; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Authorization Request</h1>
+        </div>
+        <div class="content">
+          <p>Hi ${escapeHtml(input.ownerName || "there")},</p>
+          <p><strong>${escapeHtml(input.workshopName)}</strong> is requesting permission to log services on your vehicle:</p>
+          <div class="vehicle-name">${escapeHtml(input.vehicleName)}</div>
+          ${input.licensePlate ? `<div class="detail"><strong>Plate:</strong> ${escapeHtml(input.licensePlate)}</div>` : ""}
+          <p class="note">If you did not drop this vehicle off at that workshop, ignore this email — nothing changes unless you approve it. You can revoke access at any time.</p>
+          <div style="text-align: center;">
+            <a href="${input.manageUrl}" class="button">Review the request</a>
+          </div>
+        </div>
+        <div class="footer">
+          Bitácora - Your vehicle management app
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendViaEmail(
+    to,
+    `${input.workshopName} is requesting access to your ${input.vehicleName} - Bitácora`,
+    html
+  );
+}
+
 export async function sendVehicleCreatedEmail(
   to: string,
   vehicle: { make: string; model: string; year: number; nickname: string | null; vehicleType: string }
