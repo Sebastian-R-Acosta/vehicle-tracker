@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, FileText } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { serviceTypeKey } from "@/lib/service-types";
 
 interface Record {
   id: string;
@@ -72,7 +73,7 @@ export default function AdminRecordsPage() {
               <tr key={r.id} className="border-b border-border/50 hover:bg-accent/30 transition-colors">
                 <td className="p-4 font-medium">{r.vehicle.make} {r.vehicle.model}</td>
                 <td className="p-4 text-muted-foreground">{r.vehicle.user.email}</td>
-                <td className="p-4 text-muted-foreground">{r.serviceType}</td>
+                <td className="p-4 text-muted-foreground">{t(serviceTypeKey(r.serviceType))}</td>
                 <td className="p-4 text-muted-foreground">{new Date(r.date).toLocaleDateString()}</td>
                 <td className="p-4 text-muted-foreground">{r.mileage.toLocaleString()}</td>
                 <td className="p-4 text-muted-foreground">{r.cost != null ? `$${r.cost.toFixed(2)}` : "—"}</td>

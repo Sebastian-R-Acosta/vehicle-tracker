@@ -6,18 +6,7 @@ import Link from "next/link";
 import { Check, Loader2, Search, Wrench, User, Car, ClipboardList } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { Button } from "@/components/ui/Button";
-
-const SERVICE_TYPES: { value: string; key: string }[] = [
-  { value: "Oil Change", key: "serviceTypes.oilChange" },
-  { value: "Tire Rotation", key: "serviceTypes.tireRotation" },
-  { value: "Brake Service", key: "serviceTypes.brakeService" },
-  { value: "Air Filter", key: "serviceTypes.airFilter" },
-  { value: "Transmission Service", key: "serviceTypes.transmissionService" },
-  { value: "Battery Replacement", key: "serviceTypes.batteryReplacement" },
-  { value: "Inspection", key: "serviceTypes.inspection" },
-  { value: "Repair", key: "serviceTypes.repair" },
-  { value: "Other", key: "serviceTypes.other" },
-];
+import { SERVICE_TYPES } from "@/lib/service-types";
 
 interface Customer {
   id: string;

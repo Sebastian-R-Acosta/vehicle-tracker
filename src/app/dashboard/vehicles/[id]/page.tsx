@@ -17,6 +17,7 @@ import {
   Trash2,
   Image,
   X,
+  Check,
 } from "lucide-react";
 import { useFetch } from "@/lib/queries";
 import { useQueryClient } from "@tanstack/react-query";
@@ -26,6 +27,8 @@ import { VehicleDocumentsSection } from "@/components/VehicleDocumentsSection";
 import { VehicleRecallsSection } from "@/components/VehicleRecallsSection";
 import { VehicleValueReportSection } from "@/components/VehicleValueReportSection";
 import { VehicleAuthorizationsSection } from "@/components/VehicleAuthorizationsSection";
+import { serviceTypeKey } from "@/lib/service-types";
+import { Button } from "@/components/ui/Button";
 import toast from "react-hot-toast";
 
 interface MaintenanceRecord {
@@ -36,6 +39,8 @@ interface MaintenanceRecord {
   notes: string | null;
   imageUrl: string | null;
   cost: number | null;
+  // Set by the workshop flow; owner-logged records default to "completed".
+  status?: string | null;
 }
 
 interface Reminder {
@@ -74,6 +79,8 @@ export default function VehicleDetailPage() {
   const [generatingReport, setGeneratingReport] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [pickupBusyId, setPickupBusyId] = useState<string | null>(null);
+  const [pickupError, setPickupError] = useState<string | null>(null);
 
   const vehicleId = Array.isArray(params.id) ? params.id[0] : params.id;
 
@@ -100,6 +107,24 @@ export default function VehicleDetailPage() {
     router.push("/dashboard");
     return null;
   }
+
+  const confirmPickup = async (recordId: string) => {
+    setPickupBusyId(recordId);
+    setPickupError(null);
+    try {
+      const res = await fetch(`/api/maintenance/${recordId}/pickup`, { method: "POST" });
+      if (!res.ok) {
+        setPickupError(recordId);
+        return;
+      }
+      await queryClient.invalidateQueries({ queryKey: ["vehicle", vehicleId] });
+      toast.success(t("serviceStatus.pickupDone"));
+    } catch {
+      setPickupError(recordId);
+    } finally {
+      setPickupBusyId(null);
+    }
+  };
 
   const handleDelete = async () => {
     try {
@@ -426,7 +451,7 @@ export default function VehicleDetailPage() {
                         {new Date(lastMaintenance.date).toLocaleDateString()}
                         <br />
                         <span className="text-sm font-normal text-muted-foreground">
-                          {lastMaintenance.serviceType}
+                          {t(serviceTypeKey(lastMaintenance.serviceType))}
                         </span>
                       </>
                     ) : (
@@ -463,10 +488,41 @@ export default function VehicleDetailPage() {
                           <Wrench className="w-4 h-4 text-secondary-foreground" />
                         </div>
                         <div>
-                          <p className="font-medium text-foreground">{record.serviceType}</p>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-medium text-foreground">{t(serviceTypeKey(record.serviceType))}</p>
+                            {record.status && record.status !== "completed" && (
+                              <span
+                                className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                                  record.status === "ready"
+                                    ? "bg-green-500/10 text-green-700 dark:text-green-400"
+                                    : "bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                                }`}
+                              >
+                                {record.status === "ready"
+                                  ? t("serviceStatus.ready")
+                                  : t("serviceStatus.inProgress")}
+                              </span>
+                            )}
+                          </div>
                           <p className="text-sm text-muted-foreground">
                             {new Date(record.date).toLocaleDateString()} {t("dashboard.vehicleDetail.at")} {record.mileage.toLocaleString()} {t("dashboard.reminders.miles")}
                           </p>
+                          {record.status === "ready" && (
+                            <Button
+                              size="sm"
+                              className="mt-2"
+                              loading={pickupBusyId === record.id}
+                              onClick={() => confirmPickup(record.id)}
+                            >
+                              <Check className="w-4 h-4" aria-hidden="true" />
+                              {t("serviceStatus.confirmPickup")}
+                            </Button>
+                          )}
+                          {pickupError === record.id && (
+                            <p className="text-sm text-destructive mt-1" role="alert">
+                              {t("serviceStatus.pickupFailed")}
+                            </p>
+                          )}
                           {record.notes && (
                             <p className="text-sm text-muted-foreground mt-1">{record.notes}</p>
                           )}

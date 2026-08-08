@@ -1497,6 +1497,16 @@ export const en: Translations = {
     allDocumentsValid: "All Documents Valid",
     docsInWallet: (n: number, total: number) => `${n} of ${total} documents in wallet`,
   },
+  serviceStatus: {
+    inProgress: "In progress",
+    ready: "Ready for pickup",
+    completed: "Completed",
+    atWorkshop: "At the workshop",
+    confirmPickup: "Confirm I picked it up",
+    pickupDone: "Pickup confirmed",
+    pickupFailed: "Could not confirm the pickup.",
+    notReadyYet: "The workshop has not marked it ready yet.",
+  },
   authorizations: {
     heading: "Workshops with access",
     subtitle: "Workshops that can log services on this vehicle.",

@@ -1495,6 +1495,16 @@ export const es = {
     allDocumentsValid: "Todos los Documentos Válidos",
     docsInWallet: (n: number, total: number) => `${n} de ${total} documentos en la billetera`,
   },
+  serviceStatus: {
+    inProgress: "En proceso",
+    ready: "Listo para retirar",
+    completed: "Completado",
+    atWorkshop: "En el taller",
+    confirmPickup: "Confirmar que lo retiré",
+    pickupDone: "Retiro confirmado",
+    pickupFailed: "No se pudo confirmar el retiro.",
+    notReadyYet: "El taller aún no lo marca como listo.",
+  },
   authorizations: {
     heading: "Talleres con acceso",
     subtitle: "Talleres que pueden registrar servicios en este vehículo.",

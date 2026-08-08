@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
+import { serviceTypeLabel } from "@/lib/service-types";
 
 const pdfStrings = {
   en: {
@@ -341,7 +342,7 @@ export default function VehicleReportPDF({ data, logoUrl, locale = "en" }: Vehic
             <Text style={styles.summaryText}>
               {s.lastMaintenance}:{" "}
               {new Date(summary.lastMaintenance.date).toLocaleDateString(dateLocale)} -{" "}
-              {summary.lastMaintenance.serviceType} {s.at}{" "}
+              {serviceTypeLabel(summary.lastMaintenance.serviceType, locale)} {s.at}{" "}
               {summary.lastMaintenance.mileage.toLocaleString()} {s.miles}
             </Text>
           ) : (
@@ -388,7 +389,7 @@ export default function VehicleReportPDF({ data, logoUrl, locale = "en" }: Vehic
                     {new Date(record.date).toLocaleDateString(dateLocale)}
                   </Text>
                   <Text style={[styles.tableCell, styles.colService]}>
-                    {record.serviceType}
+                    {serviceTypeLabel(record.serviceType, locale)}
                   </Text>
                   <Text style={[styles.tableCell, styles.colMileage]}>
                     {record.mileage.toLocaleString()} {s.mi}

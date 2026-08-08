@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, BellRing, Check, Loader2 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { Button } from "@/components/ui/Button";
+import { serviceTypeKey } from "@/lib/service-types";
 
 interface Record {
   id: string;
@@ -139,7 +140,7 @@ export default function WorkshopHistoryPage() {
                     {r.vehicle.year} {r.vehicle.make} {r.vehicle.model}
                     {r.vehicle.licensePlate ? ` · ${r.vehicle.licensePlate}` : ""}
                   </td>
-                  <td className="p-3 text-muted-foreground">{r.serviceType}</td>
+                  <td className="p-3 text-muted-foreground">{t(serviceTypeKey(r.serviceType))}</td>
                   <td className="p-3 text-muted-foreground whitespace-nowrap">{new Date(r.date).toLocaleDateString()}</td>
                   <td className="p-3">
                     <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${statusClass(r.status)}`}>

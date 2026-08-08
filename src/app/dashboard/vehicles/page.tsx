@@ -8,6 +8,7 @@ import { Car, Loader2, Plus, Search } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { getIndustryPageLabels, IndustryType } from "@/lib/industry-labels";
 import { Button } from "@/components/ui/Button";
+import { serviceTypeKey } from "@/lib/service-types";
 
 interface VehicleRow {
   id: string;
@@ -145,7 +146,7 @@ export default function VehiclesPage() {
                   )}
                   {last && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      {last.serviceType} · {new Date(last.date).toLocaleDateString()}
+                      {t(serviceTypeKey(last.serviceType))} · {new Date(last.date).toLocaleDateString()}
                     </p>
                   )}
                 </Link>
